@@ -5,12 +5,6 @@ import { lookbookItems, getProductsForLook, TELEGRAM_LINK } from "@/data/lookboo
 import { Product } from "@/data/products";
 
 const LookbookPage = () => {
-  // Group looks into pairs for the two-column layout
-  const lookPairs: Array<[typeof lookbookItems[0], typeof lookbookItems[0] | undefined]> = [];
-  for (let i = 0; i < lookbookItems.length; i += 2) {
-    lookPairs.push([lookbookItems[i], lookbookItems[i + 1]]);
-  }
-
   return (
     <div className="min-h-screen">
       <Header />
@@ -24,18 +18,12 @@ const LookbookPage = () => {
           </nav>
 
           {/* Title */}
-          <h1 className="section-title mb-16 text-center">LOOKBOOK</h1>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-widest text-center mb-16 uppercase">LOOKBOOK</h1>
 
-          {/* Looks Grid - Two looks per row */}
-          <div className="space-y-20">
-            {lookPairs.map(([look1, look2], pairIndex) => (
-              <div key={pairIndex} className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4">
-                {/* First Look */}
-                <LookBlock look={look1} />
-                
-                {/* Second Look (if exists) */}
-                {look2 && <LookBlock look={look2} />}
-              </div>
+          {/* Looks Grid - Two looks per row on desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
+            {lookbookItems.map((look) => (
+              <LookBlock key={look.id} look={look} />
             ))}
           </div>
         </div>
@@ -53,29 +41,27 @@ const LookBlock = ({ look }: LookBlockProps) => {
   const products = getProductsForLook(look.productIds) as Product[];
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      {/* Model Image */}
-      <div>
-        <div className="aspect-[3/4] overflow-hidden bg-secondary">
-          <img
-            src={look.mainImage}
-            alt={look.name}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <p className="mt-3 text-sm tracking-widest font-medium">{look.name}</p>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Model Image - Left side, not clickable */}
+      <div className="aspect-[3/4] overflow-hidden bg-secondary">
+        <img
+          src={look.mainImage}
+          alt={look.name}
+          className="w-full h-full object-cover"
+        />
       </div>
 
-      {/* Products Column */}
+      {/* Products Column - Right side */}
       <div className="flex flex-col">
-        <div className="space-y-4 flex-1">
+        {/* Products Grid - 2 columns on tablet+, 1 column on mobile */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1">
           {products.map((product) => (
             <Link
               key={product.id}
               to={`/product/${product.id}`}
               className="block group"
             >
-              <div className="aspect-[3/4] bg-secondary overflow-hidden mb-2">
+              <div className="aspect-[3/4] bg-secondary overflow-hidden mb-2 transition-shadow duration-300 group-hover:shadow-lg">
                 <img
                   src={product.image}
                   alt={product.name}
