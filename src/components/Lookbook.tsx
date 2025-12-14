@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import lookbook1 from "@/assets/lookbook-1.jpg";
 import lookbook2 from "@/assets/lookbook-2.jpg";
 import lookbook3 from "@/assets/lookbook-3.jpg";
@@ -32,9 +33,9 @@ const Lookbook = () => {
         </p>
 
         <div className="flex justify-center">
-          <a href="/lookbook" className="btn-primary">
+          <Link to="/lookbook" className="btn-primary">
             Смотреть Lookbook
-          </a>
+          </Link>
         </div>
       </div>
     </section>
