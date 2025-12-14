@@ -6,11 +6,11 @@ const Hero = () => {
       <img
         src={heroImage}
         alt="Rumor Evening Collection"
-        className="w-full h-full object-cover object-top"
+        className="w-full h-full object-cover object-center"
       />
       
       {/* Overlay Content */}
-      <div className="absolute bottom-16 left-8 md:left-16 text-primary-foreground">
+      <div className="absolute bottom-16 left-8 md:left-16 text-foreground">
         <h2 className="font-display text-2xl md:text-4xl tracking-[0.15em] uppercase font-medium mb-2">
           Rumor Evening Collection
         </h2>

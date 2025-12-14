@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ProductModal from "@/components/ProductModal";
 import bestseller1 from "@/assets/bestseller-1.jpg";
 import bestseller2 from "@/assets/bestseller-2.jpg";
 import bestseller3 from "@/assets/bestseller-3.jpg";
@@ -13,24 +14,25 @@ import bestseller11 from "@/assets/bestseller-11.jpg";
 import bestseller12 from "@/assets/bestseller-12.jpg";
 
 const allProducts = [
-  { id: 1, name: "блузка с бантом", price: "23 900 руб.", image: bestseller1 },
-  { id: 2, name: "платье с открытой спиной", price: "25 900 руб.", image: bestseller2 },
-  { id: 3, name: "кейп", price: "15 900 руб.", image: bestseller3 },
-  { id: 4, name: "кроп-жакет", price: "45 000 руб.", image: bestseller4, discount: "-20%" },
-  { id: 5, name: "платье-боди", price: "32 900 руб.", image: bestseller5 },
-  { id: 6, name: "пиджак в полоску", price: "47 900 руб.", image: bestseller6 },
-  { id: 7, name: "корсет бархат", price: "18 900 руб.", image: bestseller7 },
-  { id: 8, name: "платье шёлк", price: "38 900 руб.", image: bestseller8 },
-  { id: 9, name: "костюм оверсайз", price: "52 900 руб.", image: bestseller9 },
-  { id: 10, name: "вечернее платье", price: "67 900 руб.", image: bestseller10 },
-  { id: 11, name: "платье металлик", price: "42 900 руб.", image: bestseller11 },
-  { id: 12, name: "корсет с брюками", price: "35 900 руб.", image: bestseller12 },
+  { id: 1, name: "блузка с бантом", price: "799 BYN", image: bestseller1 },
+  { id: 2, name: "платье с открытой спиной", price: "869 BYN", image: bestseller2 },
+  { id: 3, name: "кейп", price: "529 BYN", image: bestseller3 },
+  { id: 4, name: "кроп-жакет", price: "1 500 BYN", image: bestseller4, discount: "-20%" },
+  { id: 5, name: "платье-боди", price: "1 099 BYN", image: bestseller5 },
+  { id: 6, name: "пиджак в полоску", price: "1 599 BYN", image: bestseller6 },
+  { id: 7, name: "корсет бархат", price: "629 BYN", image: bestseller7 },
+  { id: 8, name: "платье шёлк", price: "1 299 BYN", image: bestseller8 },
+  { id: 9, name: "костюм оверсайз", price: "1 769 BYN", image: bestseller9 },
+  { id: 10, name: "вечернее платье", price: "2 269 BYN", image: bestseller10 },
+  { id: 11, name: "платье металлик", price: "1 429 BYN", image: bestseller11 },
+  { id: 12, name: "корсет с брюками", price: "1 199 BYN", image: bestseller12 },
 ];
 
 const INITIAL_COUNT = 12;
 
 const Bestsellers = () => {
   const [showAll, setShowAll] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<typeof allProducts[0] | null>(null);
   const products = showAll ? allProducts : allProducts.slice(0, INITIAL_COUNT);
 
   return (
@@ -40,7 +42,11 @@ const Bestsellers = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
           {products.map((product) => (
-            <a key={product.id} href={`/product/${product.id}`} className="product-card">
+            <div 
+              key={product.id} 
+              className="product-card cursor-pointer"
+              onClick={() => setSelectedProduct(product)}
+            >
               <div className="relative overflow-hidden bg-secondary">
                 {product.discount && (
                   <span className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs tracking-wider px-3 py-1.5 rounded-full z-10">
@@ -57,7 +63,7 @@ const Bestsellers = () => {
                 <p className="product-price">{product.price}</p>
                 <p className="product-name">{product.name}</p>
               </div>
-            </a>
+            </div>
           ))}
         </div>
 
@@ -72,6 +78,12 @@ const Bestsellers = () => {
           </a>
         </div>
       </div>
+
+      <ProductModal 
+        product={selectedProduct}
+        isOpen={!!selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+      />
     </section>
   );
 };

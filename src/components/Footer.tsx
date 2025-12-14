@@ -24,13 +24,7 @@ const Footer = () => {
               Rumor
             </h3>
             <p className="text-sm opacity-70 mb-2">
-              ©Все права защищены 2024 RUMOR
-            </p>
-            <p className="text-sm opacity-70 mb-4">
-              ИНН 7715069200
-            </p>
-            <p className="text-xs opacity-50">
-              *Meta - запрещенная сеть на территории РФ
+              ©Все права защищены 2025 RUMOR
             </p>
           </div>
 
