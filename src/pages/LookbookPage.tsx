@@ -41,35 +41,39 @@ const LookBlock = ({ look }: LookBlockProps) => {
   const products = getProductsForLook(look.productIds) as Product[];
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      {/* Model Image - Left side, tall aspect ratio, not clickable */}
-      <div className="aspect-[2/3] overflow-hidden bg-secondary">
-        <img
-          src={look.mainImage}
-          alt={look.name}
-          className="w-full h-full object-cover"
-        />
+    <div className="flex gap-6">
+      {/* Model Image - Left side, not clickable */}
+      <div className="w-1/2 flex-shrink-0">
+        <div className="aspect-[2/3] overflow-hidden bg-secondary">
+          <img
+            src={look.mainImage}
+            alt={look.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
       </div>
 
-      {/* Products Column - Right side, single column */}
-      <div className="flex flex-col">
-        {/* Products stacked vertically */}
-        <div className="flex flex-col gap-4 flex-1">
-          {products.map((product) => (
+      {/* Products Column - Right side */}
+      <div className="w-1/2 flex flex-col">
+        {/* Products - each takes equal space, together matching model height */}
+        <div className="flex flex-col flex-1" style={{ aspectRatio: '2/3' }}>
+          {products.slice(0, 2).map((product, index) => (
             <Link
               key={product.id}
               to={`/product/${product.id}`}
-              className="block group"
+              className="flex-1 group flex flex-col"
             >
-              <div className="aspect-[3/4] bg-secondary overflow-hidden mb-2 transition-shadow duration-300 group-hover:shadow-lg">
+              <div className="flex-1 bg-secondary overflow-hidden transition-shadow duration-300 group-hover:shadow-lg">
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
-              <p className="text-xs tracking-wider uppercase font-medium leading-tight">{product.name}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{product.price}</p>
+              <div className="py-2">
+                <p className="text-xs tracking-wider uppercase font-medium leading-tight">{product.name}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{product.price}</p>
+              </div>
             </Link>
           ))}
         </div>
