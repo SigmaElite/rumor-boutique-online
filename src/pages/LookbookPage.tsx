@@ -41,9 +41,9 @@ const LookBlock = ({ look }: LookBlockProps) => {
   const products = getProductsForLook(look.productIds) as Product[];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {/* Model Image - Left side, not clickable */}
-      <div className="aspect-[3/4] overflow-hidden bg-secondary">
+    <div className="grid grid-cols-2 gap-4">
+      {/* Model Image - Left side, tall aspect ratio, not clickable */}
+      <div className="aspect-[2/3] overflow-hidden bg-secondary">
         <img
           src={look.mainImage}
           alt={look.name}
@@ -51,10 +51,10 @@ const LookBlock = ({ look }: LookBlockProps) => {
         />
       </div>
 
-      {/* Products Column - Right side */}
+      {/* Products Column - Right side, single column */}
       <div className="flex flex-col">
-        {/* Products Grid - 2 columns on tablet+, 1 column on mobile */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1">
+        {/* Products stacked vertically */}
+        <div className="flex flex-col gap-4 flex-1">
           {products.map((product) => (
             <Link
               key={product.id}
