@@ -42,12 +42,12 @@ const LookBlock = ({ look, lookNumber }: LookBlockProps) => {
   return (
     <div>
       {/* Main content - model + products side by side */}
-      <div className="flex gap-4 md:gap-6">
-        {/* Model Image - Left side, 50% width, 800px height */}
-        <div className="w-1/2">
+      <div className="flex gap-3">
+        {/* Model Image - Left side */}
+        <div className="w-[42%]">
           <div 
-            className="overflow-hidden bg-secondary"
-            style={{ height: '800px' }}
+            className="overflow-hidden"
+            style={{ height: '510px' }}
           >
             <img
               src={look.mainImage}
@@ -57,56 +57,47 @@ const LookBlock = ({ look, lookNumber }: LookBlockProps) => {
           </div>
           {/* Look label */}
           <p 
-            className="uppercase mt-2.5"
+            className="uppercase mt-2 font-medium"
             style={{ fontSize: '14px', color: '#000' }}
           >
             LOOK{lookNumber}
           </p>
         </div>
 
-        {/* Products Column - Right side, 50% width, 800px height */}
-        <div className="w-1/2 flex flex-col">
-          {/* Products container - exactly 800px to match model */}
-          <div 
-            className="flex flex-col gap-5"
-            style={{ height: '800px' }}
-          >
+        {/* Products Column - Right side */}
+        <div className="w-[58%] flex flex-col">
+          {/* Products container */}
+          <div className="flex flex-col gap-2" style={{ height: '466px' }}>
             {products.slice(0, 2).map((product) => (
               <Link
                 key={product.id}
                 to={`/product/${product.id}`}
-                className="flex-1 group flex flex-col transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                className="flex-1 group flex flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-md"
               >
-                {/* Product image - 250px height, contain, white bg */}
-                <div 
-                  className="bg-white overflow-hidden flex items-center justify-center pt-4"
-                  style={{ height: '250px' }}
-                >
+                {/* Product image */}
+                <div className="flex-1 overflow-hidden flex items-center justify-center">
                   <img
                     src={product.image}
                     alt={product.name}
                     className="max-w-full max-h-full object-contain"
                   />
                 </div>
-                {/* Product name - centered, 14px, uppercase */}
+                {/* Product name - left aligned like reference */}
                 <p 
-                  className="text-center uppercase font-medium mt-2.5"
-                  style={{ fontSize: '14px' }}
+                  className="uppercase font-medium"
+                  style={{ fontSize: '13px', lineHeight: '1.3' }}
                 >
                   {product.name}
                 </p>
-                {/* Price - centered, 14px */}
-                <p 
-                  className="text-center mt-1"
-                  style={{ fontSize: '14px', color: '#000' }}
-                >
+                {/* Price */}
+                <p style={{ fontSize: '13px', color: '#000' }}>
                   {product.price}
                 </p>
               </Link>
             ))}
           </div>
 
-          {/* Button - full width, 44px height, black bg, rounded */}
+          {/* Button - directly after products */}
           <a
             href={TELEGRAM_LINK}
             target="_blank"
@@ -114,9 +105,7 @@ const LookBlock = ({ look, lookNumber }: LookBlockProps) => {
             className="flex items-center justify-center bg-black text-white uppercase tracking-widest hover:opacity-90 transition-opacity"
             style={{ 
               height: '44px', 
-              fontSize: '14px', 
-              borderRadius: '4px',
-              marginTop: '30px'
+              fontSize: '14px'
             }}
           >
             ХОЧУ ЭТОТ ОБРАЗ
