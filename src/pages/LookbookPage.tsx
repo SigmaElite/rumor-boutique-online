@@ -67,7 +67,7 @@ const LookBlock = ({ look, lookNumber }: LookBlockProps) => {
                 <img
                   src={products[0].image}
                   alt={products[0].name}
-                  className="max-w-full max-h-[160px] object-contain"
+                  className="max-w-full max-h-[185px] object-contain"
                 />
               </div>
               <p className="uppercase font-medium" style={{ fontSize: '13px', lineHeight: '1.3' }}>
@@ -87,7 +87,7 @@ const LookBlock = ({ look, lookNumber }: LookBlockProps) => {
                 <img
                   src={products[1].image}
                   alt={products[1].name}
-                  className="max-w-full max-h-[160px] object-contain"
+                  className="max-w-full max-h-[185px] object-contain"
                 />
               </div>
               <p className="uppercase font-medium text-right" style={{ fontSize: '13px', lineHeight: '1.3' }}>
