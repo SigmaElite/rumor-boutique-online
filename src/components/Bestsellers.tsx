@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { allProducts } from "@/data/products";
+import ProductCardCarousel from "./ProductCardCarousel";
 
 const INITIAL_COUNT = 12;
 
@@ -15,28 +16,7 @@ const Bestsellers = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
           {products.map((product) => (
-            <Link 
-              key={product.id} 
-              to={`/product/${product.id}`}
-              className="product-card"
-            >
-              <div className="relative overflow-hidden bg-secondary">
-                {product.discount && (
-                  <span className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs tracking-wider px-3 py-1.5 rounded-full z-10">
-                    {product.discount}
-                  </span>
-                )}
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="product-card-image"
-                />
-              </div>
-              <div className="product-card-info">
-                <p className="product-price">{product.price}</p>
-                <p className="product-name">{product.name}</p>
-              </div>
-            </Link>
+            <ProductCardCarousel key={product.id} product={product} />
           ))}
         </div>
 
