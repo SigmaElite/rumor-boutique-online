@@ -105,19 +105,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Row */}
-        <div className="flex flex-col md:flex-row items-center justify-between mt-12 pt-8 border-t border-primary-foreground/20">
-          {/* Payment Methods */}
-          <div className="flex items-center gap-4 mb-6 md:mb-0">
-            <span className="text-xl font-bold tracking-wider">VISA</span>
-            <span className="text-xl">
-              <svg className="w-10 h-6" viewBox="0 0 40 24" fill="currentColor">
-                <circle cx="14" cy="12" r="10" fillOpacity="0.8"/>
-                <circle cx="26" cy="12" r="10" fillOpacity="0.6"/>
-              </svg>
-            </span>
-            <span className="text-lg font-bold tracking-wide">МИР</span>
-          </div>
-
+        <div className="flex flex-col md:flex-row items-center justify-center mt-12 pt-8 border-t border-primary-foreground/20">
           {/* Legal Links */}
           <div className="flex flex-col md:flex-row items-center gap-4 text-xs opacity-70">
             <a href="/offer" className="hover:opacity-100 transition-opacity underline">
