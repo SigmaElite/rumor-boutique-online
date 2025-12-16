@@ -61,9 +61,9 @@ const ProductPage = () => {
           </button>
 
           {/* Product Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
             {/* Image Gallery */}
-            <div className="relative">
+            <div className="relative lg:ml-auto lg:max-w-[90%]">
               {/* Main Image */}
               <div className="relative aspect-[3/4] max-h-[70vh] bg-secondary overflow-hidden">
                 <img
