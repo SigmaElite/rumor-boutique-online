@@ -64,7 +64,8 @@ const ProductPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
             {/* Image Gallery */}
             <div className="relative">
-              <div className="relative aspect-[3/4] bg-secondary overflow-hidden">
+              {/* Main Image */}
+              <div className="relative aspect-[4/5] max-h-[70vh] bg-secondary overflow-hidden">
                 <img
                   src={images[currentImageIndex]}
                   alt={product.name}
@@ -88,6 +89,29 @@ const ProductPage = () => {
                   </>
                 )}
               </div>
+              
+              {/* Thumbnail Carousel */}
+              {images.length > 1 && (
+                <div className="flex gap-2 mt-3 overflow-x-auto pb-2">
+                  {images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentImageIndex(idx)}
+                      className={`flex-shrink-0 w-16 h-20 overflow-hidden border-2 transition-all ${
+                        idx === currentImageIndex 
+                          ? "border-primary" 
+                          : "border-transparent hover:border-muted-foreground/30"
+                      }`}
+                    >
+                      <img
+                        src={img}
+                        alt={`${product.name} - фото ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
