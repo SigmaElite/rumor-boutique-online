@@ -45,7 +45,7 @@ const Catalog = () => {
   return (
     <div className="min-h-screen">
       <Header />
-      <main className="pt-32">
+      <main className="pt-16">
         <div className="container">
           {/* Breadcrumbs */}
           <nav className="flex items-center gap-2 text-sm mb-8">

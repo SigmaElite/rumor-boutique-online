@@ -26,7 +26,7 @@ const ProductPage = () => {
     return (
       <div className="min-h-screen">
         <Header />
-        <main className="pt-32 pb-16">
+        <main className="pt-16 pb-16">
           <div className="container text-center">
             <h1 className="text-2xl mb-4">Товар не найден</h1>
             <Link to="/catalog" className="btn-primary">Вернуться в каталог</Link>
@@ -50,7 +50,7 @@ const ProductPage = () => {
   return (
     <div className="min-h-screen">
       <Header />
-      <main className="pt-24 pb-16">
+      <main className="pt-12 pb-16">
         <div className="container">
           {/* Back button */}
           <button 
