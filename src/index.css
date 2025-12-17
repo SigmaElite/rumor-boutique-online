@@ -129,12 +129,12 @@
   }
 
   .product-price {
-    @apply text-base font-medium tracking-wide;
+    @apply text-lg font-medium tracking-wide;
     font-family: var(--font-body);
   }
 
   .product-name {
-    @apply text-sm text-muted-foreground mt-1 tracking-wide;
+    @apply text-base text-muted-foreground mt-1 tracking-wide;
     font-family: var(--font-body);
   }
 
