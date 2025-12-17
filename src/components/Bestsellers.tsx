@@ -14,7 +14,7 @@ const Bestsellers = () => {
       <div className="container">
         <h2 className="section-title mb-12 md:mb-16">Bestsellers</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-16">
           {products.map((product) => (
             <ProductCardCarousel key={product.id} product={product} />
           ))}
