@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import corsetImage from "@/assets/product-corset-1.jpg";
 import dressImage from "@/assets/product-dress-1.jpg";
 import setImage from "@/assets/product-set-1.jpg";
@@ -11,16 +12,55 @@ const categories = [
 ];
 
 const Categories = () => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
   return (
     <section className="py-16 md:py-24">
       <div className="container">
         <h2 className="section-title mb-12 md:mb-16">Категории товаров</h2>
         
-        <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 -mx-6 px-6 cursor-grab active:cursor-grabbing">
+        <div
+          ref={scrollRef}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          className={`flex gap-4 overflow-x-auto scrollbar-hide pb-4 -mx-6 px-6 select-none ${
+            isDragging ? "cursor-grabbing" : "cursor-grab"
+          }`}
+        >
           {categories.map((category) => (
             <a
               key={category.id}
               href={`/catalog?category=${category.name}`}
+              onClick={(e) => isDragging && e.preventDefault()}
+              draggable={false}
               className="category-card flex-shrink-0 w-60 md:w-72"
             >
               {category.image ? (
@@ -28,7 +68,8 @@ const Categories = () => {
                   <img
                     src={category.image}
                     alt={category.name}
-                    className="max-h-full max-w-full object-contain"
+                    className="max-h-full max-w-full object-contain pointer-events-none"
+                    draggable={false}
                   />
                 </div>
               ) : (
