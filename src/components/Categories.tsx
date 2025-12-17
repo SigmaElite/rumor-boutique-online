@@ -41,7 +41,7 @@ const Categories = () => {
   };
 
   return (
-    <section className="py-16 md:py-24">
+    <section className="pt-16 md:pt-24 pb-8 md:pb-12">
       <div className="container">
         <h2 className="section-title mb-12 md:mb-16">Категории товаров</h2>
         

@@ -10,7 +10,7 @@ const Bestsellers = () => {
   const products = showAll ? allProducts : allProducts.slice(0, INITIAL_COUNT);
 
   return (
-    <section className="py-16 md:py-24">
+    <section className="pt-8 md:pt-12 pb-16 md:pb-24">
       <div className="container">
         <h2 className="section-title mb-12 md:mb-16">Bestsellers</h2>
 
