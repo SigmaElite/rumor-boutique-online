@@ -1,17 +1,46 @@
-import { useState } from "react";
-import { ChevronDown, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Search } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { allProducts } from "@/data/products";
+import { allProducts, categories } from "@/data/products";
 import ProductCardCarousel from "@/components/ProductCardCarousel";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Catalog = () => {
-  const [showFilters, setShowFilters] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  const filteredProducts = allProducts.filter(product =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Read category from URL on mount
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get("category");
+    if (categoryFromUrl && categories.includes(categoryFromUrl)) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [searchParams]);
+
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value);
+    if (value === "all") {
+      searchParams.delete("category");
+    } else {
+      searchParams.set("category", value);
+    }
+    setSearchParams(searchParams);
+  };
+
+  const filteredProducts = allProducts.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="min-h-screen">
@@ -30,13 +59,19 @@ const Catalog = () => {
 
           {/* Filters Row */}
           <div className="flex items-center justify-between mb-10">
-            <button 
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 text-sm tracking-widest uppercase"
-            >
-              Категория
-              <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
-            </button>
+            <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+              <SelectTrigger className="w-[180px] border-border bg-background">
+                <SelectValue placeholder="Категория" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border-border">
+                <SelectItem value="all">Все категории</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             <div className="flex items-center gap-2 border-b border-border pb-1">
               <input
@@ -56,6 +91,12 @@ const Catalog = () => {
               <ProductCardCarousel key={product.id} product={product} />
             ))}
           </div>
+
+          {filteredProducts.length === 0 && (
+            <p className="text-center text-muted-foreground py-12">
+              Товары не найдены
+            </p>
+          )}
         </div>
       </main>
       <Footer />
