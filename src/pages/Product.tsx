@@ -49,13 +49,23 @@ const ProductPage = () => {
 
   return (
     <div className="min-h-screen">
-      <Header />
-      <main className="pt-4 md:pt-12 pb-16">
-        <div className="container">
-          {/* Back button */}
+      <div className="hidden md:block">
+        <Header />
+      </div>
+      <main className="pt-0 md:pt-12 pb-16">
+        <div className="container px-0 md:px-6">
+          {/* Back button - mobile top */}
           <button 
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-sm mb-8 hover:opacity-60 transition-opacity"
+            className="md:hidden absolute top-4 left-4 z-20 w-8 h-8 bg-background/80 rounded-full flex items-center justify-center"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          {/* Back button - desktop */}
+          <button 
+            onClick={() => navigate(-1)}
+            className="hidden md:flex items-center gap-2 text-sm mb-8 hover:opacity-60 transition-opacity"
           >
             ← Назад
           </button>
