@@ -58,7 +58,7 @@ const Catalog = () => {
           <h1 className="section-title mb-12">Каталог</h1>
 
           {/* Filters Row */}
-          <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center justify-between mb-16">
             <Select value={selectedCategory} onValueChange={handleCategoryChange}>
               <SelectTrigger className="w-[180px] border-border bg-background">
                 <SelectValue placeholder="Категория" />
