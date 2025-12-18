@@ -50,7 +50,7 @@ const ProductPage = () => {
   return (
     <div className="min-h-screen">
       <Header />
-      <main className="pt-12 pb-16">
+      <main className="pt-4 md:pt-12 pb-16">
         <div className="container">
           {/* Back button */}
           <button 
