@@ -61,10 +61,10 @@ const Categories = () => {
               href={`/catalog?category=${category.name}`}
               onClick={(e) => isDragging && e.preventDefault()}
               draggable={false}
-              className="category-card flex-shrink-0 w-60 md:w-72"
+              className="category-card flex-shrink-0 w-36 md:w-72"
             >
               {category.image ? (
-                <div className="h-40 flex items-center justify-center">
+                <div className="h-24 md:h-40 flex items-center justify-center">
                   <img
                     src={category.image}
                     alt={category.name}
@@ -73,8 +73,8 @@ const Categories = () => {
                   />
                 </div>
               ) : (
-                <div className="h-40 flex items-center justify-center">
-                  <span className="font-display text-4xl tracking-[0.2em] uppercase">
+                <div className="h-24 md:h-40 flex items-center justify-center">
+                  <span className="font-display text-2xl md:text-4xl tracking-[0.2em] uppercase">
                     {category.name}
                   </span>
                 </div>
