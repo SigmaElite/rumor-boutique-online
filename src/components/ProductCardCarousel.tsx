@@ -71,9 +71,9 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
           </>
         )}
       </div>
-      <div className="product-card-info">
-        <p className="product-name">{product.name}</p>
+      <div className="product-card-info text-center">
         <p className="product-price">{product.price}</p>
+        <p className="product-name">{product.name}</p>
       </div>
     </Link>
   );

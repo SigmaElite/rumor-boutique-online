@@ -1,4 +1,4 @@
-import { Search, Heart, ShoppingBag, Menu, X } from "lucide-react";
+import { Search, Heart, ShoppingBag, Menu } from "lucide-react";
 import { useState } from "react";
 import MobileMenu from "./MobileMenu";
 
@@ -17,17 +17,8 @@ const Header = () => {
       {/* Main Header */}
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="container flex items-center justify-between h-20">
-          {/* Left - Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(true)}
-            className="p-2 -ml-2 transition-opacity hover:opacity-60"
-            aria-label="Открыть меню"
-          >
-            <Menu className="w-6 h-6" strokeWidth={1.5} />
-          </button>
-
-          {/* Center - Logo */}
-          <a href="/" className="absolute left-1/2 -translate-x-1/2">
+          {/* Left - Logo */}
+          <a href="/" className="flex-shrink-0">
             <h1 className="font-display text-2xl md:text-3xl tracking-[0.3em] uppercase font-medium">
               Rumor
             </h1>
@@ -38,11 +29,18 @@ const Header = () => {
             <button className="p-2 transition-opacity hover:opacity-60" aria-label="Поиск">
               <Search className="w-5 h-5" strokeWidth={1.5} />
             </button>
-            <button className="p-2 transition-opacity hover:opacity-60 hidden md:block" aria-label="Избранное">
+            <button className="p-2 transition-opacity hover:opacity-60" aria-label="Избранное">
               <Heart className="w-5 h-5" strokeWidth={1.5} />
             </button>
-            <button className="p-2 -mr-2 transition-opacity hover:opacity-60" aria-label="Корзина">
+            <button className="p-2 transition-opacity hover:opacity-60" aria-label="Корзина">
               <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
+            </button>
+            <button
+              onClick={() => setIsMenuOpen(true)}
+              className="p-2 -mr-2 transition-opacity hover:opacity-60"
+              aria-label="Открыть меню"
+            >
+              <Menu className="w-6 h-6" strokeWidth={1.5} />
             </button>
           </div>
         </div>
