@@ -45,17 +45,17 @@ const Catalog = () => {
   return (
     <div className="min-h-screen">
       <Header />
-      <main className="pt-16">
+      <main className="pt-6 md:pt-16">
         <div className="container">
           {/* Breadcrumbs */}
-          <nav className="flex items-center gap-2 text-sm mb-8">
+          <nav className="hidden md:flex items-center gap-2 text-sm mb-8">
             <a href="/" className="hover:opacity-60 transition-opacity">Главная</a>
             <span>→</span>
             <span>Каталог</span>
           </nav>
 
           {/* Title */}
-          <h1 className="section-title mb-12">Каталог</h1>
+          <h1 className="section-title mb-6 md:mb-12">Каталог</h1>
 
           {/* Filters Row */}
           <div className="flex items-center justify-between mb-16">
