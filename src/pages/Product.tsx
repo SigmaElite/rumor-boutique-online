@@ -4,6 +4,8 @@ import { ChevronLeft, ChevronRight, Heart, X } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getProductById, getRelatedProducts, Product } from "@/data/products";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -17,10 +19,28 @@ const ProductPage = () => {
   const navigate = useNavigate();
   const product = getProductById(Number(id));
   const relatedProducts = getRelatedProducts(Number(id), 4);
+  const { addItem } = useCart();
   
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    
+    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+      toast.error("Выберите размер");
+      return;
+    }
+    
+    if (product.colors && product.colors.length > 0 && !selectedColor) {
+      toast.error("Выберите цвет");
+      return;
+    }
+    
+    addItem(product, selectedSize || undefined, selectedColor || undefined);
+    toast.success("Товар добавлен в корзину");
+  };
 
   if (!product) {
     return (
@@ -189,7 +209,7 @@ const ProductPage = () => {
 
               {/* Actions */}
               <div className="flex items-center gap-4 mb-6">
-                <button className="flex-1 btn-primary">
+                <button onClick={handleAddToCart} className="flex-1 btn-primary">
                   Добавить в корзину
                 </button>
                 <button className="w-12 h-12 flex items-center justify-center border border-border rounded hover:bg-secondary transition-colors">
