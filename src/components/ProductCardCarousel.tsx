@@ -46,15 +46,15 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
           <>
             <button
               onClick={prevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-background/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-background"
+              className="absolute left-1 bottom-1 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-background"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3 h-3" />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-background/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-background"
+              className="absolute right-1 bottom-1 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-background"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3 h-3" />
             </button>
             
             {/* Dots indicator */}
@@ -72,8 +72,8 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
         )}
       </div>
       <div className="product-card-info text-center">
-        <p className="product-price">{product.price}</p>
         <p className="product-name">{product.name}</p>
+        <p className="product-price">{product.price}</p>
       </div>
     </Link>
   );
