@@ -17,6 +17,7 @@ const Catalog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Read category from URL on mount
   useEffect(() => {
@@ -58,31 +59,44 @@ const Catalog = () => {
           <h1 className="section-title mb-6 md:mb-12">Каталог</h1>
 
           {/* Filters Row */}
-          <div className="flex items-center justify-between mb-16">
-            <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-              <SelectTrigger className="w-[180px] border-border bg-background">
-                <SelectValue placeholder="Категория" />
-              </SelectTrigger>
-              <SelectContent className="bg-background border-border">
-                <SelectItem value="all">Все категории</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col gap-4 mb-16">
+            <div className="flex items-center justify-between">
+              <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+                <SelectTrigger className="w-[180px] border-border bg-background">
+                  <SelectValue placeholder="Категория" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border-border">
+                  <SelectItem value="all">Все категории</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <div className="flex items-center gap-2 border-b border-border pb-1">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Поиск"
-                className="bg-transparent text-sm outline-none w-32 placeholder:text-muted-foreground"
-              />
-              <Search className="w-4 h-4 text-muted-foreground" />
+              <button 
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                className="p-2 hover:opacity-60 transition-opacity"
+              >
+                <Search className="w-5 h-5" />
+              </button>
             </div>
+
+            {/* Search Field - appears below when icon clicked */}
+            {isSearchOpen && (
+              <div className="flex items-center gap-2 border border-border rounded-md px-3 py-2">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Поиск"
+                  autoFocus
+                  className="bg-transparent text-sm outline-none flex-1 placeholder:text-muted-foreground"
+                />
+                <Search className="w-4 h-4 text-muted-foreground" />
+              </div>
+            )}
           </div>
 
           {/* Products Grid */}
