@@ -1,9 +1,11 @@
 import { Search, Heart, ShoppingBag, Menu } from "lucide-react";
 import { useState } from "react";
 import MobileMenu from "./MobileMenu";
+import { useCart } from "@/contexts/CartContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { totalItems, setIsCartOpen } = useCart();
 
   return (
     <>
@@ -43,8 +45,17 @@ const Header = () => {
             <button className="p-1.5 md:p-2 transition-opacity hover:opacity-60" aria-label="Избранное">
               <Heart className="w-5 h-5" strokeWidth={1.5} />
             </button>
-            <button className="p-1.5 md:p-2 transition-opacity hover:opacity-60" aria-label="Корзина">
+            <button 
+              onClick={() => setIsCartOpen(true)}
+              className="p-1.5 md:p-2 transition-opacity hover:opacity-60 relative" 
+              aria-label="Корзина"
+            >
               <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
+              {totalItems > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-full flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
             </button>
             <button
               onClick={() => setIsMenuOpen(true)}
