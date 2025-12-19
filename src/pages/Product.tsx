@@ -145,7 +145,7 @@ const ProductPage = () => {
             </div>
 
             {/* Product Info */}
-            <div className="flex flex-col">
+            <div className="flex flex-col px-3 md:px-0">
               {/* Close button - desktop */}
               <button
                 onClick={() => navigate(-1)}
@@ -239,7 +239,7 @@ const ProductPage = () => {
 
           {/* Description Section */}
           {product.description && (
-            <div className="mt-16 border-t border-border pt-16">
+            <div className="mt-16 border-t border-border pt-16 px-3 md:px-0">
               <h2 className="text-center text-xl tracking-widest mb-8">Описание</h2>
               <div className="max-w-2xl mx-auto text-muted-foreground leading-relaxed">
                 <p className="mb-4 text-foreground font-medium">{product.name}</p>
@@ -256,7 +256,7 @@ const ProductPage = () => {
 
           {/* Related Products */}
           {relatedProducts.length > 0 && (
-            <div className="mt-16">
+            <div className="mt-16 px-3 md:px-0">
               <h2 className="section-title mb-8">смотрите также</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {relatedProducts.map((relProduct) => (
