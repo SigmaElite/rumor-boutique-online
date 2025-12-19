@@ -100,7 +100,7 @@ const Catalog = () => {
           </div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-12 md:gap-y-20 mb-16">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-1 md:gap-x-4 gap-y-8 md:gap-y-20 mb-16">
             {filteredProducts.map((product) => (
               <ProductCardCarousel key={product.id} product={product} />
             ))}

@@ -41,11 +41,11 @@ const LookBlock = ({ look, lookNumber }: LookBlockProps) => {
   const isReversed = lookNumber % 2 === 0; // LOOK2, LOOK4 etc. - reversed
 
   return (
-    <div className="px-1 md:px-0">
+    <div className="px-0">
       {/* Flex row: model image + products column */}
-      <div className={`flex gap-2 md:gap-4 ${isReversed ? 'flex-row-reverse' : ''}`}>
-        {/* Model Image - 50% width */}
-        <div className="w-1/2">
+      <div className={`flex gap-1 md:gap-4 ${isReversed ? 'flex-row-reverse' : ''}`}>
+        {/* Model Image - 55% width on mobile */}
+        <div className="w-[55%] md:w-1/2">
           <div className="overflow-hidden h-[400px] md:h-[520px]">
             <img
               src={look.mainImage}
@@ -55,8 +55,8 @@ const LookBlock = ({ look, lookNumber }: LookBlockProps) => {
           </div>
         </div>
 
-        {/* Products Column - 50% width, flex column with 3 equal rows */}
-        <div className="w-1/2 flex flex-col h-[400px] md:h-[520px]">
+        {/* Products Column - 45% width on mobile */}
+        <div className="w-[45%] md:w-1/2 flex flex-col h-[400px] md:h-[520px]">
           {/* Row 1: Product 1 - shifted right on mobile */}
           {products[0] && (
             <Link
