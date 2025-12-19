@@ -47,7 +47,7 @@ const Catalog = () => {
     <div className="min-h-screen">
       <Header />
       <main className="pt-6 md:pt-16">
-        <div className="container">
+        <div className="container px-2 md:px-6">
           {/* Breadcrumbs */}
           <nav className="hidden md:flex items-center gap-2 text-sm mb-8">
             <a href="/" className="hover:opacity-60 transition-opacity">Главная</a>
@@ -100,7 +100,7 @@ const Catalog = () => {
           </div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-1 md:gap-x-4 gap-y-8 md:gap-y-20 mb-16">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-8 md:gap-y-20 mb-16">
             {filteredProducts.map((product) => (
               <ProductCardCarousel key={product.id} product={product} />
             ))}
