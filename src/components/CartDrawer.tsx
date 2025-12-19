@@ -12,7 +12,7 @@ const CartDrawer = () => {
   const { items, isCartOpen, setIsCartOpen, removeItem, updateQuantity, totalPrice, totalItems } = useCart();
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("ru-RU").format(price) + " ₽";
+    return new Intl.NumberFormat("ru-RU").format(price) + " BYN";
   };
 
   return (

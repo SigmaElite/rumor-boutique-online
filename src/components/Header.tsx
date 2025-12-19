@@ -2,10 +2,12 @@ import { Search, Heart, ShoppingBag, Menu } from "lucide-react";
 import { useState } from "react";
 import MobileMenu from "./MobileMenu";
 import { useCart } from "@/contexts/CartContext";
+import { useFavorites } from "@/contexts/FavoritesContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { totalItems, setIsCartOpen } = useCart();
+  const { totalFavorites, setIsFavoritesOpen } = useFavorites();
 
   return (
     <>
@@ -42,8 +44,17 @@ const Header = () => {
             <button className="p-1.5 md:p-2 transition-opacity hover:opacity-60" aria-label="Поиск">
               <Search className="w-5 h-5" strokeWidth={1.5} />
             </button>
-            <button className="p-1.5 md:p-2 transition-opacity hover:opacity-60" aria-label="Избранное">
+            <button 
+              onClick={() => setIsFavoritesOpen(true)}
+              className="p-1.5 md:p-2 transition-opacity hover:opacity-60 relative" 
+              aria-label="Избранное"
+            >
               <Heart className="w-5 h-5" strokeWidth={1.5} />
+              {totalFavorites > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-full flex items-center justify-center">
+                  {totalFavorites}
+                </span>
+              )}
             </button>
             <button 
               onClick={() => setIsCartOpen(true)}
