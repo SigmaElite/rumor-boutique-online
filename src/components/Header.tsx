@@ -18,9 +18,9 @@ const Header = () => {
 
       {/* Main Header */}
       <header className="sticky top-0 z-40 bg-background border-b border-border">
-        <div className="container flex items-center h-20">
+        <div className="container flex items-center justify-between h-20">
           {/* Left - Logo (mobile) / Empty space (desktop) */}
-          <div className="flex-1 md:flex-none">
+          <div className="flex-1 md:w-[200px] md:flex-none">
             <a href="/" className="md:hidden">
               <h1 className="font-display text-2xl tracking-[0.3em] uppercase font-medium">
                 Rumor
@@ -29,7 +29,7 @@ const Header = () => {
           </div>
 
           {/* Center - Logo (desktop only) */}
-          <div className="hidden md:flex flex-1 justify-center">
+          <div className="hidden md:flex justify-center">
             <a href="/">
               <h1 className="font-display text-3xl tracking-[0.3em] uppercase font-medium">
                 Rumor
@@ -38,7 +38,7 @@ const Header = () => {
           </div>
 
           {/* Right - Icons */}
-          <div className="flex items-center gap-1 md:gap-6 flex-1 md:flex-none justify-end">
+          <div className="flex items-center gap-1 md:gap-6 flex-1 md:w-[200px] md:flex-none justify-end">
             <button className="p-1.5 md:p-2 transition-opacity hover:opacity-60" aria-label="Поиск">
               <Search className="w-5 h-5" strokeWidth={1.5} />
             </button>

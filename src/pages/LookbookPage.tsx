@@ -42,8 +42,81 @@ const LookBlock = ({ look, lookNumber }: LookBlockProps) => {
 
   return (
     <div>
-      {/* Flex row: model image + products column */}
-      <div className={`flex gap-4 ${isReversed ? 'flex-row-reverse' : ''}`}>
+      {/* Mobile Layout */}
+      <div className="lg:hidden flex flex-col gap-2">
+        {/* Main Image - shorter and wider on mobile */}
+        <div className="w-full overflow-hidden" style={{ height: '380px' }}>
+          <img
+            src={look.mainImage}
+            alt={look.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* Products - staggered layout */}
+        <div className="flex flex-col gap-6 py-4">
+          {/* Product 1 - aligned left */}
+          {products[0] && (
+            <Link
+              to={`/product/${products[0].id}`}
+              className="group flex flex-col transition-all duration-300 hover:scale-[1.02] pl-4 pr-16"
+            >
+              <div className="overflow-hidden flex items-center justify-start">
+                <img
+                  src={products[0].image}
+                  alt={products[0].name}
+                  className="max-w-full h-[200px] object-contain"
+                />
+              </div>
+              <p className="uppercase font-medium mt-2" style={{ fontSize: '13px', lineHeight: '1.3' }}>
+                {products[0].name}
+              </p>
+              <p style={{ fontSize: '13px', color: '#000' }}>{products[0].price}</p>
+            </Link>
+          )}
+
+          {/* Product 2 - aligned right */}
+          {products[1] && (
+            <Link
+              to={`/product/${products[1].id}`}
+              className="group flex flex-col items-end transition-all duration-300 hover:scale-[1.02] pr-4 pl-16"
+            >
+              <div className="overflow-hidden flex items-center justify-end">
+                <img
+                  src={products[1].image}
+                  alt={products[1].name}
+                  className="max-w-full h-[200px] object-contain"
+                />
+              </div>
+              <p className="uppercase font-medium text-right mt-2" style={{ fontSize: '13px', lineHeight: '1.3' }}>
+                {products[1].name}
+              </p>
+              <p className="text-right" style={{ fontSize: '13px', color: '#000' }}>{products[1].price}</p>
+            </Link>
+          )}
+        </div>
+
+        {/* Button - wider and taller on mobile */}
+        <div className="px-4 pb-6">
+          <a
+            href={TELEGRAM_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-center bg-black text-white uppercase tracking-widest hover:opacity-90 transition-opacity"
+            style={{ height: '56px', fontSize: '14px' }}
+          >
+            ХОЧУ ЭТОТ ОБРАЗ
+          </a>
+        </div>
+
+        {/* Look label */}
+        <p className="uppercase font-medium px-4 mb-8" style={{ fontSize: '14px', color: '#000' }}>
+          LOOK{lookNumber}
+        </p>
+      </div>
+
+      {/* Desktop Layout */}
+      <div className={`hidden lg:flex gap-4 ${isReversed ? 'flex-row-reverse' : ''}`}>
         {/* Model Image - 50% width */}
         <div className="w-1/2">
           <div className="overflow-hidden" style={{ height: '520px' }}>
@@ -112,8 +185,8 @@ const LookBlock = ({ look, lookNumber }: LookBlockProps) => {
         </div>
       </div>
 
-      {/* Look label - under model image */}
-      <p className="uppercase mt-2 font-medium" style={{ fontSize: '14px', color: '#000' }}>
+      {/* Look label - desktop only */}
+      <p className="hidden lg:block uppercase mt-2 font-medium" style={{ fontSize: '14px', color: '#000' }}>
         LOOK{lookNumber}
       </p>
     </div>
