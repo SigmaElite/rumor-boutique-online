@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getProductById, getRelatedProducts, Product } from "@/data/products";
 import { useCart } from "@/contexts/CartContext";
+import { useFavorites } from "@/contexts/FavoritesContext";
 import { toast } from "sonner";
 import {
   Select,
@@ -20,6 +21,7 @@ const ProductPage = () => {
   const product = getProductById(Number(id));
   const relatedProducts = getRelatedProducts(Number(id), 4);
   const { addItem } = useCart();
+  const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
   
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
@@ -40,6 +42,18 @@ const ProductPage = () => {
     
     addItem(product, selectedSize || undefined, selectedColor || undefined);
     toast.success("Товар добавлен в корзину");
+  };
+
+  const handleToggleFavorite = () => {
+    if (!product) return;
+    
+    if (isFavorite(product.id)) {
+      removeFromFavorites(product.id);
+      toast.success("Удалено из избранного");
+    } else {
+      addToFavorites(product);
+      toast.success("Добавлено в избранное");
+    }
   };
 
   if (!product) {
@@ -212,8 +226,11 @@ const ProductPage = () => {
                 <button onClick={handleAddToCart} className="flex-1 btn-primary">
                   Добавить в корзину
                 </button>
-                <button className="w-12 h-12 flex items-center justify-center border border-border rounded hover:bg-secondary transition-colors">
-                  <Heart className="w-5 h-5" />
+                <button 
+                  onClick={handleToggleFavorite}
+                  className={`w-12 h-12 flex items-center justify-center border border-border rounded hover:bg-secondary transition-colors ${isFavorite(product.id) ? 'bg-secondary' : ''}`}
+                >
+                  <Heart className={`w-5 h-5 ${isFavorite(product.id) ? 'fill-primary text-primary' : ''}`} />
                 </button>
               </div>
 
