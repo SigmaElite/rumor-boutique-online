@@ -9,10 +9,10 @@ const LookbookPage = () => {
     <div className="min-h-screen">
       <Header />
       <main className="pt-20 pb-16">
-        {/* Title - 40px, bold, uppercase, centered, padding top 80px bottom 60px */}
+        {/* Title - 40px, bold, uppercase, centered, minimal top padding */}
         <h1 
           className="text-center font-bold uppercase tracking-widest"
-          style={{ fontSize: '40px', paddingTop: '80px', paddingBottom: '60px' }}
+          style={{ fontSize: '40px', paddingTop: '16px', paddingBottom: '24px' }}
         >
           LOOKBOOK
         </h1>
