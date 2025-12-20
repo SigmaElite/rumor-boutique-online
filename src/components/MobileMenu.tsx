@@ -14,9 +14,8 @@ const menuItems = [
   { label: "Возврат и обмен", href: "/returns" },
   { label: "Определение размера", href: "/size-guide" },
   { label: "Центр поддержки", href: "/support" },
-  { label: "Примерочная", href: "/fitting" },
+  { label: "Контакты", href: "/contacts" },
   { label: "FAQ", href: "/faq" },
-  { label: "EN", href: "/en" },
 ];
 
 const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {

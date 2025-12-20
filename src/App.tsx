@@ -12,6 +12,12 @@ import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import Product from "./pages/Product";
 import LookbookPage from "./pages/LookbookPage";
+import Delivery from "./pages/Delivery";
+import Returns from "./pages/Returns";
+import SizeGuide from "./pages/SizeGuide";
+import Support from "./pages/Support";
+import Contacts from "./pages/Contacts";
+import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +38,12 @@ const App = () => (
             <Route path="/catalog" element={<Catalog />} />
             <Route path="/product/:id" element={<Product />} />
             <Route path="/lookbook" element={<LookbookPage />} />
+            <Route path="/delivery" element={<Delivery />} />
+            <Route path="/returns" element={<Returns />} />
+            <Route path="/size-guide" element={<SizeGuide />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/contacts" element={<Contacts />} />
+            <Route path="/faq" element={<FAQ />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
