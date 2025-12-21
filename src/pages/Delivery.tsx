@@ -96,7 +96,7 @@ const Delivery = () => {
             <div className="space-y-4">
               <p className="text-muted-foreground">• Банковская карта (Visa, Mastercard)</p>
               <p className="text-muted-foreground">• Наличными при получении</p>
-              <p className="text-muted-foreground">• Рассрочка (Карта рассрочки "Халва", "Черепаха")</p>
+              <p className="text-muted-foreground">• Рассрочка (Карта рассрочки "Халва")</p>
             </div>
           </div>
         </div>
