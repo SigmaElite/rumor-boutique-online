@@ -1,14 +1,14 @@
-import { X } from "lucide-react";
-import { useEffect } from "react";
+import { X, ChevronDown, ChevronUp } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { categories } from "@/data/products";
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const menuItems = [
-  { label: "Главная", href: "/" },
-  { label: "Каталог", href: "/catalog" },
+const otherMenuItems = [
   { label: "Доставка и оплата", href: "/delivery" },
   { label: "Возврат и обмен", href: "/returns" },
   { label: "Определение размера", href: "/size-guide" },
@@ -18,6 +18,8 @@ const menuItems = [
 ];
 
 const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
+  const [catalogOpen, setCatalogOpen] = useState(false);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -40,7 +42,7 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
       />
 
       {/* Menu Panel */}
-      <div className="fixed top-0 left-0 h-full w-72 bg-background z-50 animate-slide-in-left shadow-xl">
+      <div className="fixed top-0 right-0 h-full w-80 bg-background z-50 animate-slide-in-right shadow-xl overflow-y-auto">
         <div className="flex flex-col h-full">
           {/* Close Button */}
           <div className="flex justify-end p-4">
@@ -54,17 +56,58 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
           </div>
 
           {/* Menu Links */}
-          <nav className="flex-1 px-8 py-4">
-            <ul className="space-y-1">
-              {menuItems.map((item) => (
+          <nav className="flex-1 px-6 py-2">
+            <ul className="space-y-0">
+              {/* Каталог с подкатегориями */}
+              <li>
+                <button
+                  onClick={() => setCatalogOpen(!catalogOpen)}
+                  className="flex items-center justify-between w-full py-3 text-sm font-medium tracking-wide uppercase hover:opacity-70 transition-opacity"
+                >
+                  <span>Каталог</span>
+                  {catalogOpen ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
+                </button>
+                
+                {catalogOpen && (
+                  <ul className="pl-4 pb-2 space-y-0">
+                    <li>
+                      <Link
+                        to="/catalog"
+                        className="block py-2 text-sm text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wide"
+                        onClick={onClose}
+                      >
+                        Все изделия
+                      </Link>
+                    </li>
+                    {categories.map((category) => (
+                      <li key={category}>
+                        <Link
+                          to={`/catalog?category=${encodeURIComponent(category)}`}
+                          className="block py-2 text-sm text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wide"
+                          onClick={onClose}
+                        >
+                          {category}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+
+              {/* Остальные пункты меню */}
+              {otherMenuItems.map((item) => (
                 <li key={item.href}>
-                  <a
-                    href={item.href}
-                    className="menu-link block"
+                  <Link
+                    to={item.href}
+                    className="block py-3 text-sm font-medium tracking-wide uppercase hover:opacity-70 transition-opacity"
                     onClick={onClose}
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
