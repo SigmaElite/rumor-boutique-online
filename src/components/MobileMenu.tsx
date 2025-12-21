@@ -9,7 +9,6 @@ interface MobileMenuProps {
 const menuItems = [
   { label: "Главная", href: "/" },
   { label: "Каталог", href: "/catalog" },
-  { label: "Lookbook", href: "/lookbook" },
   { label: "Доставка и оплата", href: "/delivery" },
   { label: "Возврат и обмен", href: "/returns" },
   { label: "Определение размера", href: "/size-guide" },

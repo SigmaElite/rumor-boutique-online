@@ -1,11 +1,13 @@
-import { Search, Heart, ShoppingBag, Menu } from "lucide-react";
+import { Search, Heart, ShoppingBag, Menu, X } from "lucide-react";
 import { useState } from "react";
 import MobileMenu from "./MobileMenu";
+import CatalogDropdown from "./CatalogDropdown";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const { totalItems, setIsCartOpen } = useCart();
   const { totalFavorites, setIsFavoritesOpen } = useFavorites();
 
@@ -21,8 +23,19 @@ const Header = () => {
       {/* Main Header */}
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="container flex items-center justify-between h-20">
-          {/* Left - Logo (mobile) / Empty space (desktop) */}
+          {/* Left - Catalog Button */}
           <div className="flex-1 md:w-[200px] md:flex-none">
+            <button
+              onClick={() => setIsCatalogOpen(!isCatalogOpen)}
+              className="hidden md:flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm tracking-wide hover:opacity-90 transition-opacity"
+            >
+              {isCatalogOpen ? (
+                <X className="w-4 h-4" strokeWidth={2} />
+              ) : (
+                <Menu className="w-4 h-4" strokeWidth={2} />
+              )}
+              Каталог
+            </button>
             <a href="/" className="md:hidden">
               <h1 className="font-display text-2xl tracking-[0.3em] uppercase font-medium">
                 Rumor
@@ -77,6 +90,9 @@ const Header = () => {
             </button>
           </div>
         </div>
+
+        {/* Catalog Dropdown */}
+        <CatalogDropdown isOpen={isCatalogOpen} onClose={() => setIsCatalogOpen(false)} />
       </header>
 
       {/* Mobile Menu */}

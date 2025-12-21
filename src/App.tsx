@@ -11,7 +11,7 @@ import FavoritesDrawer from "./components/FavoritesDrawer";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import Product from "./pages/Product";
-import LookbookPage from "./pages/LookbookPage";
+
 import Delivery from "./pages/Delivery";
 import Returns from "./pages/Returns";
 import SizeGuide from "./pages/SizeGuide";
@@ -37,7 +37,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/catalog" element={<Catalog />} />
             <Route path="/product/:id" element={<Product />} />
-            <Route path="/lookbook" element={<LookbookPage />} />
+            
             <Route path="/delivery" element={<Delivery />} />
             <Route path="/returns" element={<Returns />} />
             <Route path="/size-guide" element={<SizeGuide />} />
