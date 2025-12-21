@@ -178,8 +178,12 @@
     font-family: var(--font-body);
   }
 
-  .animate-slide-in {
-    animation: slideIn 0.3s ease-out forwards;
+  .animate-slide-in-left {
+    animation: slideInLeft 0.3s ease-out forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s ease-out forwards;
   }
 
   .animate-slide-out {
@@ -190,9 +194,18 @@
     animation: fadeIn 0.5s ease-out forwards;
   }
 
-  @keyframes slideIn {
+  @keyframes slideInLeft {
     from {
       transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
     }
     to {
       transform: translateX(0);
