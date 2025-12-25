@@ -4,7 +4,7 @@ import MobileMenu from "./MobileMenu";
 import CatalogDropdown from "./CatalogDropdown";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
-
+import logoBlack from "@/assets/logo-black.png";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
@@ -37,18 +37,14 @@ const Header = () => {
               Каталог
             </button>
             <a href="/" className="md:hidden">
-              <h1 className="font-display text-2xl tracking-[0.3em] uppercase font-medium">
-                Rumor
-              </h1>
+              <img src={logoBlack} alt="Rumor" className="h-6" />
             </a>
           </div>
 
           {/* Center - Logo (desktop only) */}
           <div className="hidden md:flex justify-center">
             <a href="/">
-              <h1 className="font-display text-3xl tracking-[0.3em] uppercase font-medium">
-                Rumor
-              </h1>
+              <img src={logoBlack} alt="Rumor" className="h-8" />
             </a>
           </div>
 

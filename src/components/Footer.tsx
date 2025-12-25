@@ -1,3 +1,5 @@
+import logoWhite from "@/assets/logo-white.png";
+
 const footerLinks = {
   column1: [
     { label: "Доставка и оплата", href: "/delivery" },
@@ -20,9 +22,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 md:gap-8">
           {/* Logo & Copyright */}
           <div className="lg:col-span-1">
-            <h3 className="font-display text-2xl tracking-[0.3em] uppercase mb-4">
-              Rumor
-            </h3>
+            <a href="/" className="block mb-4">
+              <img src={logoWhite} alt="Rumor" className="h-6" />
+            </a>
             <p className="text-sm opacity-70 mb-2">
               ©Все права защищены 2025 RUMOR
             </p>
