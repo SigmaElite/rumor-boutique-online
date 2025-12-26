@@ -6,8 +6,8 @@ const Contacts = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-20">
-        <div className="container pt-1 pb-8">
+      <main className="pt-[120px] md:pt-[130px]">
+        <div className="container pb-8">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
             <a href="/" className="hover:text-foreground transition-colors">Главная</a>
