@@ -15,7 +15,7 @@ const Returns = () => {
             <span className="text-foreground">Обмен и возврат</span>
           </nav>
 
-          <h1 className="font-snell text-4xl md:text-5xl tracking-wide mb-6">
+          <h1 className="font-script text-4xl md:text-5xl tracking-wide mb-6">
             Обмен и возврат
           </h1>
 
@@ -55,7 +55,7 @@ const Returns = () => {
           </div>
 
           <div className="mt-12 max-w-4xl">
-            <h2 className="font-snell text-3xl md:text-4xl tracking-wide mb-6">Обмен</h2>
+            <h2 className="font-script text-3xl md:text-4xl tracking-wide mb-6">Обмен</h2>
             <p className="text-muted-foreground mb-4">
               Обмен товара осуществляется на аналогичную модель другого размера при наличии на складе.
             </p>

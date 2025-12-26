@@ -17,6 +17,7 @@ export default {
         display: ["Cormorant Garamond", "Georgia", "serif"],
         body: ["Montserrat", "system-ui", "sans-serif"],
         snell: ['"Pinyon Script"', "cursive"],
+        script: ['"Great Vibes"', "cursive"],
       },
       colors: {
         border: "hsl(var(--border))",
