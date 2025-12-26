@@ -7,7 +7,7 @@ const Delivery = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-[120px] md:pt-[130px]">
+      <main className="pt-[118px] md:pt-[122px]">
         <div className="container pb-8">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
