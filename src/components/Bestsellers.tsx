@@ -10,9 +10,9 @@ const Bestsellers = () => {
   const products = showAll ? allProducts : allProducts.slice(0, INITIAL_COUNT);
 
   return (
-    <section className="pt-8 md:pt-12 pb-16 md:pb-24">
+    <section className="pt-4 md:pt-6 pb-16 md:pb-24">
       <div className="container">
-        <h2 className="section-title mb-12 md:mb-16">Bestsellers</h2>
+        <h2 className="section-title font-snell mb-6 md:mb-8">Bestsellers</h2>
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-6 gap-y-12 md:gap-y-20">
           {products.map((product) => (

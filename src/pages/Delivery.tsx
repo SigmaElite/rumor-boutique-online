@@ -24,69 +24,89 @@ const Delivery = () => {
             Точные условия и доступные способы доставки будут рассчитаны на странице оформления заказа после ввода страны и города доставки, а также озвучены консультантом при подтверждении заказа
           </p>
 
-          <Tabs defaultValue="belarus" className="w-full">
-            <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-8">
+          <h2 className="font-display text-2xl tracking-wide mb-6">Цены на доставку 📦🚚</h2>
+
+          <Tabs defaultValue="russia" className="w-full">
+            <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-8 flex-wrap">
               <TabsTrigger 
-                value="belarus" 
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-4"
+                value="russia" 
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 md:px-6 py-4 text-sm"
               >
-                По Беларуси
+                🇷🇺 РФ
               </TabsTrigger>
               <TabsTrigger 
-                value="cis" 
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-4"
+                value="belarus" 
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 md:px-6 py-4 text-sm"
               >
-                Доставка в Россию, Казахстан, Молдавию, Армению
+                🇧🇾 РБ
+              </TabsTrigger>
+              <TabsTrigger 
+                value="minsk" 
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 md:px-6 py-4 text-sm"
+              >
+                По Минску
               </TabsTrigger>
               <TabsTrigger 
                 value="other" 
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-4"
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 md:px-6 py-4 text-sm"
               >
-                В другие страны
+                Другие страны
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="belarus" className="space-y-6">
+            <TabsContent value="russia" className="space-y-6">
               <div>
-                <h3 className="font-semibold mb-2">1) Доставка курьером до дома</h3>
-                <p className="text-muted-foreground">Стоимость: от 15 BYN.</p>
-                <p className="text-muted-foreground">Срок доставки: от 1 до 3 дней с момента отправки.</p>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">2) Доставка в ПВЗ (Европочта)</h3>
-                <p className="text-muted-foreground">Стоимость: от 8 BYN.</p>
-                <p className="text-muted-foreground">Выбрать ПВЗ можно в процессе оформления заказа.</p>
-                <p className="text-muted-foreground">Срок доставки: от 2 до 5 дней с момента отправки.</p>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">3) Самовывоз из шоурума</h3>
-                <p className="text-muted-foreground">Бесплатно.</p>
-                <p className="text-muted-foreground">Адрес: ул. Нововиленская, 61, Минск.</p>
+                <h3 className="font-semibold mb-4">Доставка СДЭК:</h3>
+                <div className="space-y-2 text-muted-foreground">
+                  <p>• Курьером до двери — <span className="font-medium text-foreground">60 руб</span></p>
+                  <p>• До отделения — <span className="font-medium text-foreground">40 руб</span></p>
+                </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="cis" className="space-y-6">
+            <TabsContent value="belarus" className="space-y-6">
               <div>
-                <h3 className="font-semibold mb-2">1) Доставка курьером до дома</h3>
-                <p className="text-muted-foreground">Стоимость: от 50 BYN.</p>
-                <p className="text-muted-foreground">Срок доставки: от 5 до 14 дней с момента отправки в зависимости от региона.</p>
+                <h3 className="font-semibold mb-4">Европочта:</h3>
+                <div className="space-y-2 text-muted-foreground">
+                  <p>• Курьером до двери — <span className="font-medium text-foreground">30 руб</span></p>
+                  <p>• До отделения — <span className="font-medium text-foreground">15 руб</span></p>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="minsk" className="space-y-6">
+              <div>
+                <h3 className="font-semibold mb-4">В течение 4 часов с примеркой/без:</h3>
+                <div className="space-y-2 text-muted-foreground">
+                  <p>• Бесплатно в случае выкупа</p>
+                  <p>• Если не выкупили — <span className="font-medium text-foreground">15 руб</span> стоимость доставки</p>
+                </div>
               </div>
 
               <div>
-                <h3 className="font-semibold mb-2">2) Доставка в ПВЗ</h3>
-                <p className="text-muted-foreground">Стоимость: от 35 BYN.</p>
-                <p className="text-muted-foreground">Срок доставки: от 7 до 14 дней с момента отправки в зависимости от региона.</p>
+                <h3 className="font-semibold mb-4">Срочная доставка в течение часа:</h3>
+                <div className="space-y-2 text-muted-foreground">
+                  <p>• Без примерки — <span className="font-medium text-foreground">30 руб</span></p>
+                  <p>• С примеркой — <span className="font-medium text-foreground">50 руб</span></p>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-4">Срочная доставка в нерабочее время:</h3>
+                <div className="space-y-2 text-muted-foreground">
+                  <p>• С примеркой/без — <span className="font-medium text-foreground">100 руб</span></p>
+                </div>
               </div>
             </TabsContent>
 
             <TabsContent value="other" className="space-y-6">
-              <div>
-                <h3 className="font-semibold mb-2">Международная доставка</h3>
-                <p className="text-muted-foreground">Стоимость: рассчитывается индивидуально.</p>
-                <p className="text-muted-foreground">Срок доставки: от 7 до 21 дня в зависимости от страны назначения.</p>
-                <p className="text-muted-foreground">Для уточнения стоимости и сроков свяжитесь с нами.</p>
+              <div className="bg-muted/30 p-6 rounded-lg">
+                <p className="text-muted-foreground mb-4">
+                  Все кроме РБ и РФ только по полной предоплате и без возможности возврата/обмена.
+                </p>
+                <p className="text-muted-foreground">
+                  Стоимость доставки рассчитывается индивидуально. Для уточнения стоимости и сроков свяжитесь с нами.
+                </p>
               </div>
             </TabsContent>
           </Tabs>
