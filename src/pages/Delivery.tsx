@@ -8,23 +8,23 @@ const Delivery = () => {
       <Header />
       
       <main className="pt-20">
-        <div className="container py-8">
+        <div className="container py-3">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
             <a href="/" className="hover:text-foreground transition-colors">Главная</a>
             <span>/</span>
             <span className="text-foreground">Доставка и оплата</span>
           </nav>
 
-          <h1 className="font-display text-3xl md:text-4xl tracking-wide mb-6">
+          <h1 className="font-snell text-4xl md:text-5xl tracking-wide mb-4">
             Доставка и оплата
           </h1>
 
-          <p className="text-muted-foreground mb-10 max-w-2xl">
+          <p className="text-muted-foreground mb-8 max-w-2xl">
             Точные условия и доступные способы доставки будут рассчитаны на странице оформления заказа после ввода страны и города доставки, а также озвучены консультантом при подтверждении заказа
           </p>
 
-          <h2 className="font-display text-2xl tracking-wide mb-6">Цены на доставку 📦🚚</h2>
+          <h2 className="font-snell text-3xl md:text-4xl tracking-wide mb-6">Цены на доставку 📦🚚</h2>
 
           <Tabs defaultValue="russia" className="w-full">
             <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-8 flex-wrap">
@@ -112,7 +112,7 @@ const Delivery = () => {
           </Tabs>
 
           <div className="mt-12 pt-8 border-t">
-            <h2 className="font-display text-2xl tracking-wide mb-6">Способы оплаты</h2>
+            <h2 className="font-snell text-3xl md:text-4xl tracking-wide mb-6">Способы оплаты</h2>
             <div className="space-y-4">
               <p className="text-muted-foreground">• Банковская карта (Visa, Mastercard)</p>
               <p className="text-muted-foreground">• Наличными при получении</p>

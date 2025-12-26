@@ -7,15 +7,15 @@ const Returns = () => {
       <Header />
       
       <main className="pt-20">
-        <div className="container py-8">
+        <div className="container py-3">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
             <a href="/" className="hover:text-foreground transition-colors">Главная</a>
             <span>/</span>
             <span className="text-foreground">Обмен и возврат</span>
           </nav>
 
-          <h1 className="font-display text-3xl md:text-4xl tracking-wide mb-10">
+          <h1 className="font-snell text-4xl md:text-5xl tracking-wide mb-6">
             Обмен и возврат
           </h1>
 
@@ -55,7 +55,7 @@ const Returns = () => {
           </div>
 
           <div className="mt-12 max-w-4xl">
-            <h2 className="font-display text-2xl tracking-wide mb-6">Обмен</h2>
+            <h2 className="font-snell text-3xl md:text-4xl tracking-wide mb-6">Обмен</h2>
             <p className="text-muted-foreground mb-4">
               Обмен товара осуществляется на аналогичную модель другого размера при наличии на складе.
             </p>
