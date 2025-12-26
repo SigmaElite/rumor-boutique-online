@@ -24,7 +24,7 @@ const Delivery = () => {
             Точные условия и доступные способы доставки будут рассчитаны на странице оформления заказа после ввода страны и города доставки, а также озвучены консультантом при подтверждении заказа
           </p>
 
-          <h2 className="font-script text-3xl md:text-4xl tracking-wide mb-6">Цены на доставку 📦🚚</h2>
+          <h2 className="font-script text-3xl md:text-4xl tracking-wide mb-6">Цены на доставку</h2>
 
           <Tabs defaultValue="russia" className="w-full">
             <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-8 flex-wrap">

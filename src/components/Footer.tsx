@@ -101,22 +101,8 @@ const Footer = () => {
         {/* Address */}
         <div className="mt-8 pt-6 border-t border-primary-foreground/20">
           <p className="text-sm opacity-70 text-center md:text-left">
-            Республика Беларусь, город Минск, ул. Нововиленская, дом 61, 3 подъезд в ЖК Левада
+            Оффлайн шоурум: Минск, ЖК Левада, ул. Нововиленская, 61, 3 подъезд
           </p>
-        </div>
-
-        {/* Map */}
-        <div className="mt-6 w-full h-64 rounded-lg overflow-hidden">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2350.5!2d27.4893!3d53.9356!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46dbcfd35d2f33c1%3A0x5b9f25d8a5e72ac6!2z0YPQuy4g0J3QvtCy0L7QstC40LvQtdC90YHQutCw0Y8gNjEsINCc0LjQvdGB0Lo!5e0!3m2!1sru!2sby!4v1703600000000!5m2!1sru!2sby"
-            width="100%"
-            height="100%"
-            style={{ border: 0, filter: 'grayscale(1) invert(1)' }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="Наш адрес"
-          />
         </div>
 
         {/* Bottom Row */}
