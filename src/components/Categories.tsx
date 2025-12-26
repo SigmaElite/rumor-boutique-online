@@ -43,7 +43,7 @@ const Categories = () => {
   return (
     <section className="pt-8 md:pt-12 pb-4 md:pb-6">
       <div className="container">
-        <h2 className="font-snell text-4xl md:text-5xl lg:text-6xl text-center mb-6 md:mb-8">Категории товаров</h2>
+        <h2 className="text-4xl md:text-5xl lg:text-6xl text-center mb-6 md:mb-8 italic" style={{ fontFamily: '"Pinyon Script", cursive' }}>Категории товаров</h2>
         
         <div
           ref={scrollRef}
