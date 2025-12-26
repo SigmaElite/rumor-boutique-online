@@ -2,7 +2,7 @@ import heroImage from "@/assets/hero-main-new.jpg";
 
 const Hero = () => {
   return (
-    <section className="relative w-full h-screen overflow-hidden">
+    <section className="relative w-full h-[100svh] overflow-hidden">
       <img
         src={heroImage}
         alt="Rumor Evening Collection"
