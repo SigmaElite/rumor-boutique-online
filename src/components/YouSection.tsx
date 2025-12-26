@@ -43,7 +43,7 @@ const YouSection = () => {
   return (
     <section className="py-16 md:py-24">
       <div className="container">
-        <h2 className="section-title mb-12 md:mb-16">You</h2>
+        <h2 className="font-snell text-3xl md:text-4xl lg:text-5xl text-center mb-12 md:mb-16">You</h2>
 
         <div
           ref={scrollRef}
