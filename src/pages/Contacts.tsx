@@ -7,9 +7,9 @@ const Contacts = () => {
       <Header />
       
       <main className="pt-20">
-        <div className="container py-3">
+        <div className="container pt-1 pb-8">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
             <a href="/" className="hover:text-foreground transition-colors">Главная</a>
             <span>/</span>
             <span className="text-foreground">Контакты</span>

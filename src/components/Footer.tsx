@@ -19,6 +19,11 @@ const Footer = () => {
   return (
     <footer className="bg-primary text-primary-foreground py-12 md:py-16">
       <div className="container">
+        {/* Showroom Address at the very top */}
+        <p className="text-sm opacity-70 mb-6 text-center md:text-left">
+          Оффлайн шоурум: Минск, ЖК Левада, ул. Нововиленская, 61, 3 подъезд
+        </p>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 md:gap-8">
           {/* Logo & Copyright */}
           <div className="lg:col-span-1">
@@ -96,13 +101,6 @@ const Footer = () => {
               </a>
             </div>
           </div>
-        </div>
-
-        {/* Address */}
-        <div className="mt-8 pt-6 border-t border-primary-foreground/20">
-          <p className="text-sm opacity-70 text-center md:text-left">
-            Оффлайн шоурум: Минск, ЖК Левада, ул. Нововиленская, 61, 3 подъезд
-          </p>
         </div>
 
         {/* Bottom Row */}

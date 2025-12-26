@@ -129,7 +129,7 @@
   }
 
   .product-price {
-    @apply text-lg font-medium tracking-wide;
+    @apply text-sm md:text-base font-normal tracking-wide;
     font-family: var(--font-body);
   }
 
