@@ -8,9 +8,9 @@ const Delivery = () => {
       <Header />
       
       <main>
-        <div className="container py-2">
+        <div className="container pt-3 pb-8">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
             <a href="/" className="hover:text-foreground transition-colors">Главная</a>
             <span>/</span>
             <span className="text-foreground">Доставка и оплата</span>
