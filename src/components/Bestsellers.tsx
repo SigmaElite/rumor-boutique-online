@@ -12,7 +12,7 @@ const Bestsellers = () => {
   return (
     <section className="pt-4 md:pt-6 pb-16 md:pb-24">
       <div className="container">
-        <h2 className="section-title font-snell mb-6 md:mb-8">Bestsellers</h2>
+        <h2 className="font-snell text-3xl md:text-4xl lg:text-5xl text-center mb-6 md:mb-8">Bestsellers</h2>
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-6 gap-y-12 md:gap-y-20">
           {products.map((product) => (
