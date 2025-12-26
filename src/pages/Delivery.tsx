@@ -7,8 +7,8 @@ const Delivery = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-[118px] md:pt-[122px]">
-        <div className="container pb-8">
+      <main>
+        <div className="container py-2">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
             <a href="/" className="hover:text-foreground transition-colors">Главная</a>
