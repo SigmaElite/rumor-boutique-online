@@ -16,7 +16,7 @@ export default {
       fontFamily: {
         display: ["Cormorant Garamond", "Georgia", "serif"],
         body: ["Montserrat", "system-ui", "sans-serif"],
-        snell: ["Pinyon Script", "cursive"],
+        snell: ['"Pinyon Script"', "cursive"],
       },
       colors: {
         border: "hsl(var(--border))",
