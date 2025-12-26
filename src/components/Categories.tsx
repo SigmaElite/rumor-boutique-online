@@ -41,9 +41,9 @@ const Categories = () => {
   };
 
   return (
-    <section className="pt-16 md:pt-24 pb-8 md:pb-12">
+    <section className="pt-8 md:pt-12 pb-4 md:pb-6">
       <div className="container">
-        <h2 className="section-title mb-12 md:mb-16">Категории товаров</h2>
+        <h2 className="section-title font-snell mb-6 md:mb-8">Категории товаров</h2>
         
         <div
           ref={scrollRef}
