@@ -8,10 +8,10 @@ const SizeGuide = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-20">
-        <div className="container py-8">
+      <main>
+        <div className="container pt-3 pb-8">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
             <a href="/" className="hover:text-foreground transition-colors">Главная</a>
             <span>/</span>
             <span className="text-foreground">Определить размер</span>
@@ -19,7 +19,7 @@ const SizeGuide = () => {
 
           <div className="grid lg:grid-cols-2 gap-12 items-start">
             <div>
-              <h1 className="font-display text-2xl md:text-3xl tracking-wide mb-6">
+              <h1 className="font-script text-4xl md:text-5xl tracking-wide mb-4">
                 Как определить размер изделия
               </h1>
 
