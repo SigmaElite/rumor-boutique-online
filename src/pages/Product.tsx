@@ -110,7 +110,7 @@ const ProductPage = () => {
           {/* Image Gallery */}
           <div className="relative lg:ml-auto lg:max-w-[90%]">
             {/* Main Image */}
-            <div className="relative aspect-[3/4] max-h-[70vh] bg-secondary overflow-hidden">
+            <div className="relative aspect-[3/4] max-h-[70vh] bg-secondary overflow-hidden -mx-[1px] md:mx-0">
               <img
                 src={images[currentImageIndex]}
                 alt={product.name}
