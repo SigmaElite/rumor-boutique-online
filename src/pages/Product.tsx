@@ -87,76 +87,77 @@ const ProductPage = () => {
         <Header />
       </div>
       <main className="pt-0 md:pt-12 pb-16">
-        <div className="container px-0 md:px-6">
-          {/* Back button - mobile top */}
-          <button 
-            onClick={() => navigate(-1)}
-            className="md:hidden absolute top-4 left-4 z-20 w-8 h-8 bg-background/80 rounded-full flex items-center justify-center"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
+        {/* Back button - mobile top */}
+        <button 
+          onClick={() => navigate(-1)}
+          className="md:hidden absolute top-4 left-4 z-20 w-8 h-8 bg-background/80 rounded-full flex items-center justify-center"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
 
-          {/* Back button - desktop */}
+        {/* Back button - desktop */}
+        <div className="container hidden md:block px-6 mb-8">
           <button 
             onClick={() => navigate(-1)}
-            className="hidden md:flex items-center gap-2 text-sm mb-8 hover:opacity-60 transition-opacity"
+            className="flex items-center gap-2 text-sm hover:opacity-60 transition-opacity"
           >
             ← Назад
           </button>
+        </div>
 
-          {/* Product Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12">
-            {/* Image Gallery */}
-            <div className="relative lg:ml-auto lg:max-w-[90%]">
-              {/* Main Image */}
-              <div className="relative aspect-[3/4] max-h-[70vh] bg-secondary overflow-hidden">
-                <img
-                  src={images[currentImageIndex]}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-                
-                {images.length > 1 && (
-                  <>
-                    <button
-                      onClick={prevImage}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-border bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-colors"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={nextImage}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-border bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-colors"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </>
-                )}
-              </div>
+        {/* Product Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 lg:container lg:px-6">
+          {/* Image Gallery */}
+          <div className="relative lg:ml-auto lg:max-w-[90%]">
+            {/* Main Image */}
+            <div className="relative aspect-[3/4] max-h-[70vh] bg-secondary overflow-hidden">
+              <img
+                src={images[currentImageIndex]}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
               
-              {/* Thumbnail Carousel */}
               {images.length > 1 && (
-                <div className="flex gap-2 mt-3 overflow-x-auto pb-2">
-                  {images.map((img, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentImageIndex(idx)}
-                      className={`flex-shrink-0 w-16 h-20 overflow-hidden border-2 transition-all ${
-                        idx === currentImageIndex 
-                          ? "border-primary" 
-                          : "border-transparent hover:border-muted-foreground/30"
-                      }`}
-                    >
-                      <img
-                        src={img}
-                        alt={`${product.name} - фото ${idx + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
-                </div>
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-border bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-colors"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-border bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
               )}
             </div>
+            
+            {/* Thumbnail Carousel */}
+            {images.length > 1 && (
+              <div className="flex gap-2 mt-3 px-3 md:px-0 overflow-x-auto pb-2">
+                {images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={`flex-shrink-0 w-16 h-20 overflow-hidden border-2 transition-all ${
+                      idx === currentImageIndex 
+                        ? "border-primary" 
+                        : "border-transparent hover:border-muted-foreground/30"
+                    }`}
+                  >
+                    <img
+                      src={img}
+                      alt={`${product.name} - фото ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
             {/* Product Info */}
             <div className="flex flex-col px-3 md:px-0">
@@ -255,7 +256,7 @@ const ProductPage = () => {
 
           {/* Description Section */}
           {product.description && (
-            <div className="mt-16 border-t border-border pt-16 px-3 md:px-0">
+            <div className="container mt-16 border-t border-border pt-16 px-4 md:px-6">
               <h2 className="text-center text-xl tracking-widest mb-8">Описание</h2>
               <div className="max-w-2xl mx-auto text-muted-foreground leading-relaxed">
                 <p className="mb-4 text-foreground font-medium">{product.name}</p>
@@ -272,7 +273,7 @@ const ProductPage = () => {
 
           {/* Related Products */}
           {relatedProducts.length > 0 && (
-            <div className="mt-16 px-3 md:px-0">
+            <div className="container mt-16 px-4 md:px-6">
               <h2 className="text-lg md:text-xl tracking-widest text-center uppercase mb-8">смотрите также</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {relatedProducts.map((relProduct) => (
@@ -297,7 +298,6 @@ const ProductPage = () => {
               </div>
             </div>
           )}
-        </div>
       </main>
       <Footer />
     </div>
