@@ -108,9 +108,9 @@ const ProductPage = () => {
         {/* Product Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 lg:container lg:px-6">
           {/* Image Gallery */}
-          <div className="relative w-screen md:w-auto -ml-[calc((100vw-100%)/2)] md:ml-0 lg:ml-auto lg:max-w-[90%]">
+          <div className="relative md:ml-auto lg:max-w-[90%]">
             {/* Main Image */}
-            <div className="relative aspect-[3/4] max-h-[70vh] bg-secondary overflow-hidden">
+            <div className="relative w-screen md:w-auto aspect-[3/4] max-h-[70vh] bg-secondary overflow-hidden">
               <img
                 src={images[currentImageIndex]}
                 alt={product.name}
