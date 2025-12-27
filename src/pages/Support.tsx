@@ -99,18 +99,6 @@ const Support = () => {
 
               <div className="flex items-center gap-6">
                 <a
-                  href="https://wa.me/375298379586"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 hover:opacity-70 transition-opacity"
-                >
-                  <div className="w-12 h-12 flex items-center justify-center">
-                    <MessageCircle className="w-6 h-6" />
-                  </div>
-                  <span className="text-sm">WhatsApp</span>
-                </a>
-
-                <a
                   href="https://instagram.com/rumor.boutique"
                   target="_blank"
                   rel="noopener noreferrer"
