@@ -178,7 +178,7 @@ const ProductPage = () => {
 
               {product.priceInstallment && (
                 <p className="text-sm text-muted-foreground mb-6">
-                  или возможность оплатить по халве
+                  или в рассрочку по карте "Халва" от МТБанка
                 </p>
               )}
 

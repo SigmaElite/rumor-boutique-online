@@ -24,6 +24,8 @@ export interface Product {
   sizes?: string[];
   composition?: string;
   category?: string;
+  isOnSale?: boolean;
+  oldPrice?: string;
 }
 
 export const categories = ["NEW", "Корсеты", "Платья", "Комплекты", "Юбки"];
@@ -71,11 +73,13 @@ export const allProducts: Product[] = [
   { 
     id: 4, 
     name: "кроп-жакет", 
-    price: "1 500 byn",
-    priceInstallment: "375 byn",
+    price: "1 200 byn",
+    oldPrice: "1 500 byn",
+    priceInstallment: "300 byn",
     image: bestseller4, 
     images: [bestseller4, bestseller6, bestseller9],
     discount: "-20%",
+    isOnSale: true,
     description: "Модный кроп-жакет из качественной ткани. Отлично сочетается с высокой талией брюк и юбок.",
     colors: ["Чёрный", "Белый", "Бежевый"],
     sizes: ["XS-40", "S-42", "M-44", "L-46"],
@@ -150,10 +154,13 @@ export const allProducts: Product[] = [
   { 
     id: 10, 
     name: "вечернее платье", 
-    price: "2 269 byn",
-    priceInstallment: "567 byn",
+    price: "1 815 byn",
+    oldPrice: "2 269 byn",
+    priceInstallment: "454 byn",
     image: bestseller10,
     images: [bestseller10, bestseller5, bestseller8, bestseller11],
+    discount: "-20%",
+    isOnSale: true,
     description: "Роскошное вечернее платье для особых событий. Создаёт незабываемый образ и подчёркивает женственность.",
     colors: ["Чёрный", "Синий", "Бордо"],
     sizes: ["XS-40", "S-42", "M-44", "L-46"],
@@ -163,10 +170,13 @@ export const allProducts: Product[] = [
   { 
     id: 11, 
     name: "платье металлик", 
-    price: "1 429 byn",
-    priceInstallment: "357 byn",
+    price: "1 143 byn",
+    oldPrice: "1 429 byn",
+    priceInstallment: "286 byn",
     image: bestseller11,
     images: [bestseller11, bestseller10],
+    discount: "-20%",
+    isOnSale: true,
     description: "Яркое платье с эффектом металлик. Идеально для вечеринок и особых мероприятий.",
     colors: ["Серебро", "Золото"],
     sizes: ["XS-40", "S-42", "M-44", "L-46"],
@@ -194,4 +204,8 @@ export const getProductById = (id: number): Product | undefined => {
 
 export const getRelatedProducts = (currentId: number, count: number = 4): Product[] => {
   return allProducts.filter(product => product.id !== currentId).slice(0, count);
+};
+
+export const getSaleProducts = (): Product[] => {
+  return allProducts.filter(product => product.isOnSale);
 };
