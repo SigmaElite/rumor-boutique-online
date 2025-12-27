@@ -58,8 +58,8 @@ const Delivery = () => {
               <div>
                 <h3 className="font-semibold mb-4">Доставка СДЭК:</h3>
                 <div className="space-y-2 text-muted-foreground">
-                  <p>• Курьером до двери — <span className="font-medium text-foreground">60 руб</span></p>
-                  <p>• До отделения — <span className="font-medium text-foreground">40 руб</span></p>
+                  <p>• Курьером до двери — <span className="font-medium text-foreground">60 BYN (1600 ₽)</span></p>
+                  <p>• До отделения — <span className="font-medium text-foreground">40 BYN (1100 ₽)</span></p>
                 </div>
               </div>
             </TabsContent>
@@ -68,8 +68,8 @@ const Delivery = () => {
               <div>
                 <h3 className="font-semibold mb-4">Европочта:</h3>
                 <div className="space-y-2 text-muted-foreground">
-                  <p>• Курьером до двери — <span className="font-medium text-foreground">30 руб</span></p>
-                  <p>• До отделения — <span className="font-medium text-foreground">15 руб</span></p>
+                  <p>• Курьером до двери — <span className="font-medium text-foreground">30 BYN</span></p>
+                  <p>• До отделения — <span className="font-medium text-foreground">15 BYN</span></p>
                 </div>
               </div>
             </TabsContent>
@@ -79,22 +79,22 @@ const Delivery = () => {
                 <h3 className="font-semibold mb-4">В течение 4 часов с примеркой/без:</h3>
                 <div className="space-y-2 text-muted-foreground">
                   <p>• Бесплатно в случае выкупа</p>
-                  <p>• Если не выкупили — <span className="font-medium text-foreground">15 руб</span> стоимость доставки</p>
+                  <p>• Если не выкупили — <span className="font-medium text-foreground">15 BYN</span> стоимость доставки</p>
                 </div>
               </div>
 
               <div>
                 <h3 className="font-semibold mb-4">Срочная доставка в течение часа:</h3>
                 <div className="space-y-2 text-muted-foreground">
-                  <p>• Без примерки — <span className="font-medium text-foreground">30 руб</span></p>
-                  <p>• С примеркой — <span className="font-medium text-foreground">50 руб</span></p>
+                  <p>• Без примерки — <span className="font-medium text-foreground">30 BYN</span></p>
+                  <p>• С примеркой — <span className="font-medium text-foreground">50 BYN</span></p>
                 </div>
               </div>
 
               <div>
                 <h3 className="font-semibold mb-4">Срочная доставка в нерабочее время:</h3>
                 <div className="space-y-2 text-muted-foreground">
-                  <p>• С примеркой/без — <span className="font-medium text-foreground">100 руб</span></p>
+                  <p>• С примеркой/без — <span className="font-medium text-foreground">100 BYN</span></p>
                 </div>
               </div>
             </TabsContent>

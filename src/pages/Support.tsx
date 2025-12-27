@@ -34,14 +34,18 @@ const Support = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-20">
-        <div className="container py-8">
+      <main>
+        <div className="container pt-3 pb-8">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
             <a href="/" className="hover:text-foreground transition-colors">Главная</a>
             <span>/</span>
             <span className="text-foreground">Центр поддержки</span>
           </nav>
+
+          <h1 className="font-script text-4xl md:text-5xl tracking-wide mb-4">
+            Центр поддержки
+          </h1>
 
           {/* Quick Links */}
           <div className="grid md:grid-cols-3 gap-6 mb-16">

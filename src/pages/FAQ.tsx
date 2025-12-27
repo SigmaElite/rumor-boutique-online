@@ -35,16 +35,16 @@ const FAQ = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-20">
-        <div className="container py-8">
+      <main>
+        <div className="container pt-3 pb-8">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
             <a href="/" className="hover:text-foreground transition-colors">Главная</a>
             <span>/</span>
             <span className="text-foreground">FAQ</span>
           </nav>
 
-          <h1 className="font-display text-3xl md:text-4xl tracking-wide mb-10">
+          <h1 className="font-script text-4xl md:text-5xl tracking-wide mb-4">
             Часто задаваемые вопросы
           </h1>
 
