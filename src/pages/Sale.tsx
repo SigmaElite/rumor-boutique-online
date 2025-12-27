@@ -8,12 +8,18 @@ import ProductCardCarousel from "@/components/ProductCardCarousel";
 const Sale = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const saleProducts = getSaleProducts();
 
-  const filteredProducts = saleProducts.filter(product => 
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Get unique categories from sale products
+  const saleCategories = [...new Set(saleProducts.map(p => p.category).filter(Boolean))];
+
+  const filteredProducts = saleProducts.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = !activeCategory || product.category === activeCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="min-h-screen">
@@ -29,6 +35,33 @@ const Sale = () => {
 
           {/* Title */}
           <h1 className="section-title mb-6 md:mb-12">Sale</h1>
+
+          {/* Category Filters */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            <button
+              onClick={() => setActiveCategory(null)}
+              className={`px-4 py-2 text-sm border rounded-full transition-colors ${
+                activeCategory === null
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "border-border hover:border-primary"
+              }`}
+            >
+              Все
+            </button>
+            {saleCategories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category!)}
+                className={`px-4 py-2 text-sm border rounded-full transition-colors ${
+                  activeCategory === category
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border hover:border-primary"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
 
           {/* Filters Row */}
           <div className="flex flex-col gap-4 mb-16">
