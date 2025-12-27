@@ -31,7 +31,7 @@ const Footer = () => {
               <img src={logoWhite} alt="Rumor" className="h-6" />
             </a>
             <p className="text-sm opacity-70 mb-2">
-              ©Все права защищены 2025 RUMOR
+              ©2026 ООО «Хорошая девочка». УНП 693393465. Все права защищены.
             </p>
           </div>
 
