@@ -15,6 +15,7 @@ const otherMenuItems = [
   { label: "Центр поддержки", href: "/support" },
   { label: "Контакты", href: "/contacts" },
   { label: "FAQ", href: "/faq" },
+  { label: "Sale", href: "/sale" },
 ];
 
 const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {

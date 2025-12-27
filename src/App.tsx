@@ -18,6 +18,7 @@ import SizeGuide from "./pages/SizeGuide";
 import Support from "./pages/Support";
 import Contacts from "./pages/Contacts";
 import FAQ from "./pages/FAQ";
+import Sale from "./pages/Sale";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/support" element={<Support />} />
             <Route path="/contacts" element={<Contacts />} />
             <Route path="/faq" element={<FAQ />} />
+            <Route path="/sale" element={<Sale />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
