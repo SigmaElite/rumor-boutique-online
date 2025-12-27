@@ -178,7 +178,7 @@ const ProductPage = () => {
 
               {product.priceInstallment && (
                 <p className="text-sm text-muted-foreground mb-6">
-                  или <span className="text-primary">ЧАСТЯМИ</span> 4 платежа по {product.priceInstallment}{" "}
+                  или <span className="text-primary">возможность оплатить по халве</span> 4 платежа по {product.priceInstallment}{" "}
                   <button className="text-primary underline">Подробнее...</button>
                 </p>
               )}
@@ -236,9 +236,9 @@ const ProductPage = () => {
 
               {/* Secondary Actions */}
               <div className="flex flex-wrap gap-3 mb-8">
-                <button className="btn-primary bg-foreground text-background hover:bg-foreground/90">
-                  Задать вопрос в WhatsApp
-                </button>
+                <a href="https://t.me/rumor_boutique" target="_blank" rel="noopener noreferrer" className="btn-primary bg-foreground text-background hover:bg-foreground/90">
+                  Задать вопрос в Telegram
+                </a>
                 <button className="btn-outline">
                   Размерная сетка
                 </button>
@@ -274,7 +274,7 @@ const ProductPage = () => {
           {/* Related Products */}
           {relatedProducts.length > 0 && (
             <div className="mt-16 px-3 md:px-0">
-              <h2 className="section-title mb-8">смотрите также</h2>
+              <h2 className="text-lg md:text-xl tracking-widest text-center uppercase mb-8">смотрите также</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {relatedProducts.map((relProduct) => (
                   <Link 

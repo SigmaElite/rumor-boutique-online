@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import type { Product } from "@/data/products";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { toast } from "sonner";
 
 interface ProductCardCarouselProps {
   product: Product;
@@ -10,6 +12,7 @@ interface ProductCardCarouselProps {
 const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = product.images && product.images.length > 1 ? product.images : [product.image];
+  const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
 
   const nextImage = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -23,14 +26,34 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isFavorite(product.id)) {
+      removeFromFavorites(product.id);
+      toast.success("Удалено из избранного");
+    } else {
+      addToFavorites(product);
+      toast.success("Добавлено в избранное");
+    }
+  };
+
   return (
     <Link 
       to={`/product/${product.id}`}
       className="product-card group"
     >
       <div className="relative overflow-hidden bg-secondary">
+        {/* Favorite Button */}
+        <button
+          onClick={handleToggleFavorite}
+          className="absolute top-3 right-3 w-8 h-8 bg-background/80 rounded-full flex items-center justify-center z-20 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+        >
+          <Heart className={`w-4 h-4 ${isFavorite(product.id) ? 'fill-primary text-primary' : ''}`} />
+        </button>
+
         {product.discount && (
-          <span className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs tracking-wider px-3 py-1.5 rounded-full z-10">
+          <span className="absolute top-4 left-4 bg-primary text-primary-foreground text-xs tracking-wider px-3 py-1.5 rounded-full z-10">
             {product.discount}
           </span>
         )}

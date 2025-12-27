@@ -20,14 +20,14 @@ const Footer = () => {
     <footer className="bg-primary text-primary-foreground py-12 md:py-16">
       <div className="container">
         {/* Showroom Address at the very top */}
-        <p className="text-sm opacity-70 mb-6 text-center md:text-left">
+        <p className="text-sm opacity-70 mb-8 text-center md:text-left">
           Оффлайн шоурум: Минск, ЖК Левада, ул. Нововиленская, 61, 3 подъезд
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 md:gap-8">
           {/* Logo & Copyright */}
           <div className="lg:col-span-1">
-            <a href="/" className="block mb-4">
+            <a href="/" className="block mb-8">
               <img src={logoWhite} alt="Rumor" className="h-6" />
             </a>
             <p className="text-sm opacity-70 mb-2">
