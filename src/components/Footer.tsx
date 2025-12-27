@@ -17,10 +17,10 @@ const footerLinks = {
 
 const Footer = () => {
   return (
-    <footer className="bg-primary text-primary-foreground py-12 md:py-16">
+    <footer className="bg-primary text-primary-foreground pt-6 pb-12 md:pt-8 md:pb-16">
       <div className="container">
         {/* Showroom Address at the very top */}
-        <p className="text-sm opacity-70 mb-8 md:mt-4 text-center md:text-left">
+        <p className="text-sm opacity-70 mb-6 md:mb-8 text-center md:text-left">
           Оффлайн шоурум: Минск, ЖК Левада, ул. Нововиленская, 61, 3 подъезд
         </p>
 
