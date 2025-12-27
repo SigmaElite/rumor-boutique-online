@@ -20,7 +20,7 @@ const Footer = () => {
     <footer className="bg-primary text-primary-foreground py-12 md:py-16">
       <div className="container">
         {/* Showroom Address at the very top */}
-        <p className="text-sm opacity-70 mb-8 text-center md:text-left">
+        <p className="text-sm opacity-70 mb-8 md:mt-4 text-center md:text-left">
           Оффлайн шоурум: Минск, ЖК Левада, ул. Нововиленская, 61, 3 подъезд
         </p>
 
