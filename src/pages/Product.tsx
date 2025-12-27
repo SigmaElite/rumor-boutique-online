@@ -178,8 +178,7 @@ const ProductPage = () => {
 
               {product.priceInstallment && (
                 <p className="text-sm text-muted-foreground mb-6">
-                  или <span className="text-primary">возможность оплатить по халве</span> 4 платежа по {product.priceInstallment}{" "}
-                  <button className="text-primary underline">Подробнее...</button>
+                  или возможность оплатить по халве
                 </p>
               )}
 
