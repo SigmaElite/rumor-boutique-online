@@ -19,8 +19,8 @@ const Returns = () => {
             Обмен и возврат
           </h1>
 
-          <div className="bg-muted/30 p-8 rounded-lg max-w-4xl">
-            <h2 className="font-semibold text-xl mb-4">Возврат</h2>
+          <div className="max-w-4xl">
+            <h2 className="font-script text-3xl md:text-4xl tracking-wide mb-6">Возврат</h2>
             
             <p className="text-muted-foreground mb-6">
               Обменять или вернуть купленные изделия возможно в течение 7 дней с момента их получения. 
@@ -52,6 +52,17 @@ const Returns = () => {
               <li>3. Мы предоставим инструкции по отправке товара.</li>
               <li>4. После получения и проверки товара, возврат средств будет осуществлен в течение 5-7 рабочих дней.</li>
             </ol>
+          </div>
+
+          <div className="mt-12 max-w-4xl">
+            <h2 className="font-script text-3xl md:text-4xl tracking-wide mb-6">Обратная связь</h2>
+            <p className="text-muted-foreground mb-4">
+              По всем вопросам обмена и возврата свяжитесь с нами:
+            </p>
+            <div className="space-y-2 text-muted-foreground">
+              <p>Телефон: <a href="tel:+375298379586" className="text-foreground hover:underline">+375 (29) 837-95-86</a></p>
+              <p>Telegram: <a href="https://t.me/rumor_boutique" className="text-foreground hover:underline" target="_blank" rel="noopener noreferrer">@rumor_boutique</a></p>
+            </div>
           </div>
 
           <div className="mt-12 max-w-4xl">
