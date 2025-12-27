@@ -56,7 +56,7 @@ const Catalog = () => {
           </nav>
 
           {/* Title */}
-          <h1 className="section-title mb-6 md:mb-12">Каталог</h1>
+          <h1 className="font-script text-5xl md:text-7xl text-center mb-6 md:mb-12">Каталог</h1>
 
           {/* Filters Row */}
           <div className="flex flex-col gap-4 mb-16">
