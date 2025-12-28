@@ -111,6 +111,21 @@ const Catalog = () => {
               Товары не найдены
             </p>
           )}
+
+          {/* See Also Section */}
+          {filteredProducts.length > 0 && (
+            <div className="mt-8 mb-16">
+              <h2 className="font-script text-4xl md:text-5xl text-center mb-10">смотрите также</h2>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-8 md:gap-y-20">
+                {allProducts
+                  .filter(p => !filteredProducts.some(fp => fp.id === p.id))
+                  .slice(0, 6)
+                  .map((product) => (
+                    <ProductCardCarousel key={product.id} product={product} />
+                  ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
       <Footer />
