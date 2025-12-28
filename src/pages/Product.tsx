@@ -274,7 +274,7 @@ const ProductPage = () => {
           {/* Related Products */}
           {relatedProducts.length > 0 && (
             <div className="container mt-16 px-4 md:px-6">
-              <h2 className="text-lg md:text-xl tracking-widest text-center uppercase mb-8">смотрите также</h2>
+              <h2 className="font-script text-2xl md:text-3xl text-center mb-8">смотрите также</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {relatedProducts.map((relProduct) => (
                   <Link 
