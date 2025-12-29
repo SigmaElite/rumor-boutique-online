@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { allProducts, categories } from "@/data/products";
+import { usePublicProducts } from "@/hooks/usePublicProducts";
 import ProductCardCarousel from "@/components/ProductCardCarousel";
 import {
   Select,
@@ -13,7 +13,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+const categories = ["NEW", "Корсеты", "Платья", "Комплекты", "Юбки"];
+
 const Catalog = () => {
+  const { products, loading } = usePublicProducts();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -37,7 +40,7 @@ const Catalog = () => {
     setSearchParams(searchParams);
   };
 
-  const filteredProducts = allProducts.filter(product => {
+  const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
     return matchesSearch && matchesCategory;
@@ -99,25 +102,40 @@ const Catalog = () => {
             )}
           </div>
 
-          {/* Products Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-8 md:gap-y-20 mb-16">
-            {filteredProducts.map((product) => (
-              <ProductCardCarousel key={product.id} product={product} />
-            ))}
-          </div>
+          {/* Loading State */}
+          {loading && (
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-8 md:gap-y-20 mb-16">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="bg-secondary aspect-[3/4] mb-4"></div>
+                  <div className="h-4 bg-secondary w-2/3 mx-auto mb-2"></div>
+                  <div className="h-4 bg-secondary w-1/3 mx-auto"></div>
+                </div>
+              ))}
+            </div>
+          )}
 
-          {filteredProducts.length === 0 && (
+          {/* Products Grid */}
+          {!loading && (
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-8 md:gap-y-20 mb-16">
+              {filteredProducts.map((product) => (
+                <ProductCardCarousel key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+
+          {!loading && filteredProducts.length === 0 && (
             <p className="text-center text-muted-foreground py-12">
               Товары не найдены
             </p>
           )}
 
           {/* See Also Section */}
-          {filteredProducts.length > 0 && (
+          {!loading && filteredProducts.length > 0 && (
             <div className="mt-8 mb-16">
               <h2 className="font-script text-4xl md:text-5xl text-center mb-10">смотрите также</h2>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-8 md:gap-y-20">
-                {allProducts
+                {products
                   .filter(p => !filteredProducts.some(fp => fp.id === p.id))
                   .slice(0, 6)
                   .map((product) => (

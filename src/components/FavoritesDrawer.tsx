@@ -19,6 +19,13 @@ const FavoritesDrawer = () => {
     toast.success("Товар добавлен в корзину");
   };
 
+  const getProductImage = (product: typeof favorites[0]) => {
+    if (product.images && product.images.length > 0) {
+      return product.images[0];
+    }
+    return '/placeholder.svg';
+  };
+
   return (
     <Sheet open={isFavoritesOpen} onOpenChange={setIsFavoritesOpen}>
       <SheetContent className="w-full sm:max-w-md flex flex-col">
@@ -49,9 +56,12 @@ const FavoritesDrawer = () => {
                   className="w-20 h-24 flex-shrink-0 bg-secondary overflow-hidden"
                 >
                   <img
-                    src={product.image}
+                    src={getProductImage(product)}
                     alt={product.name}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/placeholder.svg';
+                    }}
                   />
                 </Link>
 
@@ -64,7 +74,7 @@ const FavoritesDrawer = () => {
                     {product.name}
                   </Link>
 
-                  <p className="text-sm mt-1">{product.price}</p>
+                  <p className="text-sm mt-1">{product.price} BYN</p>
 
                   <button
                     onClick={() => handleAddToCart(product)}

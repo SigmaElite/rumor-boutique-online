@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getSaleProducts } from "@/data/products";
+import { usePublicProducts } from "@/hooks/usePublicProducts";
 import ProductCardCarousel from "@/components/ProductCardCarousel";
 
 const Sale = () => {
+  const { loading, getSaleProducts } = usePublicProducts();
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -52,7 +53,7 @@ const Sale = () => {
               {saleCategories.map((category) => (
                 <button
                   key={category}
-                  onClick={() => setActiveCategory(category!)}
+                  onClick={() => setActiveCategory(category)}
                   className={`px-4 py-2 text-sm border rounded-full transition-colors ${
                     activeCategory === category
                       ? "bg-primary text-primary-foreground border-primary"
@@ -86,14 +87,29 @@ const Sale = () => {
             </div>
           )}
 
-          {/* Products Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-8 md:gap-y-20 mb-16">
-            {filteredProducts.map((product) => (
-              <ProductCardCarousel key={product.id} product={product} />
-            ))}
-          </div>
+          {/* Loading State */}
+          {loading && (
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-8 md:gap-y-20 mb-16">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="bg-secondary aspect-[3/4] mb-4"></div>
+                  <div className="h-4 bg-secondary w-2/3 mx-auto mb-2"></div>
+                  <div className="h-4 bg-secondary w-1/3 mx-auto"></div>
+                </div>
+              ))}
+            </div>
+          )}
 
-          {filteredProducts.length === 0 && (
+          {/* Products Grid */}
+          {!loading && (
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-8 md:gap-y-20 mb-16">
+              {filteredProducts.map((product) => (
+                <ProductCardCarousel key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+
+          {!loading && filteredProducts.length === 0 && (
             <p className="text-center text-muted-foreground py-12">
               Товары не найдены
             </p>

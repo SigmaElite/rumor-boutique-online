@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Heart, X } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getProductById, getRelatedProducts, Product } from "@/data/products";
+import { usePublicProducts, PublicProduct } from "@/hooks/usePublicProducts";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { toast } from "sonner";
@@ -14,18 +14,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ProductCardCarousel from "@/components/ProductCardCarousel";
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const product = getProductById(Number(id));
-  const relatedProducts = getRelatedProducts(Number(id), 4);
+  const { products, loading, getRelatedProducts } = usePublicProducts();
   const { addItem } = useCart();
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
   
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const product = products.find(p => p.id === id);
+  const relatedProducts = id ? getRelatedProducts(id, 4) : [];
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -56,6 +59,23 @@ const ProductPage = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <main className="pt-16 pb-16">
+          <div className="container text-center">
+            <div className="animate-pulse">
+              <div className="h-8 bg-secondary w-48 mx-auto mb-4"></div>
+              <div className="h-4 bg-secondary w-32 mx-auto"></div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div className="min-h-screen">
@@ -71,7 +91,7 @@ const ProductPage = () => {
     );
   }
 
-  const images = product.images || [product.image];
+  const images = product.images && product.images.length > 0 ? product.images : ['/placeholder.svg'];
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -115,6 +135,9 @@ const ProductPage = () => {
                 src={images[currentImageIndex]}
                 alt={product.name}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/placeholder.svg';
+                }}
               />
               
               {images.length > 1 && (
@@ -152,6 +175,9 @@ const ProductPage = () => {
                       src={img}
                       alt={`${product.name} - фото ${idx + 1}`}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/placeholder.svg';
+                      }}
                     />
                   </button>
                 ))}
@@ -173,15 +199,18 @@ const ProductPage = () => {
                 {product.name}
               </h1>
 
-              <p className="text-xl md:text-2xl font-light mb-2">
-                {product.price}
-              </p>
-
-              {product.priceInstallment && (
-                <p className="text-sm text-muted-foreground mb-6">
-                  или в рассрочку по карте "Халва" от МТБанка
+              <div className="flex items-center gap-3 mb-2">
+                {product.old_price && (
+                  <span className="text-muted-foreground line-through text-lg">{product.old_price} BYN</span>
+                )}
+                <p className="text-xl md:text-2xl font-light">
+                  {product.price} BYN
                 </p>
-              )}
+              </div>
+
+              <p className="text-sm text-muted-foreground mb-6">
+                или в рассрочку по карте "Халва" от МТБанка
+              </p>
 
               {/* Size Select */}
               {product.sizes && product.sizes.length > 0 && (
@@ -247,9 +276,6 @@ const ProductPage = () => {
               {/* Product Details */}
               <div className="text-sm text-muted-foreground space-y-1">
                 <p>Торговая марка: <span className="text-foreground">RUMOR</span></p>
-                {product.composition && (
-                  <p>Состав: <span className="text-foreground">{product.composition}</span></p>
-                )}
               </div>
             </div>
           </div>
@@ -261,7 +287,7 @@ const ProductPage = () => {
               <div className="max-w-2xl mx-auto text-muted-foreground leading-relaxed">
                 <p className="mb-4 text-foreground font-medium">{product.name}</p>
                 <p className="mb-4">{product.description}</p>
-                {product.colors && (
+                {product.colors && product.colors.length > 0 && (
                   <p className="mb-2">
                     <span className="text-foreground">Цвета:</span> {product.colors.join(", ")}
                   </p>
@@ -277,23 +303,7 @@ const ProductPage = () => {
               <h2 className="font-script text-4xl md:text-5xl text-center mb-10">смотрите также</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {relatedProducts.map((relProduct) => (
-                  <Link 
-                    key={relProduct.id} 
-                    to={`/product/${relProduct.id}`}
-                    className="product-card"
-                  >
-                    <div className="relative overflow-hidden bg-secondary">
-                      <img
-                        src={relProduct.image}
-                        alt={relProduct.name}
-                        className="product-card-image"
-                      />
-                    </div>
-                    <div className="product-card-info">
-                      <p className="product-price">{relProduct.price}</p>
-                      <p className="product-name">{relProduct.name}</p>
-                    </div>
-                  </Link>
+                  <ProductCardCarousel key={relProduct.id} product={relProduct} />
                 ))}
               </div>
             </div>

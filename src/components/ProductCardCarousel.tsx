@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
-import type { Product } from "@/data/products";
+import type { PublicProduct } from "@/hooks/usePublicProducts";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { toast } from "sonner";
 
 interface ProductCardCarouselProps {
-  product: Product;
+  product: PublicProduct;
 }
 
 const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const images = product.images && product.images.length > 1 ? product.images : [product.image];
+  const images = product.images && product.images.length > 0 ? product.images : ['/placeholder.svg'];
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
 
   const nextImage = (e: React.MouseEvent) => {
@@ -38,6 +38,10 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
     }
   };
 
+  const discount = product.old_price && product.price < product.old_price
+    ? `-${Math.round((1 - product.price / product.old_price) * 100)}%`
+    : null;
+
   return (
     <Link 
       to={`/product/${product.id}`}
@@ -52,9 +56,9 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
           <Heart className={`w-4 h-4 ${isFavorite(product.id) ? 'fill-primary text-primary' : ''}`} />
         </button>
 
-        {product.discount && (
+        {discount && (
           <span className="absolute top-4 left-4 bg-primary text-primary-foreground text-xs tracking-wider px-3 py-1.5 rounded-full z-10">
-            {product.discount}
+            {discount}
           </span>
         )}
         
@@ -62,6 +66,9 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
           src={images[currentIndex]}
           alt={product.name}
           className="product-card-image"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = '/placeholder.svg';
+          }}
         />
 
         {/* Navigation arrows - only show if multiple images */}
@@ -97,10 +104,10 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
       <div className="product-card-info text-center">
         <p className="product-name">{product.name}</p>
         <div className="flex items-center justify-center gap-2">
-          {product.oldPrice && (
-            <span className="text-muted-foreground line-through text-sm">{product.oldPrice}</span>
+          {product.old_price && (
+            <span className="text-muted-foreground line-through text-sm">{product.old_price} BYN</span>
           )}
-          <p className="product-price">{product.price}</p>
+          <p className="product-price">{product.price} BYN</p>
         </div>
       </div>
     </Link>

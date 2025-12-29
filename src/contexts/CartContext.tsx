@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { Product } from "@/data/products";
+import { PublicProduct } from "@/hooks/usePublicProducts";
 
 export interface CartItem {
-  product: Product;
+  product: PublicProduct;
   quantity: number;
   size?: string;
   color?: string;
@@ -10,9 +10,9 @@ export interface CartItem {
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product, size?: string, color?: string) => void;
-  removeItem: (productId: number, size?: string, color?: string) => void;
-  updateQuantity: (productId: number, quantity: number, size?: string, color?: string) => void;
+  addItem: (product: PublicProduct, size?: string, color?: string) => void;
+  removeItem: (productId: string, size?: string, color?: string) => void;
+  updateQuantity: (productId: string, quantity: number, size?: string, color?: string) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -33,7 +33,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("cart", JSON.stringify(items));
   }, [items]);
 
-  const addItem = (product: Product, size?: string, color?: string) => {
+  const addItem = (product: PublicProduct, size?: string, color?: string) => {
     setItems((prev) => {
       const existingIndex = prev.findIndex(
         (item) => 
@@ -53,7 +53,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setIsCartOpen(true);
   };
 
-  const removeItem = (productId: number, size?: string, color?: string) => {
+  const removeItem = (productId: string, size?: string, color?: string) => {
     setItems((prev) =>
       prev.filter(
         (item) =>
@@ -62,7 +62,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const updateQuantity = (productId: number, quantity: number, size?: string, color?: string) => {
+  const updateQuantity = (productId: string, quantity: number, size?: string, color?: string) => {
     if (quantity <= 0) {
       removeItem(productId, size, color);
       return;
@@ -84,8 +84,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const totalPrice = items.reduce((sum, item) => {
-    const price = parseInt(item.product.price.replace(/\D/g, ""));
-    return sum + price * item.quantity;
+    return sum + item.product.price * item.quantity;
   }, 0);
 
   return (
