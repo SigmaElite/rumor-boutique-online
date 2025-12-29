@@ -13,13 +13,12 @@ const authSchema = z.object({
 });
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -55,52 +54,27 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      if (isLogin) {
-        const { error } = await signIn(email, password);
-        if (error) {
-          if (error.message.includes('Invalid login credentials')) {
-            toast({
-              title: 'Ошибка',
-              description: 'Неверный email или пароль',
-              variant: 'destructive',
-            });
-          } else {
-            toast({
-              title: 'Ошибка',
-              description: error.message,
-              variant: 'destructive',
-            });
-          }
+      const { error } = await signIn(email, password);
+      if (error) {
+        if (error.message.includes('Invalid login credentials')) {
+          toast({
+            title: 'Ошибка',
+            description: 'Неверный email или пароль',
+            variant: 'destructive',
+          });
         } else {
           toast({
-            title: 'Успешно',
-            description: 'Вы вошли в систему',
+            title: 'Ошибка',
+            description: error.message,
+            variant: 'destructive',
           });
-          navigate('/admin');
         }
       } else {
-        const { error } = await signUp(email, password);
-        if (error) {
-          if (error.message.includes('User already registered')) {
-            toast({
-              title: 'Ошибка',
-              description: 'Пользователь с таким email уже зарегистрирован',
-              variant: 'destructive',
-            });
-          } else {
-            toast({
-              title: 'Ошибка',
-              description: error.message,
-              variant: 'destructive',
-            });
-          }
-        } else {
-          toast({
-            title: 'Успешно',
-            description: 'Аккаунт создан! Вы можете войти.',
-          });
-          setIsLogin(true);
-        }
+        toast({
+          title: 'Успешно',
+          description: 'Вы вошли в систему',
+        });
+        navigate('/admin');
       }
     } catch (error) {
       toast({
@@ -117,10 +91,8 @@ const Auth = () => {
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="font-script text-4xl mb-2">{isLogin ? 'вход' : 'регистрация'}</h1>
-          <p className="text-muted-foreground">
-            {isLogin ? 'Войдите в админ-панель' : 'Создайте аккаунт'}
-          </p>
+          <h1 className="font-script text-4xl mb-2">вход</h1>
+          <p className="text-muted-foreground">Войдите в админ-панель</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -151,19 +123,9 @@ const Auth = () => {
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Загрузка...' : isLogin ? 'Войти' : 'Зарегистрироваться'}
+            {loading ? 'Загрузка...' : 'Войти'}
           </Button>
         </form>
-
-        <div className="mt-6 text-center">
-          <button
-            type="button"
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {isLogin ? 'Нет аккаунта? Зарегистрируйтесь' : 'Уже есть аккаунт? Войдите'}
-          </button>
-        </div>
 
         <div className="mt-8 text-center">
           <Button variant="ghost" onClick={() => navigate('/')}>
