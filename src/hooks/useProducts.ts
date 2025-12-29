@@ -90,12 +90,16 @@ export const useProducts = () => {
 
   const updateProduct = async (id: string, productData: Partial<ProductFormData>) => {
     try {
+      console.log('Updating product:', id, productData);
+      
       const { data, error } = await supabase
         .from('products')
         .update(productData)
         .eq('id', id)
         .select()
         .single();
+
+      console.log('Update result:', { data, error });
 
       if (error) throw error;
 
@@ -106,11 +110,11 @@ export const useProducts = () => {
 
       await fetchProducts();
       return { data, error: null };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating product:', error);
       toast({
         title: 'Ошибка',
-        description: 'Не удалось обновить товар',
+        description: error?.message || 'Не удалось обновить товар',
         variant: 'destructive',
       });
       return { data: null, error };
