@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
 import { CartProvider } from "./contexts/CartContext";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import CartDrawer from "./components/CartDrawer";
 import FavoritesDrawer from "./components/FavoritesDrawer";
 import Index from "./pages/Index";
@@ -19,6 +20,8 @@ import Support from "./pages/Support";
 import Contacts from "./pages/Contacts";
 import FAQ from "./pages/FAQ";
 import Sale from "./pages/Sale";
+import Auth from "./pages/Auth";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,32 +29,36 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <CartProvider>
-        <FavoritesProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <ScrollToTop />
-            <CartDrawer />
-            <FavoritesDrawer />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/catalog" element={<Catalog />} />
-            <Route path="/product/:id" element={<Product />} />
-            
-            <Route path="/delivery" element={<Delivery />} />
-            <Route path="/returns" element={<Returns />} />
-            <Route path="/size-guide" element={<SizeGuide />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/contacts" element={<Contacts />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/sale" element={<Sale />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-        </FavoritesProvider>
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <FavoritesProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <ScrollToTop />
+              <CartDrawer />
+              <FavoritesDrawer />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/catalog" element={<Catalog />} />
+              <Route path="/product/:id" element={<Product />} />
+              
+              <Route path="/delivery" element={<Delivery />} />
+              <Route path="/returns" element={<Returns />} />
+              <Route path="/size-guide" element={<SizeGuide />} />
+              <Route path="/support" element={<Support />} />
+              <Route path="/contacts" element={<Contacts />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/sale" element={<Sale />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/admin" element={<Admin />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+          </FavoritesProvider>
+        </CartProvider>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
