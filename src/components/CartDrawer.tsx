@@ -1,4 +1,4 @@
-import { X, Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import {
   Sheet,
@@ -12,7 +12,14 @@ const CartDrawer = () => {
   const { items, isCartOpen, setIsCartOpen, removeItem, updateQuantity, totalPrice, totalItems } = useCart();
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("ru-RU").format(price) + " byn";
+    return new Intl.NumberFormat("ru-RU").format(price) + " BYN";
+  };
+
+  const getProductImage = (images: string[] | null) => {
+    if (images && images.length > 0) {
+      return images[0];
+    }
+    return '/placeholder.svg';
   };
 
   return (
@@ -46,9 +53,12 @@ const CartDrawer = () => {
                     className="w-20 h-24 flex-shrink-0 bg-secondary overflow-hidden"
                   >
                     <img
-                      src={item.product.image}
+                      src={getProductImage(item.product.images)}
                       alt={item.product.name}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/placeholder.svg';
+                      }}
                     />
                   </Link>
 
@@ -66,7 +76,7 @@ const CartDrawer = () => {
                       {item.color && <p>Цвет: {item.color}</p>}
                     </div>
 
-                    <p className="text-sm mt-auto">{item.product.price}</p>
+                    <p className="text-sm mt-auto">{item.product.price} BYN</p>
                   </div>
 
                   <div className="flex flex-col items-end justify-between">
