@@ -103,11 +103,17 @@ export const useProducts = () => {
 
       if (error) throw error;
 
+      // Immediately update local state with the new data
+      setProducts(prevProducts => 
+        prevProducts.map(p => p.id === id ? { ...p, ...data } : p)
+      );
+
       toast({
         title: 'Успешно',
         description: 'Товар обновлён',
       });
 
+      // Also refetch to ensure consistency
       await fetchProducts();
       return { data, error: null };
     } catch (error: any) {
