@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -6,7 +6,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DbProduct, ProductFormData } from '@/hooks/useProducts';
-import { X } from 'lucide-react';
+import { X, Upload, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProductFormProps {
   product?: DbProduct | null;
@@ -19,6 +21,10 @@ const categories = ['NEW', 'Корсеты', 'Платья', 'Комплекты
 const defaultSizes = ['XS-40', 'S-42', 'M-44', 'L-46', 'XL-48'];
 
 const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps) => {
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
@@ -32,6 +38,10 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
     is_new: false,
     is_sale: false,
   });
+
+  // For controlled price input that allows empty string
+  const [priceValue, setPriceValue] = useState('');
+  const [oldPriceValue, setOldPriceValue] = useState('');
 
   const [newColor, setNewColor] = useState('');
   const [newImage, setNewImage] = useState('');
@@ -47,16 +57,68 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         sizes: product.sizes || [],
         images: product.images || [],
         colors: product.colors || [],
-        is_bestseller: product.is_bestseller,
-        is_new: product.is_new,
-        is_sale: product.is_sale,
+        is_bestseller: product.is_bestseller || false,
+        is_new: product.is_new || false,
+        is_sale: product.is_sale || false,
       });
+      setPriceValue(product.price.toString());
+      setOldPriceValue(product.old_price?.toString() || '');
+    } else {
+      // Reset form for new product
+      setFormData({
+        name: '',
+        description: '',
+        price: 0,
+        old_price: null,
+        category: 'NEW',
+        sizes: [],
+        images: [],
+        colors: [],
+        is_bestseller: false,
+        is_new: false,
+        is_sale: false,
+      });
+      setPriceValue('');
+      setOldPriceValue('');
     }
   }, [product]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSubmit(formData);
+    
+    // Validate price
+    const price = parseFloat(priceValue);
+    if (isNaN(price) || price <= 0) {
+      toast({
+        title: 'Ошибка',
+        description: 'Укажите корректную цену',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    const submitData: ProductFormData = {
+      ...formData,
+      price: price,
+      old_price: oldPriceValue ? parseFloat(oldPriceValue) : null,
+    };
+    
+    await onSubmit(submitData);
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow empty string or valid number input
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setPriceValue(value);
+    }
+  };
+
+  const handleOldPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setOldPriceValue(value);
+    }
   };
 
   const toggleSize = (size: string) => {
@@ -102,6 +164,67 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
     }));
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingImage(true);
+    
+    try {
+      for (const file of Array.from(files)) {
+        // Generate unique filename
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `products/${fileName}`;
+
+        // Upload to Supabase Storage
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          toast({
+            title: 'Ошибка загрузки',
+            description: uploadError.message,
+            variant: 'destructive',
+          });
+          continue;
+        }
+
+        // Get public URL
+        const { data: urlData } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(filePath);
+
+        if (urlData?.publicUrl) {
+          setFormData((prev) => ({
+            ...prev,
+            images: [...prev.images, urlData.publicUrl],
+          }));
+        }
+      }
+
+      toast({
+        title: 'Успешно',
+        description: 'Изображения загружены',
+      });
+    } catch (error) {
+      console.error('Error uploading:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось загрузить изображения',
+        variant: 'destructive',
+      });
+    } finally {
+      setUploadingImage(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -138,10 +261,11 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
           <Label htmlFor="price">Цена (BYN) *</Label>
           <Input
             id="price"
-            type="number"
-            step="0.01"
-            value={formData.price}
-            onChange={(e) => setFormData((prev) => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
+            type="text"
+            inputMode="decimal"
+            value={priceValue}
+            onChange={handlePriceChange}
+            placeholder="0"
             required
           />
         </div>
@@ -150,15 +274,11 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
           <Label htmlFor="old_price">Старая цена (BYN)</Label>
           <Input
             id="old_price"
-            type="number"
-            step="0.01"
-            value={formData.old_price || ''}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                old_price: e.target.value ? parseFloat(e.target.value) : null,
-              }))
-            }
+            type="text"
+            inputMode="decimal"
+            value={oldPriceValue}
+            onChange={handleOldPriceChange}
+            placeholder=""
           />
         </div>
       </div>
@@ -219,25 +339,61 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
       </div>
 
       <div className="space-y-2">
-        <Label>Изображения (URL)</Label>
+        <Label>Изображения</Label>
+        
+        {/* File Upload */}
+        <div className="flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileUpload}
+            className="hidden"
+            id="image-upload"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploadingImage}
+            className="flex-1"
+          >
+            {uploadingImage ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Загрузка...
+              </>
+            ) : (
+              <>
+                <Upload className="h-4 w-4 mr-2" />
+                Загрузить с компьютера
+              </>
+            )}
+          </Button>
+        </div>
+        
+        {/* URL Input */}
         <div className="flex gap-2">
           <Input
             value={newImage}
             onChange={(e) => setNewImage(e.target.value)}
-            placeholder="URL изображения"
+            placeholder="Или введите URL изображения"
             onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addImage())}
           />
           <Button type="button" onClick={addImage} variant="outline">
             Добавить
           </Button>
         </div>
+        
+        {/* Image Previews */}
         <div className="flex flex-wrap gap-2 mt-2">
           {formData.images.map((image, index) => (
             <div key={index} className="relative group">
               <img
                 src={image}
                 alt={`Preview ${index + 1}`}
-                className="w-16 h-16 object-cover rounded"
+                className="w-16 h-16 object-cover rounded border"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = '/placeholder.svg';
                 }}
@@ -284,7 +440,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
       </div>
 
       <div className="flex gap-4 pt-4">
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading || uploadingImage}>
           {loading ? 'Сохранение...' : product ? 'Сохранить' : 'Добавить товар'}
         </Button>
         <Button type="button" variant="outline" onClick={onCancel}>
