@@ -1,14 +1,15 @@
 import { useRef, useState } from "react";
+import { useHomepageSettings } from "@/hooks/useHomepageSettings";
 import corsetImage from "@/assets/product-corset-1.jpg";
 import dressImage from "@/assets/product-dress-1.jpg";
 import setImage from "@/assets/product-set-1.jpg";
 
-const categories = [
-  { id: 1, name: "NEW", image: null },
-  { id: 2, name: "Корсеты", image: corsetImage },
-  { id: 3, name: "Платья", image: dressImage },
-  { id: 4, name: "Комплекты", image: setImage },
-  { id: 5, name: "Юбки", image: null },
+const defaultCategories = [
+  { name: "NEW", image: null },
+  { name: "Корсеты", image: corsetImage },
+  { name: "Платья", image: dressImage },
+  { name: "Комплекты", image: setImage },
+  { name: "Юбки", image: null },
 ];
 
 const Categories = () => {
@@ -16,6 +17,7 @@ const Categories = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const { categoriesSettings } = useHomepageSettings();
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollRef.current) return;
@@ -39,6 +41,15 @@ const Categories = () => {
   const handleMouseLeave = () => {
     setIsDragging(false);
   };
+
+  // Use DB settings if available, otherwise fallback to defaults
+  const categories = categoriesSettings?.items?.length 
+    ? categoriesSettings.items.map((item, idx) => ({
+        id: idx + 1,
+        name: item.name,
+        image: item.image_url || defaultCategories[idx]?.image || null,
+      }))
+    : defaultCategories.map((cat, idx) => ({ id: idx + 1, ...cat }));
 
   return (
     <section className="pt-8 md:pt-12 pb-4 md:pb-6">
