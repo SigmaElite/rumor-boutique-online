@@ -6,14 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ProductForm from '@/components/admin/ProductForm';
 import ProductsTable from '@/components/admin/ProductsTable';
-import { Plus, Search, LogOut, ArrowLeft, Package } from 'lucide-react';
+import HomepageEditor from '@/components/admin/HomepageEditor';
+import { Plus, Search, LogOut, ArrowLeft, Package, Home } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const Admin = () => {
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const { products, loading: productsLoading, createProduct, updateProduct, deleteProduct } = useProducts();
@@ -109,45 +110,67 @@ const Admin = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* Products Section */}
-        <div className="space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <Package className="h-6 w-6" />
-              <h2 className="text-xl font-medium">Товары ({products.length})</h2>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1 sm:min-w-[300px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Поиск по названию или категории..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              {isAdmin && (
-                <Button onClick={handleCreate}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Добавить товар
-                </Button>
-              )}
-            </div>
+        {!isAdmin && (
+          <div className="bg-amber-500/10 text-amber-600 p-4 rounded-lg mb-6">
+            У вас нет прав администратора. Вы можете только просматривать товары.
           </div>
+        )}
 
-          {!isAdmin && (
-            <div className="bg-amber-500/10 text-amber-600 p-4 rounded-lg">
-              У вас нет прав администратора. Вы можете только просматривать товары.
+        <Tabs defaultValue="products" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="products" className="flex items-center gap-2">
+              <Package className="h-4 w-4" />
+              Товары
+            </TabsTrigger>
+            {isAdmin && (
+              <TabsTrigger value="homepage" className="flex items-center gap-2">
+                <Home className="h-4 w-4" />
+                Главная страница
+              </TabsTrigger>
+            )}
+          </TabsList>
+
+          {/* Products Tab */}
+          <TabsContent value="products" className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <Package className="h-6 w-6" />
+                <h2 className="text-xl font-medium">Товары ({products.length})</h2>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1 sm:min-w-[300px]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Поиск по названию или категории..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                {isAdmin && (
+                  <Button onClick={handleCreate}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Добавить товар
+                  </Button>
+                )}
+              </div>
             </div>
-          )}
 
-          <ProductsTable
-            products={filteredProducts}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            loading={productsLoading}
-          />
-        </div>
+            <ProductsTable
+              products={filteredProducts}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              loading={productsLoading}
+            />
+          </TabsContent>
+
+          {/* Homepage Tab */}
+          {isAdmin && (
+            <TabsContent value="homepage">
+              <HomepageEditor />
+            </TabsContent>
+          )}
+        </Tabs>
       </main>
 
       {/* Product Form Dialog */}

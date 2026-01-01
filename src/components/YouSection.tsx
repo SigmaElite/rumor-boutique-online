@@ -1,14 +1,15 @@
 import { useRef, useState } from "react";
+import { useHomepageSettings } from "@/hooks/useHomepageSettings";
 import bestseller9 from "@/assets/bestseller-9.jpg";
 import bestseller10 from "@/assets/bestseller-10.jpg";
 import bestseller11 from "@/assets/bestseller-11.jpg";
 import bestseller12 from "@/assets/bestseller-12.jpg";
 
-const celebrities = [
-  { id: 1, handle: "@ELENA_STYLE", image: bestseller9 },
-  { id: 2, handle: "@FASHION_DIVA", image: bestseller10 },
-  { id: 3, handle: "@LUXE_ANNA", image: bestseller11 },
-  { id: 4, handle: "@MARIA_GLAM", image: bestseller12 },
+const defaultCelebrities = [
+  { handle: "@ELENA_STYLE", image: bestseller9 },
+  { handle: "@FASHION_DIVA", image: bestseller10 },
+  { handle: "@LUXE_ANNA", image: bestseller11 },
+  { handle: "@MARIA_GLAM", image: bestseller12 },
 ];
 
 const YouSection = () => {
@@ -16,6 +17,7 @@ const YouSection = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const { youSectionSettings } = useHomepageSettings();
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollRef.current) return;
@@ -39,6 +41,15 @@ const YouSection = () => {
   const handleMouseLeave = () => {
     setIsDragging(false);
   };
+
+  // Use DB settings if available, otherwise fallback to defaults
+  const celebrities = youSectionSettings?.items?.length
+    ? youSectionSettings.items.map((item, idx) => ({
+        id: idx + 1,
+        handle: item.handle,
+        image: item.image_url || defaultCelebrities[idx]?.image || '',
+      }))
+    : defaultCelebrities.map((cel, idx) => ({ id: idx + 1, ...cel }));
 
   return (
     <section className="pt-4 md:pt-6 pb-16 md:pb-24">
