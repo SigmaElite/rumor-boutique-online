@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, Trash2, Save, Image as ImageIcon } from 'lucide-react';
+import ImageUpload from './ImageUpload';
 import {
   useHomepageSettings,
   HeroSettings,
@@ -120,21 +121,11 @@ const HomepageEditor = () => {
           <CardContent className="space-y-4">
             {heroForm && (
               <>
-                <div className="space-y-2">
-                  <Label>URL изображения</Label>
-                  <Input
-                    value={heroForm.image_url}
-                    onChange={(e) => setHeroForm({ ...heroForm, image_url: e.target.value })}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  {heroForm.image_url && (
-                    <img
-                      src={heroForm.image_url}
-                      alt="Hero preview"
-                      className="mt-2 h-32 w-full object-cover rounded"
-                    />
-                  )}
-                </div>
+                <ImageUpload
+                  label="Фото Hero"
+                  value={heroForm.image_url}
+                  onChange={(url) => setHeroForm({ ...heroForm, image_url: url })}
+                />
                 <div className="space-y-2">
                   <Label>Заголовок</Label>
                   <Input
@@ -167,29 +158,26 @@ const HomepageEditor = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {categoriesForm?.items.map((item, index) => (
-              <div key={index} className="flex gap-4 items-start p-4 border rounded-lg">
-                <div className="flex-1 space-y-2">
-                  <Label>Название</Label>
-                  <Input
-                    value={item.name}
-                    onChange={(e) => updateCategory(index, 'name', e.target.value)}
-                    placeholder="Название категории"
-                  />
+              <div key={index} className="p-4 border rounded-lg space-y-4">
+                <div className="flex gap-4 items-start">
+                  <div className="flex-1 space-y-2">
+                    <Label>Название</Label>
+                    <Input
+                      value={item.name}
+                      onChange={(e) => updateCategory(index, 'name', e.target.value)}
+                      placeholder="Название категории"
+                    />
+                  </div>
+                  <Button variant="destructive" size="icon" onClick={() => removeCategory(index)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
-                <div className="flex-1 space-y-2">
-                  <Label>URL изображения</Label>
-                  <Input
-                    value={item.image_url}
-                    onChange={(e) => updateCategory(index, 'image_url', e.target.value)}
-                    placeholder="https://... (оставьте пустым для текста)"
-                  />
-                </div>
-                {item.image_url && (
-                  <img src={item.image_url} alt={item.name} className="h-16 w-16 object-cover rounded" />
-                )}
-                <Button variant="destructive" size="icon" onClick={() => removeCategory(index)}>
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <ImageUpload
+                  label="Изображение категории"
+                  value={item.image_url}
+                  onChange={(url) => updateCategory(index, 'image_url', url)}
+                  placeholder="Оставьте пустым для отображения текста"
+                />
               </div>
             ))}
             <div className="flex gap-4">
@@ -214,29 +202,25 @@ const HomepageEditor = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {youSectionForm?.items.map((item, index) => (
-              <div key={index} className="flex gap-4 items-start p-4 border rounded-lg">
-                <div className="flex-1 space-y-2">
-                  <Label>Handle (@username)</Label>
-                  <Input
-                    value={item.handle}
-                    onChange={(e) => updateYouItem(index, 'handle', e.target.value)}
-                    placeholder="@username"
-                  />
+              <div key={index} className="p-4 border rounded-lg space-y-4">
+                <div className="flex gap-4 items-start">
+                  <div className="flex-1 space-y-2">
+                    <Label>Handle (@username)</Label>
+                    <Input
+                      value={item.handle}
+                      onChange={(e) => updateYouItem(index, 'handle', e.target.value)}
+                      placeholder="@username"
+                    />
+                  </div>
+                  <Button variant="destructive" size="icon" onClick={() => removeYouItem(index)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
-                <div className="flex-1 space-y-2">
-                  <Label>URL изображения</Label>
-                  <Input
-                    value={item.image_url}
-                    onChange={(e) => updateYouItem(index, 'image_url', e.target.value)}
-                    placeholder="https://..."
-                  />
-                </div>
-                {item.image_url && (
-                  <img src={item.image_url} alt={item.handle} className="h-16 w-16 object-cover rounded" />
-                )}
-                <Button variant="destructive" size="icon" onClick={() => removeYouItem(index)}>
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <ImageUpload
+                  label="Фото"
+                  value={item.image_url}
+                  onChange={(url) => updateYouItem(index, 'image_url', url)}
+                />
               </div>
             ))}
             <div className="flex gap-4">
