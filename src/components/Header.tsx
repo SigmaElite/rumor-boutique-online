@@ -1,14 +1,17 @@
-import { Search, Heart, ShoppingBag, Menu, X } from "lucide-react";
+import { Search, Heart, ShoppingBag, Menu, X, User } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import MobileMenu from "./MobileMenu";
 import CatalogDropdown from "./CatalogDropdown";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import { useAuth } from "@/contexts/AuthContext";
 import logoBlack from "@/assets/logo-black.png";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const { totalItems, setIsCartOpen } = useCart();
+  const { user } = useAuth();
   const { totalFavorites, setIsFavoritesOpen } = useFavorites();
 
   return (
@@ -50,9 +53,13 @@ const Header = () => {
 
           {/* Right - Icons */}
           <div className="flex items-center gap-1 md:gap-6 flex-1 md:w-[200px] md:flex-none justify-end">
-            <button className="p-1.5 md:p-2 transition-opacity hover:opacity-60" aria-label="Поиск">
-              <Search className="w-5 h-5" strokeWidth={1.5} />
-            </button>
+            <Link 
+              to={user ? "/" : "/login"}
+              className="p-1.5 md:p-2 transition-opacity hover:opacity-60" 
+              aria-label={user ? "Аккаунт" : "Войти"}
+            >
+              <User className="w-5 h-5" strokeWidth={1.5} />
+            </Link>
             <button 
               onClick={() => setIsFavoritesOpen(true)}
               className="p-1.5 md:p-2 transition-opacity hover:opacity-60 relative" 

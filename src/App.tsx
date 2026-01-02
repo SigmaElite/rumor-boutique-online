@@ -12,6 +12,9 @@ import FavoritesDrawer from "./components/FavoritesDrawer";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import Product from "./pages/Product";
+import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
+import UserAuth from "./pages/UserAuth";
 
 import Delivery from "./pages/Delivery";
 import Returns from "./pages/Returns";
@@ -42,6 +45,9 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/catalog" element={<Catalog />} />
               <Route path="/product/:id" element={<Product />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/order-success" element={<OrderSuccess />} />
+              <Route path="/login" element={<UserAuth />} />
               
               <Route path="/delivery" element={<Delivery />} />
               <Route path="/returns" element={<Returns />} />

@@ -6,10 +6,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CartDrawer = () => {
   const { items, isCartOpen, setIsCartOpen, removeItem, updateQuantity, totalPrice, totalItems } = useCart();
+  const navigate = useNavigate();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("ru-RU").format(price) + " BYN";
@@ -113,7 +114,13 @@ const CartDrawer = () => {
                 <span className="font-medium">{formatPrice(totalPrice)}</span>
               </div>
 
-              <button className="w-full btn-primary">
+              <button 
+                className="w-full btn-primary"
+                onClick={() => {
+                  setIsCartOpen(false);
+                  navigate('/checkout');
+                }}
+              >
                 Оформить заказ
               </button>
             </div>
