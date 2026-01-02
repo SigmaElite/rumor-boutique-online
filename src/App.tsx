@@ -15,6 +15,7 @@ import Product from "./pages/Product";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import UserAuth from "./pages/UserAuth";
+import Profile from "./pages/Profile";
 
 import Delivery from "./pages/Delivery";
 import Returns from "./pages/Returns";
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-success" element={<OrderSuccess />} />
               <Route path="/login" element={<UserAuth />} />
+              <Route path="/profile" element={<Profile />} />
               
               <Route path="/delivery" element={<Delivery />} />
               <Route path="/returns" element={<Returns />} />

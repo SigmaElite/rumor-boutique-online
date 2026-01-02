@@ -54,7 +54,7 @@ const Header = () => {
           {/* Right - Icons */}
           <div className="flex items-center gap-1 md:gap-6 flex-1 md:w-[200px] md:flex-none justify-end">
             <Link 
-              to={user ? "/" : "/login"}
+              to={user ? "/profile" : "/login"}
               className="p-1.5 md:p-2 transition-opacity hover:opacity-60" 
               aria-label={user ? "Аккаунт" : "Войти"}
             >
