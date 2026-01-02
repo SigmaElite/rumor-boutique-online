@@ -26,10 +26,14 @@ const Admin = () => {
   const [formLoading, setFormLoading] = useState(false);
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/auth');
+    if (!authLoading) {
+      if (!user) {
+        navigate('/auth');
+      } else if (!isAdmin) {
+        navigate('/');
+      }
     }
-  }, [user, authLoading, navigate]);
+  }, [user, isAdmin, authLoading, navigate]);
 
   const handleEdit = (product: DbProduct) => {
     setEditingProduct(product);
@@ -79,7 +83,7 @@ const Admin = () => {
     );
   }
 
-  if (!user) {
+  if (!user || !isAdmin) {
     return null;
   }
 
@@ -110,12 +114,6 @@ const Admin = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        {!isAdmin && (
-          <div className="bg-amber-500/10 text-amber-600 p-4 rounded-lg mb-6">
-            У вас нет прав администратора. Вы можете только просматривать товары.
-          </div>
-        )}
-
         <Tabs defaultValue="products" className="space-y-6">
           <TabsList>
             <TabsTrigger value="products" className="flex items-center gap-2">
