@@ -26,10 +26,15 @@ export interface YouSectionSettings {
   items: YouSectionItem[];
 }
 
+export interface SizeGuideSettings {
+  image_url: string;
+}
+
 export const useHomepageSettings = () => {
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null);
   const [categoriesSettings, setCategoriesSettings] = useState<CategoriesSettings | null>(null);
   const [youSectionSettings, setYouSectionSettings] = useState<YouSectionSettings | null>(null);
+  const [sizeGuideSettings, setSizeGuideSettings] = useState<SizeGuideSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -48,6 +53,8 @@ export const useHomepageSettings = () => {
           setCategoriesSettings(setting.data as CategoriesSettings);
         } else if (setting.id === 'you_section') {
           setYouSectionSettings(setting.data as YouSectionSettings);
+        } else if (setting.id === 'size_guide') {
+          setSizeGuideSettings(setting.data as SizeGuideSettings);
         }
       });
     } catch (error) {
@@ -111,6 +118,23 @@ export const useHomepageSettings = () => {
     }
   };
 
+  const updateSizeGuideSettings = async (data: SizeGuideSettings) => {
+    try {
+      const { error } = await supabase
+        .from('homepage_settings')
+        .upsert({ id: 'size_guide', data: JSON.parse(JSON.stringify(data)) as Json });
+
+      if (error) throw error;
+
+      setSizeGuideSettings(data);
+      toast({ title: 'Успешно', description: 'Размерная сетка обновлена' });
+      return { error: null };
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось обновить', variant: 'destructive' });
+      return { error };
+    }
+  };
+
   useEffect(() => {
     fetchSettings();
   }, []);
@@ -119,10 +143,12 @@ export const useHomepageSettings = () => {
     heroSettings,
     categoriesSettings,
     youSectionSettings,
+    sizeGuideSettings,
     loading,
     updateHeroSettings,
     updateCategoriesSettings,
     updateYouSectionSettings,
+    updateSizeGuideSettings,
     refetch: fetchSettings,
   };
 };

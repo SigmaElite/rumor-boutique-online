@@ -4,13 +4,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Trash2, Save, Image as ImageIcon } from 'lucide-react';
+import { Plus, Trash2, Save, Image as ImageIcon, Ruler } from 'lucide-react';
 import ImageUpload from './ImageUpload';
 import {
   useHomepageSettings,
   HeroSettings,
   CategoriesSettings,
   YouSectionSettings,
+  SizeGuideSettings,
 } from '@/hooks/useHomepageSettings';
 
 const HomepageEditor = () => {
@@ -18,21 +19,26 @@ const HomepageEditor = () => {
     heroSettings,
     categoriesSettings,
     youSectionSettings,
+    sizeGuideSettings,
     loading,
     updateHeroSettings,
     updateCategoriesSettings,
     updateYouSectionSettings,
+    updateSizeGuideSettings,
   } = useHomepageSettings();
 
   const [heroForm, setHeroForm] = useState<HeroSettings | null>(null);
   const [categoriesForm, setCategoriesForm] = useState<CategoriesSettings | null>(null);
   const [youSectionForm, setYouSectionForm] = useState<YouSectionSettings | null>(null);
+  const [sizeGuideForm, setSizeGuideForm] = useState<SizeGuideSettings | null>(null);
   const [saving, setSaving] = useState(false);
 
   // Initialize forms when settings load
   if (!heroForm && heroSettings) setHeroForm(heroSettings);
   if (!categoriesForm && categoriesSettings) setCategoriesForm(categoriesSettings);
   if (!youSectionForm && youSectionSettings) setYouSectionForm(youSectionSettings);
+  if (!sizeGuideForm && sizeGuideSettings) setSizeGuideForm(sizeGuideSettings);
+  if (!sizeGuideForm && !sizeGuideSettings && !loading) setSizeGuideForm({ image_url: '/size-guide-table.jpg' });
 
   const handleSaveHero = async () => {
     if (!heroForm) return;
@@ -52,6 +58,13 @@ const HomepageEditor = () => {
     if (!youSectionForm) return;
     setSaving(true);
     await updateYouSectionSettings(youSectionForm);
+    setSaving(false);
+  };
+
+  const handleSaveSizeGuide = async () => {
+    if (!sizeGuideForm) return;
+    setSaving(true);
+    await updateSizeGuideSettings(sizeGuideForm);
     setSaving(false);
   };
 
@@ -103,10 +116,11 @@ const HomepageEditor = () => {
 
   return (
     <Tabs defaultValue="hero" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-3">
+      <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="hero">Hero</TabsTrigger>
         <TabsTrigger value="categories">Категории</TabsTrigger>
         <TabsTrigger value="you">You секция</TabsTrigger>
+        <TabsTrigger value="sizeguide">Размерная сетка</TabsTrigger>
       </TabsList>
 
       {/* Hero Section */}
@@ -233,6 +247,29 @@ const HomepageEditor = () => {
                 Сохранить
               </Button>
             </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      {/* Size Guide Section */}
+      <TabsContent value="sizeguide">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Ruler className="h-5 w-5" />
+              Размерная сетка
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ImageUpload
+              label="Фото размерной сетки"
+              value={sizeGuideForm?.image_url || ''}
+              onChange={(url) => setSizeGuideForm({ image_url: url })}
+            />
+            <Button onClick={handleSaveSizeGuide} disabled={saving}>
+              <Save className="h-4 w-4 mr-2" />
+              Сохранить
+            </Button>
           </CardContent>
         </Card>
       </TabsContent>
