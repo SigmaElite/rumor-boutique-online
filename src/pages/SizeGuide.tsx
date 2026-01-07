@@ -1,9 +1,28 @@
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const SizeGuide = () => {
+  const [sizeGuideImage, setSizeGuideImage] = useState<string>('/size-guide-table.jpg');
+
+  useEffect(() => {
+    const fetchSizeGuideImage = async () => {
+      const { data } = await supabase
+        .from('homepage_settings')
+        .select('data')
+        .eq('id', 'size_guide')
+        .single();
+      
+      if (data?.data && typeof data.data === 'object' && 'image_url' in data.data) {
+        setSizeGuideImage((data.data as { image_url: string }).image_url);
+      }
+    };
+    fetchSizeGuideImage();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -48,6 +67,15 @@ const SizeGuide = () => {
                 <Link to="/catalog">Перейти к покупкам</Link>
               </Button>
             </div>
+          </div>
+
+          {/* Size Guide Image */}
+          <div className="mt-12 mb-8">
+            <img 
+              src={sizeGuideImage} 
+              alt="Размерная сетка" 
+              className="w-full max-w-4xl mx-auto rounded-lg shadow-lg"
+            />
           </div>
 
           {/* Size Tables */}
