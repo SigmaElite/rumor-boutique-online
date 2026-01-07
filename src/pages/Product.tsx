@@ -7,6 +7,7 @@ import { usePublicProducts, PublicProduct } from "@/hooks/usePublicProducts";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
   SelectContent,
@@ -14,6 +15,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import ProductCardCarousel from "@/components/ProductCardCarousel";
 
 const ProductPage = () => {
@@ -26,6 +33,23 @@ const ProductPage = () => {
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [sizeGuideImage, setSizeGuideImage] = useState<string>('/size-guide-table.jpg');
+
+  useEffect(() => {
+    const fetchSizeGuideImage = async () => {
+      const { data } = await supabase
+        .from('homepage_settings')
+        .select('data')
+        .eq('id', 'size_guide')
+        .maybeSingle();
+      
+      if (data?.data && typeof data.data === 'object' && 'image_url' in data.data) {
+        setSizeGuideImage((data.data as { image_url: string }).image_url);
+      }
+    };
+    fetchSizeGuideImage();
+  }, []);
 
   const product = products.find(p => p.id === id);
   const relatedProducts = id ? getRelatedProducts(id, 4) : [];
@@ -268,7 +292,7 @@ const ProductPage = () => {
                 <a href="https://t.me/rumor_boutique" target="_blank" rel="noopener noreferrer" className="btn-primary bg-foreground text-background hover:bg-foreground/90">
                   Задать вопрос в Telegram
                 </a>
-                <button className="btn-outline">
+                <button onClick={() => setShowSizeGuide(true)} className="btn-outline">
                   Размерная сетка
                 </button>
               </div>
@@ -310,6 +334,27 @@ const ProductPage = () => {
           )}
       </main>
       <Footer />
+
+      {/* Size Guide Modal */}
+      <Dialog open={showSizeGuide} onOpenChange={setShowSizeGuide}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Размерная сетка</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <img 
+              src={sizeGuideImage} 
+              alt="Размерная сетка" 
+              className="w-full rounded-lg"
+            />
+            <p className="text-sm text-muted-foreground mt-4 text-center">
+              <Link to="/size-guide" className="underline hover:text-foreground">
+                Подробнее о том, как определить размер
+              </Link>
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -14,7 +14,7 @@ const SizeGuide = () => {
         .from('homepage_settings')
         .select('data')
         .eq('id', 'size_guide')
-        .single();
+        .maybeSingle();
       
       if (data?.data && typeof data.data === 'object' && 'image_url' in data.data) {
         setSizeGuideImage((data.data as { image_url: string }).image_url);
