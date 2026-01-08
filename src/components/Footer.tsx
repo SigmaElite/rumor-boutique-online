@@ -103,8 +103,17 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* Payment Systems */}
+        <div className="mt-8 pt-6 border-t border-primary-foreground/20">
+          <img 
+            src="/payment-systems.jpg" 
+            alt="Платёжные системы: WebPay, Visa, Visa Secure, MasterCard SecureCode, Белкарт, ЕРИП" 
+            className="h-6 md:h-8 w-auto mx-auto object-contain invert brightness-0"
+          />
+        </div>
+
         {/* Bottom Row */}
-        <div className="flex flex-col md:flex-row items-center justify-center mt-8 pt-6 border-t border-primary-foreground/20">
+        <div className="flex flex-col md:flex-row items-center justify-center mt-6 pt-4">
           {/* Legal Links */}
           <div className="flex flex-col md:flex-row items-center gap-4 text-xs opacity-70">
             <a href="/offer" className="hover:opacity-100 transition-opacity underline">
