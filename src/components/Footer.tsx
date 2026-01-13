@@ -21,7 +21,7 @@ const Footer = () => {
       <div className="container">
         {/* Showroom Address at the very top */}
         <p className="text-sm opacity-70 mb-6 md:mb-8 text-center md:text-left">
-          Оффлайн шоурум: Минск, ЖК Левада, ул. Нововиленская, 61, 3 подъезд
+          Оффлайн шоурум: Беларусь, Минск, ЖК Левада, ул. Нововиленская, 61, 3 подъезд
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 md:gap-8">
@@ -32,6 +32,11 @@ const Footer = () => {
             </a>
             <p className="text-sm opacity-70 mb-2">
               ©2026 ООО «Хорошая девочка». УНП 693393465. Все права защищены.
+            </p>
+            <p className="text-sm opacity-70">
+              Дата регистрации: 13.11.2025
+              <br />
+              Номер регистрации: 761427
             </p>
           </div>
 
@@ -74,8 +79,22 @@ const Footer = () => {
             ))}
           </nav>
 
-          {/* Social & Contact */}
+          {/* Contacts & Social */}
           <div className="space-y-4">
+            <div className="space-y-2">
+              <a
+                href="tel:+375298379586"
+                className="block text-sm opacity-90 hover:opacity-70 transition-opacity"
+              >
+                +375 29 837 9586
+              </a>
+              <a
+                href="mailto:rumor.by@icloud.com"
+                className="block text-sm opacity-90 hover:opacity-70 transition-opacity"
+              >
+                rumor.by@icloud.com
+              </a>
+            </div>
             <div className="flex items-center gap-6 justify-center md:justify-start">
               <a
                 href="https://instagram.com"
@@ -103,12 +122,21 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* Contacts section */}
+        <div className="mt-8 pt-6 border-t border-primary-foreground/20">
+          <h4 className="text-sm font-medium mb-3">Контакты</h4>
+          <div className="text-sm opacity-70 space-y-1">
+            <p>Почтовый адрес: Беларусь, Минск, ЖК Левада, ул. Нововиленская, 61, 3 подъезд</p>
+            <p>e-mail: rumor.by@icloud.com</p>
+          </div>
+        </div>
+
         {/* Payment Systems */}
         <div className="mt-8 pt-6 border-t border-primary-foreground/20">
           <img 
             src="/payment-systems.jpg" 
             alt="Платёжные системы: WebPay, Visa, Visa Secure, MasterCard SecureCode, Белкарт, ЕРИП" 
-            className="h-6 md:h-8 w-auto mx-auto object-contain invert brightness-0"
+            className="h-8 md:h-10 w-auto mx-auto md:mx-0 object-contain"
           />
         </div>
 

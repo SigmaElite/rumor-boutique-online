@@ -32,7 +32,7 @@ const CartDrawer = () => {
   const [loading, setLoading] = useState(false);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("ru-RU").format(price) + " руб.";
+    return new Intl.NumberFormat("ru-RU").format(price) + " BYN";
   };
 
   const getProductImage = (images: string[] | null) => {
