@@ -12,6 +12,7 @@ const footerLinks = {
   column3: [
     { label: "Контакты", href: "/contacts" },
     { label: "FAQ", href: "/faq" },
+    { label: "Документы подтверждающие покупку", href: "/documents" },
   ],
 };
 
@@ -120,11 +121,37 @@ const Footer = () => {
 
         {/* Payment Systems */}
         <div className="mt-8 pt-6 border-t border-primary-foreground/20">
-          <img 
-            src="/payment-systems.jpg" 
-            alt="Платёжные системы: WebPay, Visa, Visa Secure, MasterCard SecureCode, Белкарт, ЕРИП" 
-            className="h-8 md:h-10 w-auto mx-auto md:mx-0 object-contain"
-          />
+          <div className="flex items-center gap-3 flex-wrap justify-center md:justify-start">
+            <img 
+              src="/payment-systems.jpg" 
+              alt="Платёжные системы: WebPay, Visa, Visa Secure, MasterCard SecureCode, Белкарт, ЕРИП" 
+              className="h-8 md:h-10 w-auto object-contain"
+            />
+            <a 
+              href="https://webpay.by/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-xs opacity-70 hover:opacity-100 transition-opacity underline"
+            >
+              webpay.by
+            </a>
+          </div>
+        </div>
+
+        {/* WebPay Security Notice */}
+        <div className="mt-6 text-[10px] leading-relaxed opacity-60 max-w-4xl">
+          <p className="mb-2">
+            Безопасный сервер WEBPAY устанавливает шифрованное соединение по защищенному протоколу TLS и конфиденциально принимает от клиента данные его платёжной карты (номер карты, имя держателя, дату окончания действия, и контрольный номер банковской карточке CVC/CVC2).
+          </p>
+          <p className="mb-2">
+            После совершения оплаты с использованием банковской карты необходимо сохранять полученные карт-чеки (подтверждения об оплате) для сверки с выпиской из карт-счёта (с целью подтверждения совершённых операций в случае возникновения спорных ситуаций).
+          </p>
+          <p className="mb-2">
+            В случае, если Вы не получили заказ (не оказана услуга), Вам необходимо обратиться (в службу технической поддержки) по телефону: <a href="tel:+375298379586" className="hover:opacity-100 transition-opacity">+375 29 837 9586</a> или e-mail: <a href="mailto:rumor.by@icloud.com" className="hover:opacity-100 transition-opacity">rumor.by@icloud.com</a>. Менеджеры Вас проконсультируют.
+          </p>
+          <p>
+            При оплате банковской платежной картой возврат денежных средств осуществляется на карточку, с которой была произведена оплата.
+          </p>
         </div>
 
         {/* Bottom Row */}
