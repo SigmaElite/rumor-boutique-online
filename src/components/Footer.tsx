@@ -79,22 +79,8 @@ const Footer = () => {
             ))}
           </nav>
 
-          {/* Contacts & Social */}
+          {/* Social */}
           <div className="space-y-4">
-            <div className="space-y-2">
-              <a
-                href="tel:+375298379586"
-                className="block text-sm opacity-90 hover:opacity-70 transition-opacity"
-              >
-                +375 29 837 9586
-              </a>
-              <a
-                href="mailto:rumor.by@icloud.com"
-                className="block text-sm opacity-90 hover:opacity-70 transition-opacity"
-              >
-                rumor.by@icloud.com
-              </a>
-            </div>
             <div className="flex items-center gap-6 justify-center md:justify-start">
               <a
                 href="https://instagram.com"
@@ -127,7 +113,8 @@ const Footer = () => {
           <h4 className="text-sm font-medium mb-3">Контакты</h4>
           <div className="text-sm opacity-70 space-y-1">
             <p>Почтовый адрес: Беларусь, Минск, ЖК Левада, ул. Нововиленская, 61, 3 подъезд</p>
-            <p>e-mail: rumor.by@icloud.com</p>
+            <p>Телефон: <a href="tel:+375298379586" className="hover:opacity-100 transition-opacity">+375 29 837 9586</a></p>
+            <p>e-mail: <a href="mailto:rumor.by@icloud.com" className="hover:opacity-100 transition-opacity">rumor.by@icloud.com</a></p>
           </div>
         </div>
 
