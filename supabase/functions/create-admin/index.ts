@@ -26,16 +26,37 @@ serve(async (req) => {
 
     const { secret_key } = await req.json();
     
-    // Security check - only allow with correct secret
-    if (secret_key !== 'INIT_ADMIN_2024_MOIRE') {
+    // Get secret key from environment variables
+    const expectedSecretKey = Deno.env.get('ADMIN_SECRET_KEY');
+    
+    if (!expectedSecretKey) {
+      console.error('ADMIN_SECRET_KEY not configured');
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Security check - only allow with correct secret from environment
+    if (secret_key !== expectedSecretKey) {
+      console.warn('Unauthorized admin creation attempt');
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const adminEmail = 'moire.admin@luxe.by';
-    const adminPassword = 'Mx9$kL2#vQp7@Zw4!';
+    // Get admin credentials from environment variables
+    const adminEmail = Deno.env.get('ADMIN_EMAIL');
+    const adminPassword = Deno.env.get('ADMIN_PASSWORD');
+
+    if (!adminEmail || !adminPassword) {
+      console.error('Admin credentials not configured in environment');
+      return new Response(
+        JSON.stringify({ error: 'Admin credentials not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Check if admin already exists
     const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
@@ -44,7 +65,7 @@ serve(async (req) => {
     if (adminExists) {
       console.log('Admin user already exists');
       return new Response(
-        JSON.stringify({ message: 'Admin already exists', email: adminEmail }),
+        JSON.stringify({ message: 'Admin already exists' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -61,7 +82,7 @@ serve(async (req) => {
       throw userError;
     }
 
-    console.log('Admin user created:', userData.user?.id);
+    console.log('Admin user created successfully');
 
     // Update user role to admin
     if (userData.user) {
@@ -84,8 +105,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'Admin created successfully',
-        email: adminEmail 
+        message: 'Admin created successfully'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
