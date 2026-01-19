@@ -35,9 +35,9 @@ const Footer = () => {
               ©2026 ООО «Хорошая девочка». УНП 693393465. Все права защищены.
             </p>
             <p className="text-sm opacity-70">
-              Дата регистрации: 13.11.2025
+              Дата регистрации в Торговом реестре: 13.11.2025
               <br />
-              Номер регистрации: 761427
+              Номер регистрации в Торговом реестре: 761427
             </p>
           </div>
 
@@ -123,7 +123,7 @@ const Footer = () => {
         <div className="mt-8 pt-6 border-t border-primary-foreground/20">
           <div className="flex items-center gap-3 flex-wrap justify-center md:justify-start">
             <img 
-              src="/payment-systems.jpg" 
+              src="/payment-systems.png" 
               alt="Платёжные системы: WebPay, Visa, Visa Secure, MasterCard SecureCode, Белкарт, ЕРИП" 
               className="h-8 md:h-10 w-auto object-contain"
             />
