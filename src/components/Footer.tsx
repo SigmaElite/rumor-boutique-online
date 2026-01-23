@@ -154,6 +154,19 @@ const Footer = () => {
           </p>
         </div>
 
+        {/* Order Procedure */}
+        <div className="mt-6 text-[10px] leading-relaxed opacity-60 max-w-4xl">
+          <p className="font-medium mb-2">Процедура оформления заказа</p>
+          <ol className="list-decimal list-inside space-y-1">
+            <li>Выбрать и добавить в корзину понравившийся товар.</li>
+            <li>Нажать "Оформить заказ".</li>
+            <li>Заполнить необходимую информацию: ФИО, номер телефона и email для связи.</li>
+            <li>Выбрать способ доставки товара. Указать адрес для доставки или выбрать пункт выдачи Европочты.</li>
+            <li>Выбрать способ оплаты.</li>
+            <li>Нажать "Подтвердить".</li>
+          </ol>
+        </div>
+
         {/* Bottom Row */}
         <div className="flex flex-col md:flex-row items-center justify-center mt-6 pt-4">
           {/* Legal Links */}
