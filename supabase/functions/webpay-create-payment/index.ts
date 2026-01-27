@@ -6,13 +6,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Generate MD5 hash
-async function md5(message: string): Promise<string> {
-  const msgBuffer = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest('MD5', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -33,8 +26,8 @@ serve(async (req) => {
     // Get environment variables
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const wsbStoreId = Deno.env.get('WSB_STOREID')!;
-    const wsbSecretKey = Deno.env.get('WSB_SECRET_KEY')!;
+    const wsbStoreId = '554332557';
+    const wsbSecretKey = '1';
 
     // Create Supabase client
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -75,16 +68,14 @@ serve(async (req) => {
     // Order number (first 8 chars of UUID uppercased)
     const orderNum = `ORDER-${orderId.slice(0, 8).toUpperCase()}`;
 
-    // Generate signature: md5(seed + wsb_storeid + wsb_order_num + wsb_test + wsb_currency_id + wsb_total + wsb_secret_key)
+    // Generate signature: sha1(seed + wsb_storeid + wsb_order_num + wsb_test + wsb_currency_id + wsb_total + wsb_secret_key)
     const signatureString = `${seed}${wsbStoreId}${orderNum}1BYN${total}${wsbSecretKey}`;
-    const signature = await md5(signatureString);
-
-    // Prepare items for WebPay
-    const wsbItems = orderItems?.map((item, index) => ({
-      name: item.product_name + (item.size ? ` (${item.size})` : '') + (item.color ? ` - ${item.color}` : ''),
-      quantity: item.quantity,
-      price: item.product_price.toFixed(2),
-    })) || [];
+    
+    // Use SHA1 for signature
+    const msgBuffer = new TextEncoder().encode(signatureString);
+    const hashBuffer = await crypto.subtle.digest('SHA-1', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const signature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
     // URLs
     const baseUrl = 'https://rumor-chic-style.lovable.app';
@@ -92,15 +83,15 @@ serve(async (req) => {
     const cancelUrl = `${baseUrl}/catalog`;
     const notifyUrl = `${supabaseUrl}/functions/v1/webpay-webhook`;
 
-    // Build payment form data
-    const paymentData = {
-      action: 'https://securesandbox.webpay.by/', // Use production URL: https://payment.webpay.by/ for live
+    // Build payment form data with invoice items in correct format
+    const paymentData: Record<string, string> = {
+      action: 'https://securesandbox.webpay.by/',
       wsb_version: '2',
       wsb_language_id: 'russian',
       wsb_storeid: wsbStoreId,
       wsb_store: 'RUMOR',
       wsb_order_num: orderNum,
-      wsb_test: '1', // Set to '0' for production
+      wsb_test: '1',
       wsb_currency_id: 'BYN',
       wsb_seed: seed,
       wsb_customer_name: order.customer_name,
@@ -112,8 +103,15 @@ serve(async (req) => {
       wsb_phone: order.customer_phone.replace(/[^0-9]/g, ''),
       wsb_total: total,
       wsb_signature: signature,
-      items: wsbItems,
     };
+
+    // Add invoice items in correct format: wsb_invoice_item_name[0], wsb_invoice_item_quantity[0], etc.
+    orderItems?.forEach((item, index) => {
+      const itemName = item.product_name + (item.size ? ` (${item.size})` : '') + (item.color ? ` - ${item.color}` : '');
+      paymentData[`wsb_invoice_item_name[${index}]`] = itemName;
+      paymentData[`wsb_invoice_item_quantity[${index}]`] = item.quantity.toString();
+      paymentData[`wsb_invoice_item_price[${index}]`] = item.product_price.toFixed(2);
+    });
 
     return new Response(
       JSON.stringify(paymentData),
