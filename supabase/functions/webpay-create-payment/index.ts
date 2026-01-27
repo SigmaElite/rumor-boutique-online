@@ -86,9 +86,11 @@ serve(async (req) => {
       price: item.product_price.toFixed(2),
     })) || [];
 
-    // Return URL (production domain)
-    const returnUrl = 'https://rumor-chic-style.lovable.app/order-success';
-    const cancelUrl = 'https://rumor-chic-style.lovable.app/catalog';
+    // URLs
+    const baseUrl = 'https://rumor-chic-style.lovable.app';
+    const returnUrl = `${baseUrl}/order-success`;
+    const cancelUrl = `${baseUrl}/catalog`;
+    const notifyUrl = `${supabaseUrl}/functions/v1/webpay-webhook`;
 
     // Build payment form data
     const paymentData = {
@@ -105,6 +107,7 @@ serve(async (req) => {
       wsb_customer_address: order.delivery_address,
       wsb_return_url: returnUrl,
       wsb_cancel_return_url: cancelUrl,
+      wsb_notify_url: notifyUrl,
       wsb_email: order.customer_email,
       wsb_phone: order.customer_phone.replace(/[^0-9]/g, ''),
       wsb_total: total,
