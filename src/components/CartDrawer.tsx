@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Minus, Plus, X } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,27 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 
+interface WebPayFormData {
+  action: string;
+  wsb_version: string;
+  wsb_language_id: string;
+  wsb_storeid: string;
+  wsb_store: string;
+  wsb_order_num: string;
+  wsb_test: string;
+  wsb_currency_id: string;
+  wsb_seed: string;
+  wsb_customer_name: string;
+  wsb_customer_address: string;
+  wsb_return_url: string;
+  wsb_cancel_return_url: string;
+  wsb_email: string;
+  wsb_phone: string;
+  wsb_total: string;
+  wsb_signature: string;
+  items: { name: string; quantity: number; price: string }[];
+}
+
 const orderSchema = z.object({
   phone: z.string().min(9, "Введите корректный номер телефона"),
   name: z.string().min(2, "Введите ваше имя"),
@@ -21,6 +42,9 @@ const orderSchema = z.object({
 
 const CartDrawer = () => {
   const { items, isCartOpen, setIsCartOpen, removeItem, updateQuantity, totalPrice, clearCart } = useCart();
+  const formRef = useRef<HTMLFormElement>(null);
+  const paymentFormRef = useRef<HTMLFormElement>(null);
+  const [webPayData, setWebPayData] = useState<WebPayFormData | null>(null);
 
   const [formData, setFormData] = useState({
     phone: "+375",
@@ -30,6 +54,13 @@ const CartDrawer = () => {
   const [agreed, setAgreed] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+
+  // Auto-submit WebPay form when data is set
+  useEffect(() => {
+    if (webPayData && paymentFormRef.current) {
+      paymentFormRef.current.submit();
+    }
+  }, [webPayData]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("ru-RU").format(price) + " BYN";
@@ -88,7 +119,7 @@ const CartDrawer = () => {
           customer_phone: formData.phone,
           delivery_address: 'Уточняется',
           delivery_method: 'delivery',
-          payment_method: 'cash',
+          payment_method: 'webpay',
         })
         .select()
         .single();
@@ -112,12 +143,23 @@ const CartDrawer = () => {
 
       if (itemsError) throw itemsError;
 
+      // Get WebPay payment form data
+      const { data: paymentData, error: paymentError } = await supabase.functions.invoke('webpay-create-payment', {
+        body: { orderId: order.id }
+      });
+
+      if (paymentError || !paymentData) {
+        throw new Error('Failed to create payment');
+      }
+
       clearCart();
-      setIsCartOpen(false);
       setFormData({ phone: "+375", name: "", email: "" });
       setAgreed(false);
+      setIsCartOpen(false);
       
-      toast.success(`Заказ #${order.id.slice(0, 8).toUpperCase()} оформлен! Мы свяжемся с вами для уточнения деталей.`);
+      // Set WebPay data to trigger form submission
+      setWebPayData(paymentData);
+      
     } catch (error: any) {
       console.error('Order error:', error);
       toast.error("Не удалось оформить заказ. Попробуйте позже.");
@@ -300,6 +342,41 @@ const CartDrawer = () => {
             </form>
           )}
         </div>
+
+        {/* Hidden WebPay form for redirect */}
+        {webPayData && (
+          <form
+            ref={paymentFormRef}
+            action={webPayData.action}
+            method="post"
+            style={{ display: 'none' }}
+          >
+            <input type="hidden" name="*scart" />
+            <input type="hidden" name="wsb_version" value={webPayData.wsb_version} />
+            <input type="hidden" name="wsb_language_id" value={webPayData.wsb_language_id} />
+            <input type="hidden" name="wsb_storeid" value={webPayData.wsb_storeid} />
+            <input type="hidden" name="wsb_store" value={webPayData.wsb_store} />
+            <input type="hidden" name="wsb_order_num" value={webPayData.wsb_order_num} />
+            <input type="hidden" name="wsb_test" value={webPayData.wsb_test} />
+            <input type="hidden" name="wsb_currency_id" value={webPayData.wsb_currency_id} />
+            <input type="hidden" name="wsb_seed" value={webPayData.wsb_seed} />
+            <input type="hidden" name="wsb_customer_name" value={webPayData.wsb_customer_name} />
+            <input type="hidden" name="wsb_customer_address" value={webPayData.wsb_customer_address} />
+            <input type="hidden" name="wsb_return_url" value={webPayData.wsb_return_url} />
+            <input type="hidden" name="wsb_cancel_return_url" value={webPayData.wsb_cancel_return_url} />
+            <input type="hidden" name="wsb_email" value={webPayData.wsb_email} />
+            <input type="hidden" name="wsb_phone" value={webPayData.wsb_phone} />
+            <input type="hidden" name="wsb_total" value={webPayData.wsb_total} />
+            <input type="hidden" name="wsb_signature" value={webPayData.wsb_signature} />
+            {webPayData.items.map((item, index) => (
+              <div key={index}>
+                <input type="hidden" name={`wsb_invoice_item_name[${index}]`} value={item.name} />
+                <input type="hidden" name={`wsb_invoice_item_quantity[${index}]`} value={item.quantity} />
+                <input type="hidden" name={`wsb_invoice_item_price[${index}]`} value={item.price} />
+              </div>
+            ))}
+          </form>
+        )}
       </DialogContent>
     </Dialog>
   );
