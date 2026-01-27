@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.webpay-create-payment]
 verify_jwt = false
+
+[functions.webpay-webhook]
+verify_jwt = false

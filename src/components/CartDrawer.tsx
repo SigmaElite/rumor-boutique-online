@@ -27,6 +27,7 @@ interface WebPayFormData {
   wsb_customer_address: string;
   wsb_return_url: string;
   wsb_cancel_return_url: string;
+  wsb_notify_url: string;
   wsb_email: string;
   wsb_phone: string;
   wsb_total: string;
@@ -364,6 +365,7 @@ const CartDrawer = () => {
             <input type="hidden" name="wsb_customer_address" value={webPayData.wsb_customer_address} />
             <input type="hidden" name="wsb_return_url" value={webPayData.wsb_return_url} />
             <input type="hidden" name="wsb_cancel_return_url" value={webPayData.wsb_cancel_return_url} />
+            <input type="hidden" name="wsb_notify_url" value={webPayData.wsb_notify_url} />
             <input type="hidden" name="wsb_email" value={webPayData.wsb_email} />
             <input type="hidden" name="wsb_phone" value={webPayData.wsb_phone} />
             <input type="hidden" name="wsb_total" value={webPayData.wsb_total} />
