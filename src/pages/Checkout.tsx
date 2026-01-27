@@ -89,24 +89,38 @@ const Checkout = () => {
     setLoading(true);
 
     try {
-      // Create order
+      // Create order - user_id can be null for guest checkout
+      const orderData = {
+        total_price: totalPrice,
+        customer_name: formData.name,
+        customer_email: formData.email,
+        customer_phone: formData.phone,
+        delivery_address: formData.deliveryMethod === 'delivery' ? formData.address : 'Самовывоз',
+        delivery_method: formData.deliveryMethod,
+        payment_method: formData.paymentMethod,
+        comment: formData.comment || null,
+        status: 'pending',
+      };
+
+      // Only add user_id if user is authenticated
+      if (user?.id) {
+        (orderData as any).user_id = user.id;
+      }
+
       const { data: order, error: orderError } = await supabase
         .from('orders')
-        .insert({
-          user_id: user?.id || null,
-          total_price: totalPrice,
-          customer_name: formData.name,
-          customer_email: formData.email,
-          customer_phone: formData.phone,
-          delivery_address: formData.deliveryMethod === 'delivery' ? formData.address : 'Самовывоз',
-          delivery_method: formData.deliveryMethod,
-          payment_method: formData.paymentMethod,
-          comment: formData.comment || null,
-        })
+        .insert(orderData)
         .select()
         .single();
 
-      if (orderError) throw orderError;
+      if (orderError) {
+        console.error('Order creation error:', orderError);
+        throw new Error(`Ошибка создания заказа: ${orderError.message}`);
+      }
+
+      if (!order) {
+        throw new Error('Заказ не был создан');
+      }
 
       // Create order items
       const orderItems = items.map((item) => ({
@@ -123,7 +137,10 @@ const Checkout = () => {
         .from('order_items')
         .insert(orderItems);
 
-      if (itemsError) throw itemsError;
+      if (itemsError) {
+        console.error('Order items error:', itemsError);
+        throw new Error(`Ошибка добавления товаров: ${itemsError.message}`);
+      }
 
       clearCart();
       
@@ -137,7 +154,7 @@ const Checkout = () => {
       console.error('Order error:', error);
       toast({
         title: 'Ошибка',
-        description: 'Не удалось оформить заказ. Попробуйте позже.',
+        description: error.message || 'Не удалось оформить заказ. Попробуйте позже.',
         variant: 'destructive',
       });
     } finally {
