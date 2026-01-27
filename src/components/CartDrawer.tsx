@@ -13,27 +13,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 
-interface WebPayFormData {
-  action: string;
-  wsb_version: string;
-  wsb_language_id: string;
-  wsb_storeid: string;
-  wsb_store: string;
-  wsb_order_num: string;
-  wsb_test: string;
-  wsb_currency_id: string;
-  wsb_seed: string;
-  wsb_customer_name: string;
-  wsb_customer_address: string;
-  wsb_return_url: string;
-  wsb_cancel_return_url: string;
-  wsb_notify_url: string;
-  wsb_email: string;
-  wsb_phone: string;
-  wsb_total: string;
-  wsb_signature: string;
-  items: { name: string; quantity: number; price: string }[];
-}
+// WebPay returns flat object with dynamic keys like wsb_invoice_item_name[0]
+type WebPayFormData = Record<string, string>;
 
 const orderSchema = z.object({
   phone: z.string().min(9, "Введите корректный номер телефона"),
@@ -356,30 +337,11 @@ const CartDrawer = () => {
           style={{ display: 'none' }}
         >
           <input type="hidden" name="*scart" />
-          <input type="hidden" name="wsb_version" value={webPayData.wsb_version} />
-          <input type="hidden" name="wsb_language_id" value={webPayData.wsb_language_id} />
-          <input type="hidden" name="wsb_storeid" value={webPayData.wsb_storeid} />
-          <input type="hidden" name="wsb_store" value={webPayData.wsb_store} />
-          <input type="hidden" name="wsb_order_num" value={webPayData.wsb_order_num} />
-          <input type="hidden" name="wsb_test" value={webPayData.wsb_test} />
-          <input type="hidden" name="wsb_currency_id" value={webPayData.wsb_currency_id} />
-          <input type="hidden" name="wsb_seed" value={webPayData.wsb_seed} />
-          <input type="hidden" name="wsb_customer_name" value={webPayData.wsb_customer_name} />
-          <input type="hidden" name="wsb_customer_address" value={webPayData.wsb_customer_address} />
-          <input type="hidden" name="wsb_return_url" value={webPayData.wsb_return_url} />
-          <input type="hidden" name="wsb_cancel_return_url" value={webPayData.wsb_cancel_return_url} />
-          <input type="hidden" name="wsb_notify_url" value={webPayData.wsb_notify_url} />
-          <input type="hidden" name="wsb_email" value={webPayData.wsb_email} />
-          <input type="hidden" name="wsb_phone" value={webPayData.wsb_phone} />
-          <input type="hidden" name="wsb_total" value={webPayData.wsb_total} />
-          <input type="hidden" name="wsb_signature" value={webPayData.wsb_signature} />
-          {webPayData.items.map((item, index) => (
-            <div key={index}>
-              <input type="hidden" name={`wsb_invoice_item_name[${index}]`} value={item.name} />
-              <input type="hidden" name={`wsb_invoice_item_quantity[${index}]`} value={item.quantity} />
-              <input type="hidden" name={`wsb_invoice_item_price[${index}]`} value={item.price} />
-            </div>
-          ))}
+          {Object.entries(webPayData)
+            .filter(([key]) => key !== 'action')
+            .map(([key, value]) => (
+              <input key={key} type="hidden" name={key} value={value} />
+            ))}
         </form>
       )}
     </>
