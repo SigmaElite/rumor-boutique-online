@@ -26,21 +26,26 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const wsbSecretKey = Deno.env.get('WSB_SECRET_KEY')!;
 
-    // Parse form data from WebPay
-    const formData = await req.formData();
+    // Parse body - WebPay may send without Content-Type header
+    // Read raw body and parse as URL-encoded form data
+    const rawBody = await req.text();
+    const params = new URLSearchParams(rawBody);
+    
+    // Helper function to get param value
+    const getParam = (key: string): string => params.get(key) || '';
     
     // Extract WebPay parameters
-    const siteOrderId = formData.get('site_order_id') as string; // Our order number (ORDER-XXXXXXXX)
-    const orderNum = formData.get('wsb_order_num') as string;
-    const tid = formData.get('wsb_tid') as string; // WebPay transaction ID
-    const paymentType = formData.get('wsb_payment_type') as string;
-    const rcText = formData.get('wsb_rc_text') as string; // Result text
-    const rc = formData.get('wsb_rc') as string; // Result code (00 = success)
-    const rrn = formData.get('wsb_rrn') as string; // Reference number
-    const approvalCode = formData.get('wsb_approval_code') as string;
-    const signature = formData.get('wsb_signature') as string;
-    const amount = formData.get('wsb_amount') as string;
-    const currency = formData.get('wsb_currency_id') as string;
+    const siteOrderId = getParam('site_order_id'); // Our order number (ORDER-XXXXXXXX)
+    const orderNum = getParam('wsb_order_num');
+    const tid = getParam('wsb_tid'); // WebPay transaction ID
+    const paymentType = getParam('wsb_payment_type');
+    const rcText = getParam('wsb_rc_text'); // Result text
+    const rc = getParam('wsb_rc'); // Result code (00 = success)
+    const rrn = getParam('wsb_rrn'); // Reference number
+    const approvalCode = getParam('wsb_approval_code');
+    const signature = getParam('wsb_signature');
+    const amount = getParam('wsb_amount');
+    const currency = getParam('wsb_currency_id');
 
     console.log('WebPay notification received:', {
       orderNum,
@@ -61,7 +66,7 @@ serve(async (req) => {
 
     // Verify signature
     // WebPay signature = md5(batch_timestamp + currency_id + amount + payment_type + order_id + site_order_id + transaction_id + rrn + secret_key)
-    const batchTimestamp = formData.get('batch_timestamp') as string || '';
+    const batchTimestamp = getParam('batch_timestamp');
     const signatureString = `${batchTimestamp}${currency}${amount}${paymentType}${orderNum}${siteOrderId}${tid}${rrn}${wsbSecretKey}`;
     const expectedSignature = await md5(signatureString);
 
