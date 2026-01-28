@@ -8,20 +8,29 @@ const corsHeaders = {
 
 
 serve(async (req) => {
+  console.log('=== EDGE FUNCTION: webpay-create-payment started ===');
+  
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
+    console.log('CORS preflight request');
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { orderId } = await req.json();
+    const body = await req.json();
+    console.log('Request body:', JSON.stringify(body));
+    
+    const { orderId } = body;
 
     if (!orderId) {
+      console.log('ERROR: No orderId provided');
       return new Response(
         JSON.stringify({ error: 'Order ID is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    console.log('Processing order:', orderId);
 
     // Get environment variables
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -29,59 +38,87 @@ serve(async (req) => {
     const wsbStoreId = '554332557';
     const wsbSecretKey = '1';
 
+    console.log('Supabase URL:', supabaseUrl);
+    console.log('Store ID:', wsbStoreId);
+
     // Create Supabase client
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get order details
+    console.log('Fetching order from database...');
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .select('*')
       .eq('id', orderId)
       .single();
 
-    if (orderError || !order) {
+    if (orderError) {
+      console.log('ERROR fetching order:', orderError);
+      return new Response(
+        JSON.stringify({ error: 'Order not found', details: orderError }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!order) {
+      console.log('ERROR: Order is null');
       return new Response(
         JSON.stringify({ error: 'Order not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
+    console.log('Order found:', JSON.stringify(order));
+
     // Get order items
+    console.log('Fetching order items...');
     const { data: orderItems, error: itemsError } = await supabase
       .from('order_items')
       .select('*')
       .eq('order_id', orderId);
 
     if (itemsError) {
+      console.log('ERROR fetching order items:', itemsError);
       return new Response(
-        JSON.stringify({ error: 'Failed to get order items' }),
+        JSON.stringify({ error: 'Failed to get order items', details: itemsError }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
+    console.log('Order items:', JSON.stringify(orderItems));
+
     // Generate seed (timestamp)
     const seed = Date.now().toString();
+    console.log('Generated seed:', seed);
 
     // Calculate total
     const total = order.total_price.toFixed(2);
+    console.log('Total price:', total);
 
     // Order number (first 8 chars of UUID uppercased)
     const orderNum = `ORDER-${orderId.slice(0, 8).toUpperCase()}`;
+    console.log('Order number:', orderNum);
 
     // Generate signature: sha1(seed + wsb_storeid + wsb_order_num + wsb_test + wsb_currency_id + wsb_total + wsb_secret_key)
     const signatureString = `${seed}${wsbStoreId}${orderNum}1BYN${total}${wsbSecretKey}`;
+    console.log('Signature string:', signatureString);
     
     // Use SHA1 for signature
     const msgBuffer = new TextEncoder().encode(signatureString);
     const hashBuffer = await crypto.subtle.digest('SHA-1', msgBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const signature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    console.log('Generated signature:', signature);
 
     // URLs
     const baseUrl = 'https://rumor-chic-style.lovable.app';
     const returnUrl = `${baseUrl}/order-success`;
     const cancelUrl = `${baseUrl}/catalog`;
     const notifyUrl = `${supabaseUrl}/functions/v1/webpay-webhook`;
+
+    console.log('Return URL:', returnUrl);
+    console.log('Cancel URL:', cancelUrl);
+    console.log('Notify URL:', notifyUrl);
 
     // Build payment form data with invoice items in correct format
     const paymentData: Record<string, string> = {
@@ -113,15 +150,19 @@ serve(async (req) => {
       paymentData[`wsb_invoice_item_price[${index}]`] = item.product_price.toFixed(2);
     });
 
+    console.log('=== Final payment data ===');
+    console.log(JSON.stringify(paymentData, null, 2));
+
     return new Response(
       JSON.stringify(paymentData),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('WebPay error:', error);
+    console.error('=== EDGE FUNCTION ERROR ===');
+    console.error('Error:', error);
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ error: 'Internal server error', details: String(error) }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
