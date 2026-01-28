@@ -115,31 +115,24 @@ const CartDrawer = () => {
 
     try {
       // Create order
-      console.log('Creating order with data:', {
-        user_id: null,
-        total_price: totalPrice,
-        customer_name: formData.name,
-        customer_email: formData.email,
-        customer_phone: formData.phone,
-        delivery_address: 'Уточняется',
-        delivery_method: 'delivery',
-        payment_method: 'webpay',
-      });
-
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          user_id: null,
-          total_price: totalPrice,
+      // Use edge function to create order (bypasses RLS)
+      console.log('Calling create-order edge function...');
+      const { data: orderResult, error: orderError } = await supabase.functions.invoke('create-order', {
+        body: {
           customer_name: formData.name,
           customer_email: formData.email,
           customer_phone: formData.phone,
-          delivery_address: 'Уточняется',
-          delivery_method: 'delivery',
-          payment_method: 'webpay',
-        })
-        .select()
-        .single();
+          total_price: totalPrice,
+          items: items.map((item) => ({
+            product_id: item.product.id,
+            product_name: item.product.name,
+            product_price: item.product.price,
+            quantity: item.quantity,
+            size: item.size || null,
+            color: item.color || null,
+          })),
+        }
+      });
 
       if (orderError) {
         console.log('=== ERROR: Order creation failed ===');
@@ -147,41 +140,20 @@ const CartDrawer = () => {
         throw orderError;
       }
 
-      console.log('=== STEP 3: Order created successfully ===');
-      console.log('Order ID:', order.id);
-      console.log('Full order:', order);
-
-      // Create order items
-      const orderItems = items.map((item) => ({
-        order_id: order.id,
-        product_id: item.product.id,
-        product_name: item.product.name,
-        product_price: item.product.price,
-        quantity: item.quantity,
-        size: item.size || null,
-        color: item.color || null,
-      }));
-
-      console.log('Creating order items:', orderItems);
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-      if (itemsError) {
-        console.log('=== ERROR: Order items creation failed ===');
-        console.log('Items error:', itemsError);
-        throw itemsError;
+      if (!orderResult?.orderId) {
+        console.log('=== ERROR: No orderId returned ===');
+        throw new Error('No orderId returned from server');
       }
 
-      console.log('=== STEP 4: Order items created successfully ===');
+      console.log('=== STEP 3: Order created successfully ===');
+      console.log('Order ID:', orderResult.orderId);
 
       // Get WebPay payment form data
-      console.log('=== STEP 5: Calling webpay-create-payment function ===');
-      console.log('Calling with orderId:', order.id);
+      console.log('=== STEP 4: Calling webpay-create-payment function ===');
+      console.log('Calling with orderId:', orderResult.orderId);
 
       const { data: paymentData, error: paymentError } = await supabase.functions.invoke('webpay-create-payment', {
-        body: { orderId: order.id }
+        body: { orderId: orderResult.orderId }
       });
 
       console.log('WebPay function response:');
@@ -199,7 +171,7 @@ const CartDrawer = () => {
         throw new Error('No payment data returned from function');
       }
 
-      console.log('=== STEP 5b: WebPay data received ===');
+      console.log('=== STEP 5: WebPay data received ===');
       console.log('Payment data keys:', Object.keys(paymentData));
       console.log('Payment data action:', paymentData.action);
 
