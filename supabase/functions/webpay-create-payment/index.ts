@@ -35,11 +35,12 @@ serve(async (req) => {
     // Get environment variables
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const wsbStoreId = '554332557';
-    const wsbSecretKey = '1';
+    const wsbStoreId = Deno.env.get('WSB_STOREID') || '554332557';
+    const wsbSecretKey = Deno.env.get('WSB_SECRET_KEY') || '1';
 
     console.log('Supabase URL:', supabaseUrl);
     console.log('Store ID:', wsbStoreId);
+    console.log('Secret key configured:', wsbSecretKey ? 'yes' : 'no');
 
     // Create Supabase client
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
