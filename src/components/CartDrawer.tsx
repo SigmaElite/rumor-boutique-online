@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Minus, Plus, X } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,9 +13,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 
-// WebPay returns flat object with dynamic keys like wsb_invoice_item_name[0]
-type WebPayFormData = Record<string, string>;
-
 const orderSchema = z.object({
   phone: z.string().min(9, "Введите корректный номер телефона"),
   name: z.string().min(2, "Введите ваше имя"),
@@ -24,9 +21,6 @@ const orderSchema = z.object({
 
 const CartDrawer = () => {
   const { items, isCartOpen, setIsCartOpen, removeItem, updateQuantity, totalPrice, clearCart } = useCart();
-  const formRef = useRef<HTMLFormElement>(null);
-  const paymentFormRef = useRef<HTMLFormElement>(null);
-  const [webPayData, setWebPayData] = useState<WebPayFormData | null>(null);
 
   const [formData, setFormData] = useState({
     phone: "+375",
@@ -36,26 +30,6 @@ const CartDrawer = () => {
   const [agreed, setAgreed] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-
-  // Auto-submit WebPay form when data is set
-  useEffect(() => {
-    if (webPayData && paymentFormRef.current) {
-      console.log('=== STEP 6: WebPay data received, submitting form ===');
-      console.log('WebPay form action:', webPayData.action);
-      console.log('Full WebPay data:', JSON.stringify(webPayData, null, 2));
-      console.log('Form ref exists:', !!paymentFormRef.current);
-      
-      // Log all form fields before submit
-      const formData = new FormData(paymentFormRef.current);
-      console.log('Form fields being submitted:');
-      formData.forEach((value, key) => {
-        console.log(`  ${key}: ${value}`);
-      });
-      
-      console.log('=== STEP 7: Submitting form to WebPay ===');
-      paymentFormRef.current.submit();
-    }
-  }, [webPayData]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("ru-RU").format(price) + " BYN";
@@ -114,8 +88,7 @@ const CartDrawer = () => {
     setLoading(true);
 
     try {
-      // Create order
-      // Use edge function to create order (bypasses RLS)
+      // Create order via edge function (bypasses RLS)
       console.log('Calling create-order edge function...');
       const { data: orderResult, error: orderError } = await supabase.functions.invoke('create-order', {
         body: {
@@ -148,7 +121,7 @@ const CartDrawer = () => {
       console.log('=== STEP 3: Order created successfully ===');
       console.log('Order ID:', orderResult.orderId);
 
-      // Get WebPay payment form data
+      // Get WebPay redirect URL from JSON API
       console.log('=== STEP 4: Calling webpay-create-payment function ===');
       console.log('Calling with orderId:', orderResult.orderId);
 
@@ -166,23 +139,23 @@ const CartDrawer = () => {
         throw new Error('Failed to create payment: ' + JSON.stringify(paymentError));
       }
 
-      if (!paymentData) {
-        console.log('=== ERROR: No payment data returned ===');
-        throw new Error('No payment data returned from function');
+      if (!paymentData?.redirectUrl) {
+        console.log('=== ERROR: No redirectUrl returned ===');
+        console.log('Payment data received:', paymentData);
+        throw new Error('No redirectUrl returned from WebPay');
       }
 
-      console.log('=== STEP 5: WebPay data received ===');
-      console.log('Payment data keys:', Object.keys(paymentData));
-      console.log('Payment data action:', paymentData.action);
+      console.log('=== STEP 5: Got redirectUrl, redirecting... ===');
+      console.log('Redirect URL:', paymentData.redirectUrl);
 
+      // Clear cart and form
       clearCart();
       setFormData({ phone: "+375", name: "", email: "" });
       setAgreed(false);
       setIsCartOpen(false);
       
-      // Set WebPay data to trigger form submission
-      console.log('Setting webPayData state to trigger form submit...');
-      setWebPayData(paymentData);
+      // Redirect to WebPay payment page
+      window.location.href = paymentData.redirectUrl;
       
     } catch (error: any) {
       console.log('=== CATCH BLOCK: Error occurred ===');
@@ -196,200 +169,181 @@ const CartDrawer = () => {
   };
 
   return (
-    <>
-      <Dialog open={isCartOpen} onOpenChange={setIsCartOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0">
-          <div className="p-6">
-            {/* Header */}
-            <h2 className="text-xl font-medium mb-6">Ваш заказ:</h2>
+    <Dialog open={isCartOpen} onOpenChange={setIsCartOpen}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0">
+        <div className="p-6">
+          {/* Header */}
+          <h2 className="text-xl font-medium mb-6">Ваш заказ:</h2>
 
-            {items.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground mb-4">Ваша корзина пуста</p>
-                <Link
-                  to="/catalog"
-                  onClick={() => setIsCartOpen(false)}
-                  className="btn-primary inline-block"
-                >
-                  Перейти в каталог
-                </Link>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit}>
-                {/* Cart Items */}
-                <div className="space-y-4 mb-6">
-                  {items.map((item, index) => (
-                    <div key={`${item.product.id}-${item.size}-${item.color}-${index}`} className="flex gap-4 items-start">
+          {items.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground mb-4">Ваша корзина пуста</p>
+              <Link
+                to="/catalog"
+                onClick={() => setIsCartOpen(false)}
+                className="btn-primary inline-block"
+              >
+                Перейти в каталог
+              </Link>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              {/* Cart Items */}
+              <div className="space-y-4 mb-6">
+                {items.map((item, index) => (
+                  <div key={`${item.product.id}-${item.size}-${item.color}-${index}`} className="flex gap-4 items-start">
+                    <Link
+                      to={`/product/${item.product.id}`}
+                      onClick={() => setIsCartOpen(false)}
+                      className="w-16 h-20 flex-shrink-0 bg-secondary overflow-hidden"
+                    >
+                      <img
+                        src={getProductImage(item.product.images)}
+                        alt={item.product.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/placeholder.svg';
+                        }}
+                      />
+                    </Link>
+
+                    <div className="flex-1">
                       <Link
                         to={`/product/${item.product.id}`}
                         onClick={() => setIsCartOpen(false)}
-                        className="w-16 h-20 flex-shrink-0 bg-secondary overflow-hidden"
+                        className="font-medium hover:opacity-60 transition-opacity block"
                       >
-                        <img
-                          src={getProductImage(item.product.images)}
-                          alt={item.product.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/placeholder.svg';
-                          }}
-                        />
+                        {item.product.name}
                       </Link>
-
-                      <div className="flex-1">
-                        <Link
-                          to={`/product/${item.product.id}`}
-                          onClick={() => setIsCartOpen(false)}
-                          className="font-medium hover:opacity-60 transition-opacity block"
-                        >
-                          {item.product.name}
-                        </Link>
-                        <div className="text-sm text-muted-foreground mt-1">
-                          {item.size && <span>Размер: {item.size}</span>}
-                          {item.size && item.color && <br />}
-                          {item.color && <span>Цвет: {item.color}</span>}
-                        </div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        {item.size && <span>Размер: {item.size}</span>}
+                        {item.size && item.color && <br />}
+                        {item.color && <span>Цвет: {item.color}</span>}
                       </div>
+                    </div>
 
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.size, item.color)}
-                          className="w-6 h-6 flex items-center justify-center border border-border rounded-full hover:bg-secondary transition-colors"
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="w-4 text-center">{item.quantity}</span>
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.size, item.color)}
-                          className="w-6 h-6 flex items-center justify-center border border-border rounded-full hover:bg-secondary transition-colors"
-                        >
-                          <Plus className="w-3 h-3" />
-                        </button>
-                      </div>
-
-                      <span className="font-medium whitespace-nowrap">
-                        {formatPrice(item.product.price * item.quantity)}
-                      </span>
-
+                    <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => removeItem(item.product.id, item.size, item.color)}
-                        className="p-1 hover:opacity-60 transition-opacity"
+                        onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.size, item.color)}
+                        className="w-6 h-6 flex items-center justify-center border border-border rounded-full hover:bg-secondary transition-colors"
                       >
-                        <X className="w-4 h-4" />
+                        <Minus className="w-3 h-3" />
+                      </button>
+                      <span className="w-4 text-center">{item.quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.size, item.color)}
+                        className="w-6 h-6 flex items-center justify-center border border-border rounded-full hover:bg-secondary transition-colors"
+                      >
+                        <Plus className="w-3 h-3" />
                       </button>
                     </div>
-                  ))}
-                </div>
 
-                {/* Subtotal */}
-                <div className="text-right mb-6">
-                  <span className="font-medium">Сумма: {formatPrice(totalPrice)}</span>
-                </div>
+                    <span className="font-medium whitespace-nowrap">
+                      {formatPrice(item.product.price * item.quantity)}
+                    </span>
 
-                {/* Info text */}
-                <div className="bg-secondary/50 p-4 mb-6 text-sm italic">
-                  <p className="font-medium mb-2">При подтверждении заказа, консультант проинформирует вас о наличии изделия на складе или необходимости его отшить по вашим параметрам для идеальной посадки</p>
-                </div>
-
-                {/* Form */}
-                <div className="space-y-4 mb-6">
-                  <h3 className="font-medium">Данные получателя</h3>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Номер телефона</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="+375 (XX) XXX-XX-XX"
-                      disabled={loading}
-                      className="border-foreground"
-                    />
-                    {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
+                    <button
+                      type="button"
+                      onClick={() => removeItem(item.product.id, item.size, item.color)}
+                      className="p-1 hover:opacity-60 transition-opacity"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   </div>
+                ))}
+              </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Имя</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Ваше имя"
-                      disabled={loading}
-                      className="border-foreground"
-                    />
-                    {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
-                  </div>
+              {/* Subtotal */}
+              <div className="text-right mb-6">
+                <span className="font-medium">Сумма: {formatPrice(totalPrice)}</span>
+              </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">e-mail</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="email@example.com"
-                      disabled={loading}
-                      className="border-foreground"
-                    />
-                    {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
-                  </div>
+              {/* Info text */}
+              <div className="bg-secondary/50 p-4 mb-6 text-sm italic">
+                <p className="font-medium mb-2">При подтверждении заказа, консультант проинформирует вас о наличии изделия на складе или необходимости его отшить по вашим параметрам для идеальной посадки</p>
+              </div>
 
-                  {/* Agreement checkbox */}
-                  <div className="flex items-start space-x-2">
-                    <Checkbox
-                      id="agreement"
-                      checked={agreed}
-                      onCheckedChange={(checked) => setAgreed(checked as boolean)}
-                      disabled={loading}
-                    />
-                    <label htmlFor="agreement" className="text-sm leading-relaxed cursor-pointer">
-                      Согласен (-сна) с условиями{" "}
-                      <Link to="/offer" className="underline" onClick={() => setIsCartOpen(false)}>Оферты</Link>,{" "}
-                      <Link to="/privacy" className="underline" onClick={() => setIsCartOpen(false)}>Политики обработки персональных данных</Link>,{" "}
-                      <Link to="/returns" className="underline" onClick={() => setIsCartOpen(false)}>Политики возврата товара</Link>
-                    </label>
-                  </div>
+              {/* Form */}
+              <div className="space-y-4 mb-6">
+                <h3 className="font-medium">Данные получателя</h3>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Номер телефона</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="+375 (XX) XXX-XX-XX"
+                    disabled={loading}
+                    className="border-foreground"
+                  />
+                  {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
                 </div>
 
-                {/* Total and submit */}
-                <div className="text-right mb-4">
-                  <span className="text-lg font-medium">Итоговая сумма: {formatPrice(totalPrice)}</span>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Имя</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Ваше имя"
+                    disabled={loading}
+                    className="border-foreground"
+                  />
+                  {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={loading || !agreed}
-                  className="w-full bg-foreground text-background py-4 font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-                >
-                  {loading ? 'Оформление...' : 'Оформить заказ'}
-                </button>
-              </form>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+                <div className="space-y-2">
+                  <Label htmlFor="email">e-mail</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="email@example.com"
+                    disabled={loading}
+                    className="border-foreground"
+                  />
+                  {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+                </div>
 
-      {/* Hidden WebPay form OUTSIDE dialog so it doesn't get unmounted */}
-      {webPayData && (
-        <form
-          ref={paymentFormRef}
-          action={webPayData.action}
-          method="post"
-          style={{ display: 'none' }}
-        >
-          <input type="hidden" name="*scart" />
-          {Object.entries(webPayData)
-            .filter(([key]) => key !== 'action')
-            .map(([key, value]) => (
-              <input key={key} type="hidden" name={key} value={value} />
-            ))}
-        </form>
-      )}
-    </>
+                {/* Agreement checkbox */}
+                <div className="flex items-start space-x-2">
+                  <Checkbox
+                    id="agreement"
+                    checked={agreed}
+                    onCheckedChange={(checked) => setAgreed(checked as boolean)}
+                    disabled={loading}
+                  />
+                  <label htmlFor="agreement" className="text-sm leading-relaxed cursor-pointer">
+                    Согласен (-сна) с условиями{" "}
+                    <Link to="/offer" className="underline" onClick={() => setIsCartOpen(false)}>Оферты</Link>,{" "}
+                    <Link to="/privacy" className="underline" onClick={() => setIsCartOpen(false)}>Политики обработки персональных данных</Link>,{" "}
+                    <Link to="/returns" className="underline" onClick={() => setIsCartOpen(false)}>Политики возврата товара</Link>
+                  </label>
+                </div>
+              </div>
+
+              {/* Total and submit */}
+              <div className="text-right mb-4">
+                <span className="text-lg font-medium">Итоговая сумма: {formatPrice(totalPrice)}</span>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading || !agreed}
+                className="w-full bg-foreground text-background py-4 font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+              >
+                {loading ? 'Оформление...' : 'Оформить заказ'}
+              </button>
+            </form>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
