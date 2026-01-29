@@ -6,6 +6,23 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Generate SHA-256 signature with sorted keys
+async function generateSignature(params: Record<string, string>, secretKey: string): Promise<string> {
+  // Sort keys alphabetically
+  const sortedKeys = Object.keys(params).sort();
+  
+  // Join values with ';' and append secret key
+  const values = sortedKeys.map(key => params[key]);
+  const stringToSign = values.join(';') + secretKey;
+  
+  console.log('String to sign (sorted values joined with ;):', stringToSign);
+  
+  // Generate SHA-256 hash
+  const msgBuffer = new TextEncoder().encode(stringToSign);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 serve(async (req) => {
   console.log('=== EDGE FUNCTION: webpay-create-payment started ===');
@@ -36,11 +53,11 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const wsbStoreId = Deno.env.get('WSB_STOREID') || '554332557';
-    const wsbSecretKey = Deno.env.get('WSB_SECRET_KEY') || '1';
+    const wsbSecretKey = Deno.env.get('WSB_SECRET_KEY')!;
 
     console.log('Supabase URL:', supabaseUrl);
     console.log('Store ID:', wsbStoreId);
-    console.log('Secret key configured:', wsbSecretKey ? 'yes' : 'no');
+    console.log('Secret key length:', wsbSecretKey?.length);
 
     // Create Supabase client
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -88,10 +105,6 @@ serve(async (req) => {
 
     console.log('Order items:', JSON.stringify(orderItems));
 
-    // Generate seed (timestamp)
-    const seed = Date.now().toString();
-    console.log('Generated seed:', seed);
-
     // Calculate total
     const total = order.total_price.toFixed(2);
     console.log('Total price:', total);
@@ -99,17 +112,6 @@ serve(async (req) => {
     // Order number (first 8 chars of UUID uppercased)
     const orderNum = `ORDER-${orderId.slice(0, 8).toUpperCase()}`;
     console.log('Order number:', orderNum);
-
-    // Generate signature: sha1(seed + wsb_storeid + wsb_order_num + wsb_test + wsb_currency_id + wsb_total + wsb_secret_key)
-    const signatureString = `${seed}${wsbStoreId}${orderNum}1BYN${total}${wsbSecretKey}`;
-    console.log('Signature string:', signatureString);
-    
-    // Use SHA1 for signature
-    const msgBuffer = new TextEncoder().encode(signatureString);
-    const hashBuffer = await crypto.subtle.digest('SHA-1', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const signature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    console.log('Generated signature:', signature);
 
     // URLs
     const baseUrl = 'https://rumor-chic-style.lovable.app';
@@ -121,7 +123,27 @@ serve(async (req) => {
     console.log('Cancel URL:', cancelUrl);
     console.log('Notify URL:', notifyUrl);
 
-    // Build payment form data with invoice items in correct format
+    // Build params for signature (these are the fields that WebPay uses for signature)
+    const signatureParams: Record<string, string> = {
+      wsb_cancel_return_url: cancelUrl,
+      wsb_currency_id: 'BYN',
+      wsb_customer_name: order.customer_name,
+      wsb_email: order.customer_email,
+      wsb_notify_url: notifyUrl,
+      wsb_order_num: orderNum,
+      wsb_phone: order.customer_phone.replace(/[^0-9+]/g, ''),
+      wsb_return_url: returnUrl,
+      wsb_storeid: wsbStoreId,
+      wsb_test: '1',
+      wsb_total: total,
+      wsb_version: '2',
+    };
+
+    // Generate signature with SHA-256
+    const signature = await generateSignature(signatureParams, wsbSecretKey);
+    console.log('Generated SHA-256 signature:', signature);
+
+    // Build payment form data with invoice items
     const paymentData: Record<string, string> = {
       action: 'https://securesandbox.webpay.by/',
       wsb_version: '2',
@@ -131,19 +153,18 @@ serve(async (req) => {
       wsb_order_num: orderNum,
       wsb_test: '1',
       wsb_currency_id: 'BYN',
-      wsb_seed: seed,
       wsb_customer_name: order.customer_name,
       wsb_customer_address: order.delivery_address,
       wsb_return_url: returnUrl,
       wsb_cancel_return_url: cancelUrl,
       wsb_notify_url: notifyUrl,
       wsb_email: order.customer_email,
-      wsb_phone: order.customer_phone.replace(/[^0-9]/g, ''),
+      wsb_phone: order.customer_phone.replace(/[^0-9+]/g, ''),
       wsb_total: total,
       wsb_signature: signature,
     };
 
-    // Add invoice items in correct format: wsb_invoice_item_name[0], wsb_invoice_item_quantity[0], etc.
+    // Add invoice items in correct format
     orderItems?.forEach((item, index) => {
       const itemName = item.product_name + (item.size ? ` (${item.size})` : '') + (item.color ? ` - ${item.color}` : '');
       paymentData[`wsb_invoice_item_name[${index}]`] = itemName;
