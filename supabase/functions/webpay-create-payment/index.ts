@@ -6,24 +6,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Generate SHA-256 signature with sorted keys
-async function generateSignature(params: Record<string, string>, secretKey: string): Promise<string> {
-  // Sort keys alphabetically
-  const sortedKeys = Object.keys(params).sort();
-  
-  // Join values with ';' and append secret key
-  const values = sortedKeys.map(key => params[key]);
-  const stringToSign = values.join(';') + secretKey;
-  
-  console.log('String to sign (sorted values joined with ;):', stringToSign);
-  
-  // Generate SHA-256 hash
-  const msgBuffer = new TextEncoder().encode(stringToSign);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
 serve(async (req) => {
   console.log('=== EDGE FUNCTION: webpay-create-payment started ===');
   
@@ -105,13 +87,34 @@ serve(async (req) => {
 
     console.log('Order items:', JSON.stringify(orderItems));
 
-    // Calculate total
+    // Generate seed (timestamp)
+    const seed = Date.now().toString();
+    console.log('Generated seed:', seed);
+
+    // Calculate total - format with decimal places
     const total = order.total_price.toFixed(2);
     console.log('Total price:', total);
 
     // Order number (first 8 chars of UUID uppercased)
     const orderNum = `ORDER-${orderId.slice(0, 8).toUpperCase()}`;
     console.log('Order number:', orderNum);
+
+    // Currency
+    const currencyId = 'BYN';
+    const testMode = '1';
+
+    // Generate signature according to WebPay docs:
+    // SHA1(wsb_seed + wsb_storeid + wsb_order_num + wsb_test + wsb_currency_id + wsb_total + SecretKey)
+    // Fields must be concatenated WITHOUT separators in exact order
+    const signatureString = `${seed}${wsbStoreId}${orderNum}${testMode}${currencyId}${total}${wsbSecretKey}`;
+    console.log('Signature string:', signatureString);
+    
+    // Use SHA1 for version 2 (as per official docs)
+    const msgBuffer = new TextEncoder().encode(signatureString);
+    const hashBuffer = await crypto.subtle.digest('SHA-1', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const signature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    console.log('Generated SHA-1 signature:', signature);
 
     // URLs
     const baseUrl = 'https://rumor-chic-style.lovable.app';
@@ -123,27 +126,7 @@ serve(async (req) => {
     console.log('Cancel URL:', cancelUrl);
     console.log('Notify URL:', notifyUrl);
 
-    // Build params for signature (these are the fields that WebPay uses for signature)
-    const signatureParams: Record<string, string> = {
-      wsb_cancel_return_url: cancelUrl,
-      wsb_currency_id: 'BYN',
-      wsb_customer_name: order.customer_name,
-      wsb_email: order.customer_email,
-      wsb_notify_url: notifyUrl,
-      wsb_order_num: orderNum,
-      wsb_phone: order.customer_phone.replace(/[^0-9+]/g, ''),
-      wsb_return_url: returnUrl,
-      wsb_storeid: wsbStoreId,
-      wsb_test: '1',
-      wsb_total: total,
-      wsb_version: '2',
-    };
-
-    // Generate signature with SHA-256
-    const signature = await generateSignature(signatureParams, wsbSecretKey);
-    console.log('Generated SHA-256 signature:', signature);
-
-    // Build payment form data with invoice items
+    // Build payment form data
     const paymentData: Record<string, string> = {
       action: 'https://securesandbox.webpay.by/',
       wsb_version: '2',
@@ -151,15 +134,16 @@ serve(async (req) => {
       wsb_storeid: wsbStoreId,
       wsb_store: 'RUMOR',
       wsb_order_num: orderNum,
-      wsb_test: '1',
-      wsb_currency_id: 'BYN',
+      wsb_test: testMode,
+      wsb_currency_id: currencyId,
+      wsb_seed: seed,
       wsb_customer_name: order.customer_name,
       wsb_customer_address: order.delivery_address,
       wsb_return_url: returnUrl,
       wsb_cancel_return_url: cancelUrl,
       wsb_notify_url: notifyUrl,
       wsb_email: order.customer_email,
-      wsb_phone: order.customer_phone.replace(/[^0-9+]/g, ''),
+      wsb_phone: order.customer_phone.replace(/[^0-9]/g, ''),
       wsb_total: total,
       wsb_signature: signature,
     };
