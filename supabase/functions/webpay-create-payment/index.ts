@@ -101,7 +101,7 @@ serve(async (req) => {
 
     // Currency and test mode
     const currencyId = 'BYN';
-    const testMode = 1; // Number for JSON API
+    const testMode = 0; // Production mode (0 = real payments)
 
     // Generate signature according to WebPay docs:
     // SHA1(wsb_seed + wsb_storeid + wsb_order_num + wsb_test + wsb_currency_id + wsb_total + SecretKey)
@@ -157,8 +157,8 @@ serve(async (req) => {
     console.log('=== WebPay API Request Payload ===');
     console.log(JSON.stringify(paymentPayload, null, 2));
 
-    // Make API request to WebPay
-    const webpayApiUrl = 'https://securesandbox.webpay.by/api/v1/payment';
+    // Make API request to WebPay (production endpoint)
+    const webpayApiUrl = 'https://payment.webpay.by/api/v1/payment';
     console.log('Sending request to:', webpayApiUrl);
 
     const webpayResponse = await fetch(webpayApiUrl, {
