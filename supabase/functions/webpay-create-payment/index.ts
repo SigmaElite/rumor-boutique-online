@@ -102,7 +102,7 @@ serve(async (req) => {
 
     // Currency and test mode
     const currencyId = 'BYN';
-    const testMode = 0; // Production mode
+    const testMode = 1; // TEST mode for sandbox environment
 
     // Calculate total from order items to ensure it matches
     const itemNames: string[] = [];
@@ -136,8 +136,12 @@ serve(async (req) => {
     // Use calculated total to ensure consistency
     const total = calculatedTotal;
     
-    // Format total for signature - must match wsb_total format exactly
-    const totalStr = total.toFixed(2);
+    // IMPORTANT: Format total for signature must match wsb_total exactly
+    // If total has no decimals, use integer format in BOTH signature and payload
+    const hasDecimals = total % 1 !== 0;
+    const totalStr = hasDecimals ? total.toFixed(2) : total.toString();
+    console.log('Total value:', total);
+    console.log('Has decimals:', hasDecimals);
     console.log('Total for signature (string):', totalStr);
 
     console.log('=== STAGE 8: GENERATING SIGNATURE ===');
@@ -169,9 +173,10 @@ serve(async (req) => {
     const cleanPhone = order.customer_phone.replace(/[^0-9]/g, '');
     console.log('Clean phone:', cleanPhone);
 
-    // Build JSON payload - IMPORTANT: wsb_storeid must be a string but wsb_total must be a number
+    // Build JSON payload
+    // CRITICAL: wsb_total must be in the SAME format as used in signature calculation
     const paymentPayload = {
-      wsb_storeid: wsbStoreId, // String as per docs "number >= 1" but examples show string
+      wsb_storeid: wsbStoreId,
       wsb_order_num: orderNum,
       wsb_currency_id: currencyId,
       wsb_version: 2,
@@ -180,7 +185,7 @@ serve(async (req) => {
       wsb_invoice_item_name: itemNames,
       wsb_invoice_item_quantity: itemQuantities,
       wsb_invoice_item_price: itemPrices,
-      wsb_total: total, // Number, not string
+      wsb_total: hasDecimals ? total : Math.floor(total), // Match signature format exactly
       wsb_signature: signature,
       wsb_store: 'RUMOR',
       wsb_language_id: 'russian',
@@ -197,7 +202,8 @@ serve(async (req) => {
     console.log('Full payload:', JSON.stringify(paymentPayload, null, 2));
 
     console.log('=== STAGE 12: SENDING REQUEST TO WEBPAY ===');
-    const webpayApiUrl = 'https://payment.webpay.by/api/v1/payment';
+    // Use sandbox URL for testing
+    const webpayApiUrl = 'https://securesandbox.webpay.by/api/v1/payment';
     console.log('WebPay API URL:', webpayApiUrl);
 
     const webpayResponse = await fetch(webpayApiUrl, {
