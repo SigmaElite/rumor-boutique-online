@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
 serve(async (req) => {
@@ -87,11 +87,11 @@ serve(async (req) => {
 
     console.log('Order items:', JSON.stringify(orderItems));
 
-    // Generate seed (timestamp)
+    // Generate seed (timestamp as string)
     const seed = Date.now().toString();
     console.log('Generated seed:', seed);
 
-    // Calculate total - format with decimal places
+    // Calculate total - format with 2 decimal places
     const total = order.total_price.toFixed(2);
     console.log('Total price:', total);
 
@@ -99,9 +99,9 @@ serve(async (req) => {
     const orderNum = `ORDER-${orderId.slice(0, 8).toUpperCase()}`;
     console.log('Order number:', orderNum);
 
-    // Currency
+    // Currency and test mode
     const currencyId = 'BYN';
-    const testMode = '1';
+    const testMode = 1; // Number for JSON API
 
     // Generate signature according to WebPay docs:
     // SHA1(wsb_seed + wsb_storeid + wsb_order_num + wsb_test + wsb_currency_id + wsb_total + SecretKey)
@@ -126,41 +126,100 @@ serve(async (req) => {
     console.log('Cancel URL:', cancelUrl);
     console.log('Notify URL:', notifyUrl);
 
-    // Build payment form data
-    const paymentData: Record<string, string> = {
-      action: 'https://securesandbox.webpay.by/',
-      wsb_version: '2',
-      wsb_language_id: 'russian',
+    // Build JSON payload for WebPay API
+    const paymentPayload: Record<string, unknown> = {
       wsb_storeid: wsbStoreId,
-      wsb_store: 'RUMOR',
       wsb_order_num: orderNum,
-      wsb_test: testMode,
       wsb_currency_id: currencyId,
+      wsb_version: 2,
       wsb_seed: seed,
-      wsb_customer_name: order.customer_name,
-      wsb_customer_address: order.delivery_address,
+      wsb_test: testMode,
+      wsb_total: parseFloat(total),
+      wsb_signature: signature,
+      wsb_store: 'RUMOR',
+      wsb_language_id: 'russian',
       wsb_return_url: returnUrl,
       wsb_cancel_return_url: cancelUrl,
       wsb_notify_url: notifyUrl,
+      wsb_customer_name: order.customer_name,
+      wsb_customer_address: order.delivery_address,
       wsb_email: order.customer_email,
       wsb_phone: order.customer_phone.replace(/[^0-9]/g, ''),
-      wsb_total: total,
-      wsb_signature: signature,
+      // Invoice items as arrays
+      wsb_invoice_item_name: orderItems?.map(item => {
+        const itemName = item.product_name + (item.size ? ` (${item.size})` : '') + (item.color ? ` - ${item.color}` : '');
+        return itemName;
+      }) || [],
+      wsb_invoice_item_quantity: orderItems?.map(item => item.quantity) || [],
+      wsb_invoice_item_price: orderItems?.map(item => parseFloat(item.product_price.toFixed(2))) || [],
     };
 
-    // Add invoice items in correct format
-    orderItems?.forEach((item, index) => {
-      const itemName = item.product_name + (item.size ? ` (${item.size})` : '') + (item.color ? ` - ${item.color}` : '');
-      paymentData[`wsb_invoice_item_name[${index}]`] = itemName;
-      paymentData[`wsb_invoice_item_quantity[${index}]`] = item.quantity.toString();
-      paymentData[`wsb_invoice_item_price[${index}]`] = item.product_price.toFixed(2);
+    console.log('=== WebPay API Request Payload ===');
+    console.log(JSON.stringify(paymentPayload, null, 2));
+
+    // Make API request to WebPay
+    const webpayApiUrl = 'https://securesandbox.webpay.by/api/v1/payment';
+    console.log('Sending request to:', webpayApiUrl);
+
+    const webpayResponse = await fetch(webpayApiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(paymentPayload),
     });
 
-    console.log('=== Final payment data ===');
-    console.log(JSON.stringify(paymentData, null, 2));
+    const webpayResponseText = await webpayResponse.text();
+    console.log('WebPay API Response Status:', webpayResponse.status);
+    console.log('WebPay API Response:', webpayResponseText);
+
+    if (!webpayResponse.ok) {
+      console.log('ERROR: WebPay API returned error');
+      return new Response(
+        JSON.stringify({ 
+          error: 'WebPay API error', 
+          status: webpayResponse.status,
+          details: webpayResponseText 
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Parse WebPay response
+    let webpayData;
+    try {
+      webpayData = JSON.parse(webpayResponseText);
+    } catch (e) {
+      console.log('ERROR: Failed to parse WebPay response as JSON');
+      return new Response(
+        JSON.stringify({ 
+          error: 'Failed to parse WebPay response', 
+          details: webpayResponseText 
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('WebPay parsed response:', JSON.stringify(webpayData));
+
+    // Extract redirectUrl from response
+    const redirectUrl = webpayData?.data?.redirectUrl;
+    if (!redirectUrl) {
+      console.log('ERROR: No redirectUrl in WebPay response');
+      return new Response(
+        JSON.stringify({ 
+          error: 'No redirectUrl in WebPay response', 
+          details: webpayData 
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('=== SUCCESS: Got redirectUrl ===');
+    console.log('Redirect URL:', redirectUrl);
 
     return new Response(
-      JSON.stringify(paymentData),
+      JSON.stringify({ redirectUrl }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
