@@ -15,10 +15,12 @@ import Footer from '@/components/Footer';
 import { Link } from 'react-router-dom';
 
 const checkoutSchema = z.object({
-  name: z.string().min(2, 'Введите имя'),
-  email: z.string().email('Введите корректный email'),
-  phone: z.string().min(9, 'Введите корректный номер телефона'),
-  address: z.string().min(5, 'Введите адрес доставки'),
+  name: z.string().trim().min(2, 'Введите имя').max(100, 'Имя слишком длинное'),
+  email: z.string().trim().email('Введите корректный email').max(255, 'Email слишком длинный'),
+  phone: z.string().trim().min(9, 'Введите корректный номер телефона').max(20, 'Номер слишком длинный')
+    .regex(/^[\+0-9\s\-\(\)]+$/, 'Номер содержит недопустимые символы'),
+  address: z.string().trim().min(5, 'Введите адрес доставки').max(500, 'Адрес слишком длинный'),
+  comment: z.string().max(1000, 'Комментарий слишком длинный').optional(),
 });
 
 const Checkout = () => {
@@ -53,10 +55,11 @@ const Checkout = () => {
   const validateForm = () => {
     try {
       checkoutSchema.parse({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        address: formData.deliveryMethod === 'delivery' ? formData.address : 'Самовывоз',
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        address: formData.deliveryMethod === 'delivery' ? formData.address.trim() : 'Самовывоз',
+        comment: formData.comment?.trim(),
       });
       setErrors({});
       return true;
@@ -89,67 +92,48 @@ const Checkout = () => {
     setLoading(true);
 
     try {
-      // Create order - user_id can be null for guest checkout
-      const orderData = {
-        total_price: totalPrice,
-        customer_name: formData.name,
-        customer_email: formData.email,
-        customer_phone: formData.phone,
-        delivery_address: formData.deliveryMethod === 'delivery' ? formData.address : 'Самовывоз',
-        delivery_method: formData.deliveryMethod,
-        payment_method: formData.paymentMethod,
-        comment: formData.comment || null,
-        status: 'pending',
-      };
-
-      // Only add user_id if user is authenticated
-      if (user?.id) {
-        (orderData as any).user_id = user.id;
-      }
-
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert(orderData)
-        .select()
-        .single();
-
-      if (orderError) {
-        console.error('Order creation error:', orderError);
-        throw new Error(`Ошибка создания заказа: ${orderError.message}`);
-      }
-
-      if (!order) {
-        throw new Error('Заказ не был создан');
-      }
-
-      // Create order items
+      // Use edge function for secure order creation with server-side price validation
       const orderItems = items.map((item) => ({
-        order_id: order.id,
         product_id: item.product.id,
         product_name: item.product.name,
-        product_price: item.product.price,
+        product_price: item.product.price, // Will be validated server-side
         quantity: item.quantity,
         size: item.size || null,
         color: item.color || null,
       }));
 
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
+      const response = await supabase.functions.invoke('create-order', {
+        body: {
+          customer_name: formData.name.trim(),
+          customer_email: formData.email.trim(),
+          customer_phone: formData.phone.trim(),
+          delivery_address: formData.deliveryMethod === 'delivery' ? formData.address.trim() : 'Самовывоз',
+          delivery_method: formData.deliveryMethod,
+          payment_method: formData.paymentMethod,
+          comment: formData.comment?.trim() || null,
+          items: orderItems,
+        },
+      });
 
-      if (itemsError) {
-        console.error('Order items error:', itemsError);
-        throw new Error(`Ошибка добавления товаров: ${itemsError.message}`);
+      if (response.error) {
+        console.error('Order creation error:', response.error);
+        throw new Error(response.error.message || 'Ошибка создания заказа');
+      }
+
+      const { orderId } = response.data;
+
+      if (!orderId) {
+        throw new Error('Заказ не был создан');
       }
 
       clearCart();
       
       toast({
         title: 'Заказ оформлен!',
-        description: `Номер заказа: ${order.id.slice(0, 8).toUpperCase()}`,
+        description: `Номер заказа: ${orderId.slice(0, 8).toUpperCase()}`,
       });
 
-      navigate('/order-success', { state: { orderId: order.id } });
+      navigate('/order-success', { state: { orderId } });
     } catch (error: any) {
       console.error('Order error:', error);
       toast({
