@@ -38,11 +38,9 @@ serve(async (req) => {
     const wsbStoreId = Deno.env.get('WSB_STOREID') || '554332557';
     const wsbSecretKey = Deno.env.get('WSB_SECRET_KEY')!;
 
-    console.log('Supabase URL:', supabaseUrl);
-    console.log('Store ID:', wsbStoreId);
-    console.log('Store ID type:', typeof wsbStoreId);
-    console.log('Secret key exists:', !!wsbSecretKey);
-    console.log('Secret key length:', wsbSecretKey?.length);
+    // SECURITY: Only log non-sensitive info
+    console.log('Store ID configured:', !!wsbStoreId);
+    console.log('Secret key configured:', !!wsbSecretKey);
 
     console.log('=== STAGE 4: CREATING SUPABASE CLIENT ===');
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -148,7 +146,8 @@ serve(async (req) => {
     // Generate signature according to WebPay docs:
     // SHA1(wsb_seed + wsb_storeid + wsb_order_num + wsb_test + wsb_currency_id + wsb_total + SecretKey)
     const signatureString = `${seed}${wsbStoreId}${orderNum}${testMode}${currencyId}${totalStr}${wsbSecretKey}`;
-    console.log('Signature string:', signatureString);
+    // SECURITY: Don't log signature string as it contains secret key
+    console.log('Signature string length:', signatureString.length);
     
     // Use SHA1 for version 2
     const msgBuffer = new TextEncoder().encode(signatureString);
