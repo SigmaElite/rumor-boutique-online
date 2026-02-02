@@ -100,7 +100,7 @@ serve(async (req) => {
 
     // Currency and test mode
     const currencyId = 'BYN';
-    const testMode = 1; // TEST mode for sandbox environment
+    const testMode = 0; // Production mode
 
     // Calculate total from order items to ensure it matches
     const itemNames: string[] = [];

@@ -72,7 +72,7 @@ serve(async (req) => {
 
     // Note: Signature verification may vary based on WebPay version
     // For sandbox/test mode, we may skip strict verification
-    const isTestMode = true; // Set to false in production
+    const isTestMode = false; // Production mode
     
     if (!isTestMode && signature !== expectedSignature) {
       console.error('Invalid signature', { received: signature, expected: expectedSignature });
