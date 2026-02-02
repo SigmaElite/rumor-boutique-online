@@ -201,8 +201,8 @@ serve(async (req) => {
     console.log('Full payload:', JSON.stringify(paymentPayload, null, 2));
 
     console.log('=== STAGE 12: SENDING REQUEST TO WEBPAY ===');
-    // Use sandbox URL for testing
-    const webpayApiUrl = 'https://securesandbox.webpay.by/api/v1/payment';
+    // Production URL
+    const webpayApiUrl = 'https://payment.webpay.by/api/v1/payment';
     console.log('WebPay API URL:', webpayApiUrl);
 
     const webpayResponse = await fetch(webpayApiUrl, {
