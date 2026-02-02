@@ -209,6 +209,8 @@ serve(async (req) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Referer': 'https://rumor.by/',
+        'Origin': 'https://rumor.by',
       },
       body: JSON.stringify(paymentPayload),
     });
