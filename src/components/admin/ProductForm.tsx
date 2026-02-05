@@ -18,7 +18,19 @@ interface ProductFormProps {
 }
 
 const categories = ['NEW', 'Корсеты', 'Платья', 'Комплекты', 'Юбки'];
-const defaultSizes = ['XS-40', 'S-42', 'M-44', 'L-46', 'XL-48'];
+const defaultSizes = [
+  'XXS-38',
+  'Doll (55 талия, 90 грудь)',
+  'XXS с Push-up',
+  'XS без Push-up',
+  'XS-40',
+  'S с Push-up',
+  'S-42',
+  'M без Push-up',
+  'M-44',
+  'L-46',
+  'XL-48',
+];
 
 const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps) => {
   const { toast } = useToast();
