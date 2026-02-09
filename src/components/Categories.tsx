@@ -75,25 +75,27 @@ const Categories = () => {
               href={`/catalog?category=${category.name}`}
               onClick={(e) => isDragging && e.preventDefault()}
               draggable={false}
-              className="category-card flex-shrink-0 w-36 md:w-72 block"
+              className="category-card flex-shrink-0 w-36 md:w-52 block"
             >
-              {category.image ? (
-                <div className="h-48 md:h-80 w-full overflow-hidden rounded-lg">
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="w-full h-full object-cover pointer-events-none"
-                    draggable={false}
-                  />
-                </div>
-              ) : (
-                <div className="h-48 md:h-80 flex items-center justify-center bg-secondary rounded-lg">
-                  <span className="font-display text-2xl md:text-4xl tracking-[0.2em] uppercase">
-                    {category.name}
-                  </span>
-                </div>
-              )}
-              <span className="block text-center mt-2 text-sm md:text-base tracking-wider uppercase">{category.name}</span>
+              <div className="bg-background border border-border rounded-lg p-4 flex flex-col items-center">
+                {category.image ? (
+                  <div className="h-40 md:h-56 w-full flex items-center justify-center mb-4">
+                    <img
+                      src={category.image}
+                      alt={category.name}
+                      className="max-w-full max-h-full object-contain pointer-events-none"
+                      draggable={false}
+                    />
+                  </div>
+                ) : (
+                  <div className="h-40 md:h-56 w-full flex items-center justify-center mb-4">
+                    <span className="font-display text-2xl md:text-3xl tracking-[0.2em] uppercase text-muted-foreground">
+                      {category.name}
+                    </span>
+                  </div>
+                )}
+                <span className="block text-center text-sm md:text-base tracking-wider uppercase font-body">{category.name}</span>
+              </div>
             </a>
           ))}
         </div>
