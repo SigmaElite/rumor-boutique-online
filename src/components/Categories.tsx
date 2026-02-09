@@ -10,6 +10,9 @@ const defaultCategories = [
   { name: "Платья", image: dressImage },
   { name: "Комплекты", image: setImage },
   { name: "Юбки", image: null },
+  { name: "Костюмы", image: null },
+  { name: "Верхняя одежда", image: null },
+  { name: "Спорт", image: null },
 ];
 
 const Categories = () => {
@@ -72,27 +75,25 @@ const Categories = () => {
               href={`/catalog?category=${category.name}`}
               onClick={(e) => isDragging && e.preventDefault()}
               draggable={false}
-              className="category-card flex-shrink-0 w-36 md:w-72"
+              className="category-card flex-shrink-0 w-36 md:w-72 block"
             >
               {category.image ? (
-                <div className="h-24 md:h-40 flex items-center justify-center">
+                <div className="h-48 md:h-80 w-full overflow-hidden rounded-lg">
                   <img
                     src={category.image}
                     alt={category.name}
-                    className="max-h-full max-w-full object-contain pointer-events-none"
+                    className="w-full h-full object-cover pointer-events-none"
                     draggable={false}
                   />
                 </div>
               ) : (
-                <div className="h-24 md:h-40 flex items-center justify-center">
+                <div className="h-48 md:h-80 flex items-center justify-center bg-secondary rounded-lg">
                   <span className="font-display text-2xl md:text-4xl tracking-[0.2em] uppercase">
                     {category.name}
                   </span>
                 </div>
               )}
-              {category.image && (
-                <span className="category-title">{category.name}</span>
-              )}
+              <span className="block text-center mt-2 text-sm md:text-base tracking-wider uppercase">{category.name}</span>
             </a>
           ))}
         </div>

@@ -8,12 +8,14 @@ export interface PublicProduct {
   price: number;
   old_price: number | null;
   category: string;
+  secondary_category: string | null;
   sizes: string[];
   images: string[];
   colors: string[];
   is_bestseller: boolean;
   is_new: boolean;
   is_sale: boolean;
+  is_last_sizes: boolean;
 }
 
 export const usePublicProducts = () => {
@@ -25,19 +27,21 @@ export const usePublicProducts = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, description, price, old_price, category, sizes, images, colors, is_bestseller, is_new, is_sale')
+        .select('id, name, description, price, old_price, category, secondary_category, sizes, images, colors, is_bestseller, is_new, is_sale, is_last_sizes')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
       setProducts(data?.map(p => ({
         ...p,
+        secondary_category: p.secondary_category || null,
         sizes: p.sizes || [],
         images: p.images || [],
         colors: p.colors || [],
         is_bestseller: p.is_bestseller || false,
         is_new: p.is_new || false,
         is_sale: p.is_sale || false,
+        is_last_sizes: p.is_last_sizes || false,
       })) || []);
     } catch (error) {
       console.error('Error fetching products:', error);

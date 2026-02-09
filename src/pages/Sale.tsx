@@ -14,11 +14,11 @@ const Sale = () => {
   const saleProducts = getSaleProducts();
 
   // Get unique categories from sale products
-  const saleCategories = [...new Set(saleProducts.map(p => p.category).filter(Boolean))];
+  const saleCategories = [...new Set(saleProducts.flatMap(p => [p.category, p.secondary_category].filter(Boolean)))];
 
   const filteredProducts = saleProducts.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = !activeCategory || product.category === activeCategory;
+    const matchesCategory = !activeCategory || product.category === activeCategory || product.secondary_category === activeCategory;
     return matchesSearch && matchesCategory;
   });
 

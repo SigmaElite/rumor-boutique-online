@@ -17,7 +17,7 @@ interface ProductFormProps {
   loading?: boolean;
 }
 
-const categories = ['NEW', 'Корсеты', 'Платья', 'Комплекты', 'Юбки'];
+const categories = ['NEW', 'Корсеты', 'Платья', 'Комплекты', 'Юбки', 'Костюмы', 'Верхняя одежда', 'Спорт'];
 const defaultSizes = [
   'XXS-38',
   'Doll (55 талия, 90 грудь)',
@@ -43,12 +43,14 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
     price: 0,
     old_price: null,
     category: 'NEW',
+    secondary_category: null,
     sizes: [],
     images: [],
     colors: [],
     is_bestseller: false,
     is_new: false,
     is_sale: false,
+    is_last_sizes: false,
   });
 
   // For controlled price input that allows empty string
@@ -66,12 +68,14 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         price: product.price,
         old_price: product.old_price,
         category: product.category,
+        secondary_category: product.secondary_category || null,
         sizes: product.sizes || [],
         images: product.images || [],
         colors: product.colors || [],
         is_bestseller: product.is_bestseller || false,
         is_new: product.is_new || false,
         is_sale: product.is_sale || false,
+        is_last_sizes: product.is_last_sizes || false,
       });
       setPriceValue(product.price.toString());
       setOldPriceValue(product.old_price?.toString() || '');
@@ -83,12 +87,14 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         price: 0,
         old_price: null,
         category: 'NEW',
+        secondary_category: null,
         sizes: [],
         images: [],
         colors: [],
         is_bestseller: false,
         is_new: false,
         is_sale: false,
+        is_last_sizes: false,
       });
       setPriceValue('');
       setOldPriceValue('');
@@ -261,6 +267,26 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
             </SelectTrigger>
             <SelectContent>
               {categories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="secondary_category">Вторая категория</Label>
+          <Select
+            value={formData.secondary_category || 'none'}
+            onValueChange={(value) => setFormData((prev) => ({ ...prev, secondary_category: value === 'none' ? null : value }))}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">— Нет —</SelectItem>
+              {categories.filter(cat => cat !== formData.category).map((cat) => (
                 <SelectItem key={cat} value={cat}>
                   {cat}
                 </SelectItem>
@@ -448,6 +474,15 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
             onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, is_sale: checked }))}
           />
           <Label htmlFor="is_sale">Распродажа</Label>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Switch
+            id="is_last_sizes"
+            checked={formData.is_last_sizes}
+            onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, is_last_sizes: checked }))}
+          />
+          <Label htmlFor="is_last_sizes">Последние размеры</Label>
         </div>
       </div>
 

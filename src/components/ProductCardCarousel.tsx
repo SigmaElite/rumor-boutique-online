@@ -56,11 +56,19 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
           <Heart className={`w-4 h-4 ${isFavorite(product.id) ? 'fill-primary text-primary' : ''}`} />
         </button>
 
-        {discount && (
-          <span className="absolute top-4 left-4 bg-primary text-primary-foreground text-xs tracking-wider px-3 py-1.5 rounded-full z-10">
-            {discount}
-          </span>
-        )}
+        {/* Badges */}
+        <div className="absolute top-4 left-4 flex flex-col gap-1 z-10">
+          {discount && (
+            <span className="bg-primary text-primary-foreground text-xs tracking-wider px-3 py-1.5 rounded-full">
+              {discount}
+            </span>
+          )}
+          {product.is_last_sizes && (
+            <span className="bg-destructive text-destructive-foreground text-xs tracking-wider px-3 py-1.5 rounded-full">
+              Последние размеры
+            </span>
+          )}
+        </div>
         
         <img
           src={images[currentIndex]}
@@ -109,6 +117,29 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
           )}
           <p className="product-price">{product.price} BYN</p>
         </div>
+        {/* Color swatches */}
+        {product.colors && product.colors.length > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-1">
+            {product.colors.map((color) => (
+              <button
+                key={color}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  // Find image index matching this color name (convention: image filename contains color)
+                  const colorLower = color.toLowerCase();
+                  const matchIndex = images.findIndex((img) => img.toLowerCase().includes(colorLower));
+                  if (matchIndex >= 0) {
+                    setCurrentIndex(matchIndex);
+                  }
+                }}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors underline-offset-2 hover:underline"
+              >
+                {color}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </Link>
   );

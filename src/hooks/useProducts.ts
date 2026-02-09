@@ -9,12 +9,14 @@ export interface DbProduct {
   price: number;
   old_price: number | null;
   category: string;
+  secondary_category: string | null;
   sizes: string[];
   images: string[];
   colors: string[];
   is_bestseller: boolean;
   is_new: boolean;
   is_sale: boolean;
+  is_last_sizes: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -25,12 +27,14 @@ export interface ProductFormData {
   price: number;
   old_price: number | null;
   category: string;
+  secondary_category: string | null;
   sizes: string[];
   images: string[];
   colors: string[];
   is_bestseller: boolean;
   is_new: boolean;
   is_sale: boolean;
+  is_last_sizes: boolean;
 }
 
 export const useProducts = () => {
