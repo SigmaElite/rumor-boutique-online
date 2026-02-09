@@ -140,11 +140,13 @@ export type Database = {
           id: string
           images: string[] | null
           is_bestseller: boolean | null
+          is_last_sizes: boolean | null
           is_new: boolean | null
           is_sale: boolean | null
           name: string
           old_price: number | null
           price: number
+          secondary_category: string | null
           sizes: string[] | null
           updated_at: string
         }
@@ -156,11 +158,13 @@ export type Database = {
           id?: string
           images?: string[] | null
           is_bestseller?: boolean | null
+          is_last_sizes?: boolean | null
           is_new?: boolean | null
           is_sale?: boolean | null
           name: string
           old_price?: number | null
           price: number
+          secondary_category?: string | null
           sizes?: string[] | null
           updated_at?: string
         }
@@ -172,11 +176,13 @@ export type Database = {
           id?: string
           images?: string[] | null
           is_bestseller?: boolean | null
+          is_last_sizes?: boolean | null
           is_new?: boolean | null
           is_sale?: boolean | null
           name?: string
           old_price?: number | null
           price?: number
+          secondary_category?: string | null
           sizes?: string[] | null
           updated_at?: string
         }

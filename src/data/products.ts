@@ -28,7 +28,7 @@ export interface Product {
   oldPrice?: string;
 }
 
-export const categories = ["NEW", "Корсеты", "Платья", "Комплекты", "Юбки"];
+export const categories = ["NEW", "Корсеты", "Платья", "Комплекты", "Юбки", "Костюмы", "Верхняя одежда", "Спорт"];
 
 export const allProducts: Product[] = [
   { 

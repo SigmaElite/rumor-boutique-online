@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const categories = ["NEW", "Корсеты", "Платья", "Комплекты", "Юбки"];
+const categories = ["NEW", "Корсеты", "Платья", "Комплекты", "Юбки", "Костюмы", "Верхняя одежда", "Спорт"];
 
 const Catalog = () => {
   const { products, loading } = usePublicProducts();
@@ -42,7 +42,7 @@ const Catalog = () => {
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
+    const matchesCategory = selectedCategory === "all" || product.category === selectedCategory || product.secondary_category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
