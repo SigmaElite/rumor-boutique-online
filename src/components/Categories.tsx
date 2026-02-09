@@ -75,7 +75,7 @@ const Categories = () => {
               href={`/catalog?category=${category.name}`}
               onClick={(e) => isDragging && e.preventDefault()}
               draggable={false}
-              className="category-card flex-shrink-0 w-36 md:w-52 block"
+              className="category-card flex-shrink-0 w-36 md:w-64 block"
             >
               <div className="bg-background border border-border rounded-lg p-4 flex flex-col items-center">
                 {category.image ? (
