@@ -3,11 +3,16 @@ import { useHomepageSettings } from "@/hooks/useHomepageSettings";
 import heroImageFallback from "@/assets/hero-main-new.jpg";
 
 const HERO_CACHE_KEY = "rumor_hero_image";
+const HERO_CACHE_VERSION_KEY = "rumor_hero_version";
 
 const Hero = () => {
   const { heroSettings, loading } = useHomepageSettings();
-  const [cachedImage, setCachedImage] = useState<string | null>(() => {
-    try { return localStorage.getItem(HERO_CACHE_KEY); } catch { return null; }
+  const [displayImage, setDisplayImage] = useState<string>(() => {
+    try {
+      return localStorage.getItem(HERO_CACHE_KEY) || heroImageFallback;
+    } catch {
+      return heroImageFallback;
+    }
   });
 
   const imageUrl = heroSettings?.image_url || heroImageFallback;
@@ -15,13 +20,16 @@ const Hero = () => {
   const subtitle = heroSettings?.subtitle || "new year edition";
 
   useEffect(() => {
-    if (imageUrl) {
-      try { localStorage.setItem(HERO_CACHE_KEY, imageUrl); } catch {}
-      setCachedImage(imageUrl);
+    if (imageUrl && !loading) {
+      try {
+        const cached = localStorage.getItem(HERO_CACHE_KEY);
+        if (cached !== imageUrl) {
+          localStorage.setItem(HERO_CACHE_KEY, imageUrl);
+        }
+      } catch {}
+      setDisplayImage(imageUrl);
     }
-  }, [imageUrl]);
-
-  const displayImage = cachedImage || imageUrl;
+  }, [imageUrl, loading]);
 
   return (
     <section className="relative w-full h-[70svh] md:h-[90svh] overflow-hidden">

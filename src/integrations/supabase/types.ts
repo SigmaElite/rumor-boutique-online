@@ -145,6 +145,7 @@ export type Database = {
           is_sale: boolean | null
           name: string
           old_price: number | null
+          position: number
           price: number
           secondary_category: string | null
           sizes: string[] | null
@@ -163,6 +164,7 @@ export type Database = {
           is_sale?: boolean | null
           name: string
           old_price?: number | null
+          position?: number
           price: number
           secondary_category?: string | null
           sizes?: string[] | null
@@ -181,6 +183,7 @@ export type Database = {
           is_sale?: boolean | null
           name?: string
           old_price?: number | null
+          position?: number
           price?: number
           secondary_category?: string | null
           sizes?: string[] | null

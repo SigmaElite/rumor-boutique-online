@@ -113,9 +113,9 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
         <p className="product-name">{product.name}</p>
         <div className="flex items-center justify-center gap-2">
           {product.old_price && (
-            <span className="text-muted-foreground line-through text-sm">{product.old_price} BYN</span>
+            <span className="text-muted-foreground line-through text-xs">{product.old_price} byn</span>
           )}
-          <p className="product-price">{product.price} BYN</p>
+          <p className="product-price">{product.price} byn</p>
         </div>
         {/* Color swatches */}
         {product.colors && product.colors.length > 1 && (

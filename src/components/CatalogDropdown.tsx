@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { categories } from "@/data/products";
 
 interface CatalogDropdownProps {
@@ -7,7 +7,16 @@ interface CatalogDropdownProps {
 }
 
 const CatalogDropdown = ({ isOpen, onClose }: CatalogDropdownProps) => {
+  const navigate = useNavigate();
+
   if (!isOpen) return null;
+
+  const handleNavigate = (path: string) => {
+    onClose();
+    navigate(path);
+    // Force re-render even if already on catalog page
+    window.dispatchEvent(new Event('catalog-navigate'));
+  };
 
   return (
     <>
@@ -24,23 +33,21 @@ const CatalogDropdown = ({ isOpen, onClose }: CatalogDropdownProps) => {
             <h3 className="font-semibold text-sm tracking-wide mb-4">Каталог</h3>
             <ul className="space-y-2">
               <li>
-                <Link
-                  to="/catalog"
+                <button
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={onClose}
+                  onClick={() => handleNavigate("/catalog")}
                 >
                   Все изделия
-                </Link>
+                </button>
               </li>
               {categories.map((category) => (
                 <li key={category}>
-                  <Link
-                    to={`/catalog?category=${encodeURIComponent(category)}`}
+                  <button
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    onClick={onClose}
+                    onClick={() => handleNavigate(`/catalog?category=${encodeURIComponent(category)}`)}
                   >
                     {category}
-                  </Link>
+                  </button>
                 </li>
               ))}
             </ul>

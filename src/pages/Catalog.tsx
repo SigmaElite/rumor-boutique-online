@@ -22,12 +22,34 @@ const Catalog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // Read category from URL on mount
+  const [selectedSize, setSelectedSize] = useState<string>("all");
+
+  // Read category from URL on mount and on navigation events
   useEffect(() => {
-    const categoryFromUrl = searchParams.get("category");
-    if (categoryFromUrl && categories.includes(categoryFromUrl)) {
-      setSelectedCategory(categoryFromUrl);
-    }
+    const updateCategory = () => {
+      const categoryFromUrl = searchParams.get("category");
+      if (categoryFromUrl && categories.includes(categoryFromUrl)) {
+        setSelectedCategory(categoryFromUrl);
+      } else if (!searchParams.get("category")) {
+        setSelectedCategory("all");
+      }
+    };
+    updateCategory();
+    
+    const handleCatalogNavigate = () => {
+      // Re-read from URL after navigation
+      setTimeout(() => {
+        const params = new URLSearchParams(window.location.search);
+        const cat = params.get("category");
+        if (cat && categories.includes(cat)) {
+          setSelectedCategory(cat);
+        } else {
+          setSelectedCategory("all");
+        }
+      }, 0);
+    };
+    window.addEventListener('catalog-navigate', handleCatalogNavigate);
+    return () => window.removeEventListener('catalog-navigate', handleCatalogNavigate);
   }, [searchParams]);
 
   const handleCategoryChange = (value: string) => {
@@ -40,30 +62,34 @@ const Catalog = () => {
     setSearchParams(searchParams);
   };
 
+  // Collect all unique sizes from products
+  const allSizes = Array.from(new Set(products.flatMap(p => p.sizes || [])));
+
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory || product.secondary_category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    const matchesSize = selectedSize === "all" || (product.sizes && product.sizes.includes(selectedSize));
+    return matchesSearch && matchesCategory && matchesSize;
   });
 
   return (
     <div className="min-h-screen">
       <Header />
-      <main className="pt-6 md:pt-16">
+      <main className="pt-2 md:pt-4">
         <div className="container px-2 md:px-6">
           {/* Breadcrumbs */}
-          <nav className="hidden md:flex items-center gap-2 text-sm mb-8">
+          <nav className="hidden md:flex items-center gap-2 text-sm mb-3">
             <a href="/" className="hover:opacity-60 transition-opacity">Главная</a>
             <span>→</span>
             <span>Каталог</span>
           </nav>
 
           {/* Title */}
-          <h1 className="font-script text-5xl md:text-7xl text-center mb-6 md:mb-12">каталог</h1>
+          <h1 className="font-script text-5xl md:text-7xl text-center mb-3 md:mb-5">каталог</h1>
 
           {/* Filters Row */}
-          <div className="flex flex-col gap-4 mb-16">
-            <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4 mb-6">
+            <div className="flex items-center gap-3 flex-wrap">
               <Select value={selectedCategory} onValueChange={handleCategoryChange}>
                 <SelectTrigger className="w-[180px] border-border bg-background">
                   <SelectValue placeholder="Категория" />
@@ -78,9 +104,25 @@ const Catalog = () => {
                 </SelectContent>
               </Select>
 
+              {allSizes.length > 0 && (
+                <Select value={selectedSize} onValueChange={setSelectedSize}>
+                  <SelectTrigger className="w-[160px] border-border bg-background">
+                    <SelectValue placeholder="Размер" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border-border">
+                    <SelectItem value="all">Все размеры</SelectItem>
+                    {allSizes.map((size) => (
+                      <SelectItem key={size} value={size}>
+                        {size}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+
               <button 
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="p-2 hover:opacity-60 transition-opacity"
+                className="p-2 hover:opacity-60 transition-opacity ml-auto"
               >
                 <Search className="w-5 h-5" />
               </button>
