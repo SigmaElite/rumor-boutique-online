@@ -16,6 +16,7 @@ export interface PublicProduct {
   is_new: boolean;
   is_sale: boolean;
   is_last_sizes: boolean;
+  position: number;
 }
 
 export const usePublicProducts = () => {
@@ -27,7 +28,8 @@ export const usePublicProducts = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, description, price, old_price, category, secondary_category, sizes, images, colors, is_bestseller, is_new, is_sale, is_last_sizes')
+        .select('id, name, description, price, old_price, category, secondary_category, sizes, images, colors, is_bestseller, is_new, is_sale, is_last_sizes, position')
+        .order('position', { ascending: true })
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -42,6 +44,7 @@ export const usePublicProducts = () => {
         is_new: p.is_new || false,
         is_sale: p.is_sale || false,
         is_last_sizes: p.is_last_sizes || false,
+        position: p.position || 0,
       })) || []);
     } catch (error) {
       console.error('Error fetching products:', error);

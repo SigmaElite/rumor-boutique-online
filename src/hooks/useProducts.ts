@@ -17,6 +17,7 @@ export interface DbProduct {
   is_new: boolean;
   is_sale: boolean;
   is_last_sizes: boolean;
+  position: number;
   created_at: string;
   updated_at: string;
 }
@@ -35,6 +36,7 @@ export interface ProductFormData {
   is_new: boolean;
   is_sale: boolean;
   is_last_sizes: boolean;
+  position: number;
 }
 
 export const useProducts = () => {
@@ -48,6 +50,7 @@ export const useProducts = () => {
       const { data, error } = await supabase
         .from('products')
         .select('*')
+        .order('position', { ascending: true })
         .order('created_at', { ascending: false });
 
       if (error) throw error;

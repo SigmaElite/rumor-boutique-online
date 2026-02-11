@@ -51,6 +51,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
     is_new: false,
     is_sale: false,
     is_last_sizes: false,
+    position: 0,
   });
 
   // For controlled price input that allows empty string
@@ -76,6 +77,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         is_new: product.is_new || false,
         is_sale: product.is_sale || false,
         is_last_sizes: product.is_last_sizes || false,
+        position: product.position || 0,
       });
       setPriceValue(product.price.toString());
       setOldPriceValue(product.old_price?.toString() || '');
@@ -95,6 +97,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         is_new: false,
         is_sale: false,
         is_last_sizes: false,
+        position: 0,
       });
       setPriceValue('');
       setOldPriceValue('');
@@ -484,6 +487,18 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
           />
           <Label htmlFor="is_last_sizes">Последние размеры</Label>
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="position">Позиция (порядок сортировки)</Label>
+        <Input
+          id="position"
+          type="number"
+          value={formData.position}
+          onChange={(e) => setFormData((prev) => ({ ...prev, position: parseInt(e.target.value) || 0 }))}
+          placeholder="0"
+        />
+        <p className="text-xs text-muted-foreground">Чем меньше число, тем выше товар в каталоге</p>
       </div>
 
       <div className="flex gap-4 pt-4">
