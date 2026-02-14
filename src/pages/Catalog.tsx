@@ -72,6 +72,25 @@ const Catalog = () => {
     return matchesSearch && matchesCategory && matchesSize;
   });
 
+  // Expand products by color: each color becomes a separate card
+  const expandedProducts = filteredProducts.flatMap(product => {
+    if (product.colors && product.colors.length > 1) {
+      return product.colors.map((color) => {
+        const colorLower = color.toLowerCase();
+        const matchingImageIndex = product.images.findIndex(img => img.toLowerCase().includes(colorLower));
+        const colorImage = matchingImageIndex >= 0 ? product.images[matchingImageIndex] : product.images[0];
+        return {
+          ...product,
+          _colorVariant: color,
+          _key: `${product.id}-${color}`,
+          images: colorImage ? [colorImage] : product.images,
+          colors: [color],
+        };
+      });
+    }
+    return [{ ...product, _colorVariant: undefined as string | undefined, _key: product.id }];
+  });
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -160,20 +179,20 @@ const Catalog = () => {
           {/* Products Grid */}
           {!loading && (
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-8 md:gap-y-20 mb-16">
-              {filteredProducts.map((product) => (
-                <ProductCardCarousel key={product.id} product={product} />
+              {expandedProducts.map((product) => (
+                <ProductCardCarousel key={product._key} product={product} selectedColor={product._colorVariant} />
               ))}
             </div>
           )}
 
-          {!loading && filteredProducts.length === 0 && (
+          {!loading && expandedProducts.length === 0 && (
             <p className="text-center text-muted-foreground py-12">
               Товары не найдены
             </p>
           )}
 
           {/* See Also Section */}
-          {!loading && filteredProducts.length > 0 && (
+          {!loading && expandedProducts.length > 0 && (
             <div className="mt-8 mb-16">
               <h2 className="font-script text-4xl md:text-5xl text-center mb-10">смотрите также</h2>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-8 md:gap-y-20">

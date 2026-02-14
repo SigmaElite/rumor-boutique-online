@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useSearchParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Heart, X } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -26,12 +26,14 @@ import ProductCardCarousel from "@/components/ProductCardCarousel";
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const colorFromUrl = searchParams.get("color");
   const { products, loading, getRelatedProducts } = usePublicProducts();
   const { addItem } = useCart();
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
   
   const [selectedSize, setSelectedSize] = useState<string>("");
-  const [selectedColor, setSelectedColor] = useState<string>("");
+  const [selectedColor, setSelectedColor] = useState<string>(colorFromUrl || "");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [sizeGuideImage, setSizeGuideImage] = useState<string>('/size-guide-table.jpg');
@@ -53,6 +55,17 @@ const ProductPage = () => {
 
   const product = products.find(p => p.id === id);
   const relatedProducts = id ? getRelatedProducts(id, 4) : [];
+
+  // Set image to match color from URL
+  useEffect(() => {
+    if (product && colorFromUrl && product.images) {
+      const colorLower = colorFromUrl.toLowerCase();
+      const matchIndex = product.images.findIndex(img => img.toLowerCase().includes(colorLower));
+      if (matchIndex >= 0) {
+        setCurrentImageIndex(matchIndex);
+      }
+    }
+  }, [product, colorFromUrl]);
 
   const handleAddToCart = () => {
     if (!product) return;
