@@ -7,9 +7,10 @@ import { toast } from "sonner";
 
 interface ProductCardCarouselProps {
   product: PublicProduct;
+  selectedColor?: string;
 }
 
-const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
+const ProductCardCarousel = ({ product, selectedColor }: ProductCardCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = product.images && product.images.length > 0 ? product.images : ['/placeholder.svg'];
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
@@ -44,7 +45,7 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
 
   return (
     <Link 
-      to={`/product/${product.id}`}
+      to={selectedColor ? `/product/${product.id}?color=${encodeURIComponent(selectedColor)}` : `/product/${product.id}`}
       className="product-card group"
     >
       <div className="relative overflow-hidden bg-secondary">
@@ -64,8 +65,8 @@ const ProductCardCarousel = ({ product }: ProductCardCarouselProps) => {
             </span>
           )}
           {product.is_last_sizes && (
-            <span className="bg-destructive text-destructive-foreground text-xs tracking-wider px-3 py-1.5 rounded-full">
-              Последние размеры
+            <span className="bg-destructive text-destructive-foreground text-[10px] tracking-wider px-2 py-1 rounded-full">
+              Заканчивается
             </span>
           )}
         </div>
