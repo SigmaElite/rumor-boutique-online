@@ -340,7 +340,7 @@ const ProductPage = () => {
               <h2 className="font-script text-4xl md:text-5xl text-center mb-10">смотрите также</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {relatedProducts.map((relProduct) => (
-                  <ProductCardCarousel key={relProduct.id} product={relProduct} />
+                  <ProductCardCarousel key={relProduct.id} product={relProduct} hideColors />
                 ))}
               </div>
             </div>

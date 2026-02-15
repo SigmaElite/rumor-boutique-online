@@ -205,7 +205,7 @@ const Catalog = () => {
                   .filter(p => !filteredProducts.some(fp => fp.id === p.id))
                   .slice(0, 6)
                   .map((product) => (
-                    <ProductCardCarousel key={product.id} product={product} />
+                    <ProductCardCarousel key={product.id} product={product} hideColors />
                   ))}
               </div>
             </div>

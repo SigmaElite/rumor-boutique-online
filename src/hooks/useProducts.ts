@@ -74,9 +74,19 @@ export const useProducts = () => {
 
   const createProduct = async (productData: ProductFormData) => {
     try {
+      // Clean color_images: remove empty values
+      const cleanedData = { ...productData };
+      if (cleanedData.color_images) {
+        const cleaned: Record<string, string> = {};
+        for (const [k, v] of Object.entries(cleanedData.color_images)) {
+          if (v && v.trim()) cleaned[k] = v.trim();
+        }
+        cleanedData.color_images = cleaned;
+      }
+
       const { data, error } = await supabase
         .from('products')
-        .insert([productData])
+        .insert([cleanedData])
         .select()
         .single();
 
@@ -102,11 +112,20 @@ export const useProducts = () => {
 
   const updateProduct = async (id: string, productData: Partial<ProductFormData>) => {
     try {
-      console.log('Updating product:', id, productData);
+      // Clean color_images: remove empty values
+      const cleanedData = { ...productData };
+      if (cleanedData.color_images) {
+        const cleaned: Record<string, string> = {};
+        for (const [k, v] of Object.entries(cleanedData.color_images)) {
+          if (v && v.trim()) cleaned[k] = v.trim();
+        }
+        cleanedData.color_images = cleaned;
+      }
+      console.log('Updating product:', id, cleanedData);
       
       const { data, error } = await supabase
         .from('products')
-        .update(productData)
+        .update(cleanedData)
         .eq('id', id)
         .select()
         .single();
