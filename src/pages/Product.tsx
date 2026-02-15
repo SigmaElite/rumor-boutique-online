@@ -56,16 +56,27 @@ const ProductPage = () => {
   const product = products.find(p => p.id === id);
   const relatedProducts = id ? getRelatedProducts(id, 4) : [];
 
-  // Set image to match color from URL
+  // Set image to match selected color (from URL or dropdown)
   useEffect(() => {
-    if (product && colorFromUrl && product.images) {
-      const colorLower = colorFromUrl.toLowerCase();
+    const color = selectedColor || colorFromUrl;
+    if (product && color && product.images) {
+      // First check explicit color_images mapping
+      const explicitImage = product.color_images?.[color];
+      if (explicitImage) {
+        const idx = product.images.indexOf(explicitImage);
+        if (idx >= 0) {
+          setCurrentImageIndex(idx);
+          return;
+        }
+      }
+      // Fallback to filename matching
+      const colorLower = color.toLowerCase();
       const matchIndex = product.images.findIndex(img => img.toLowerCase().includes(colorLower));
       if (matchIndex >= 0) {
         setCurrentImageIndex(matchIndex);
       }
     }
-  }, [product, colorFromUrl]);
+  }, [product, colorFromUrl, selectedColor]);
 
   const handleAddToCart = () => {
     if (!product) return;
