@@ -58,6 +58,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
   // For controlled price input that allows empty string
   const [priceValue, setPriceValue] = useState('');
   const [oldPriceValue, setOldPriceValue] = useState('');
+  const [positionValue, setPositionValue] = useState('0');
 
   const [newColor, setNewColor] = useState('');
   const [newImage, setNewImage] = useState('');
@@ -83,6 +84,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
       });
       setPriceValue(product.price.toString());
       setOldPriceValue(product.old_price?.toString() || '');
+      setPositionValue(product.position?.toString() || '0');
     } else {
       // Reset form for new product
       setFormData({
@@ -104,6 +106,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
       });
       setPriceValue('');
       setOldPriceValue('');
+      setPositionValue('0');
     }
   }, [product]);
 
@@ -537,8 +540,11 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         <Input
           id="position"
           type="number"
-          value={formData.position}
-          onChange={(e) => setFormData((prev) => ({ ...prev, position: parseInt(e.target.value) || 0 }))}
+          value={positionValue}
+          onChange={(e) => {
+            setPositionValue(e.target.value);
+            setFormData((prev) => ({ ...prev, position: e.target.value === '' ? 0 : parseInt(e.target.value) || 0 }));
+          }}
           placeholder="0"
         />
         <p className="text-xs text-muted-foreground">Чем меньше число, тем выше товар в каталоге</p>
