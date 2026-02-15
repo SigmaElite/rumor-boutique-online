@@ -128,7 +128,13 @@ const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCard
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  // Find image index matching this color name (convention: image filename contains color)
+                  // Check explicit color_images first
+                  const explicitImg = product.color_images?.[color];
+                  if (explicitImg) {
+                    const idx = images.findIndex(img => img === explicitImg);
+                    if (idx >= 0) { setCurrentIndex(idx); return; }
+                  }
+                  // Fallback to filename matching
                   const colorLower = color.toLowerCase();
                   const matchIndex = images.findIndex((img) => img.toLowerCase().includes(colorLower));
                   if (matchIndex >= 0) {
