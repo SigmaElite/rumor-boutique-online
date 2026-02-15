@@ -8,9 +8,10 @@ import { toast } from "sonner";
 interface ProductCardCarouselProps {
   product: PublicProduct;
   selectedColor?: string;
+  hideColors?: boolean;
 }
 
-const ProductCardCarousel = ({ product, selectedColor }: ProductCardCarouselProps) => {
+const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCardCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = product.images && product.images.length > 0 ? product.images : ['/placeholder.svg'];
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
@@ -119,7 +120,7 @@ const ProductCardCarousel = ({ product, selectedColor }: ProductCardCarouselProp
           <p className="product-price">{product.price} byn</p>
         </div>
         {/* Color swatches */}
-        {product.colors && product.colors.length > 1 && (
+        {!hideColors && product.colors && product.colors.length > 1 && (
           <div className="flex items-center justify-center gap-2 mt-1">
             {product.colors.map((color) => (
               <button
