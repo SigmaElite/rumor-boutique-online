@@ -13,6 +13,7 @@ export interface DbProduct {
   sizes: string[];
   images: string[];
   colors: string[];
+  color_images: Record<string, string>;
   is_bestseller: boolean;
   is_new: boolean;
   is_sale: boolean;
@@ -32,6 +33,7 @@ export interface ProductFormData {
   sizes: string[];
   images: string[];
   colors: string[];
+  color_images: Record<string, string>;
   is_bestseller: boolean;
   is_new: boolean;
   is_sale: boolean;
@@ -54,7 +56,10 @@ export const useProducts = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts((data || []).map(p => ({
+        ...p,
+        color_images: (p.color_images as Record<string, string>) || {},
+      })));
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({
@@ -112,7 +117,7 @@ export const useProducts = () => {
 
       // Immediately update local state with the new data
       setProducts(prevProducts => 
-        prevProducts.map(p => p.id === id ? { ...p, ...data } : p)
+        prevProducts.map(p => p.id === id ? { ...p, ...data, color_images: (data.color_images as Record<string, string>) || {} } : p)
       );
 
       toast({

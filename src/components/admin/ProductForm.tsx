@@ -47,6 +47,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
     sizes: [],
     images: [],
     colors: [],
+    color_images: {},
     is_bestseller: false,
     is_new: false,
     is_sale: false,
@@ -73,6 +74,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         sizes: product.sizes || [],
         images: product.images || [],
         colors: product.colors || [],
+        color_images: (product.color_images as Record<string, string>) || {},
         is_bestseller: product.is_bestseller || false,
         is_new: product.is_new || false,
         is_sale: product.is_sale || false,
@@ -93,6 +95,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         sizes: [],
         images: [],
         colors: [],
+        color_images: {},
         is_bestseller: false,
         is_new: false,
         is_sale: false,
@@ -364,17 +367,57 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
             Добавить
           </Button>
         </div>
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="flex flex-col gap-3 mt-2">
           {formData.colors.map((color) => (
-            <span
-              key={color}
-              className="inline-flex items-center gap-1 bg-secondary px-2 py-1 rounded text-sm"
-            >
-              {color}
+            <div key={color} className="flex items-center gap-3 p-2 border rounded">
+              <span className="text-sm font-medium min-w-[80px]">{color}</span>
+              {formData.color_images[color] ? (
+                <img src={formData.color_images[color]} alt={color} className="w-12 h-12 object-cover rounded border" />
+              ) : null}
+              <Input
+                placeholder={`URL фото для "${color}"`}
+                value={formData.color_images[color] || ''}
+                onChange={(e) => setFormData(prev => ({
+                  ...prev,
+                  color_images: { ...prev.color_images, [color]: e.target.value },
+                }))}
+                className="flex-1 text-xs"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  // Open file picker for this color
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = 'image/*';
+                  input.onchange = async (ev) => {
+                    const file = (ev.target as HTMLInputElement).files?.[0];
+                    if (!file) return;
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+                    const filePath = `products/${fileName}`;
+                    const { error: uploadError } = await supabase.storage.from('product-images').upload(filePath, file);
+                    if (uploadError) { toast({ title: 'Ошибка', description: uploadError.message, variant: 'destructive' }); return; }
+                    const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(filePath);
+                    if (urlData?.publicUrl) {
+                      setFormData(prev => ({
+                        ...prev,
+                        color_images: { ...prev.color_images, [color]: urlData.publicUrl },
+                        images: prev.images.includes(urlData.publicUrl) ? prev.images : [...prev.images, urlData.publicUrl],
+                      }));
+                    }
+                  };
+                  input.click();
+                }}
+              >
+                <Upload className="h-3 w-3" />
+              </Button>
               <button type="button" onClick={() => removeColor(color)}>
-                <X className="h-3 w-3" />
+                <X className="h-4 w-4" />
               </button>
-            </span>
+            </div>
           ))}
         </div>
       </div>

@@ -76,9 +76,14 @@ const Catalog = () => {
   const expandedProducts = filteredProducts.flatMap(product => {
     if (product.colors && product.colors.length > 1) {
       return product.colors.map((color) => {
-        const colorLower = color.toLowerCase();
-        const matchingImageIndex = product.images.findIndex(img => img.toLowerCase().includes(colorLower));
-        const colorImage = matchingImageIndex >= 0 ? product.images[matchingImageIndex] : product.images[0];
+        // Use explicit color_images mapping first, fallback to filename matching
+        const explicitImage = product.color_images?.[color];
+        let colorImage: string | undefined = explicitImage;
+        if (!colorImage) {
+          const colorLower = color.toLowerCase();
+          const matchingImageIndex = product.images.findIndex(img => img.toLowerCase().includes(colorLower));
+          colorImage = matchingImageIndex >= 0 ? product.images[matchingImageIndex] : product.images[0];
+        }
         return {
           ...product,
           _colorVariant: color,
