@@ -12,6 +12,7 @@ export interface PublicProduct {
   sizes: string[];
   images: string[];
   colors: string[];
+  color_images: Record<string, string>;
   is_bestseller: boolean;
   is_new: boolean;
   is_sale: boolean;
@@ -28,7 +29,7 @@ export const usePublicProducts = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, description, price, old_price, category, secondary_category, sizes, images, colors, is_bestseller, is_new, is_sale, is_last_sizes, position')
+        .select('id, name, description, price, old_price, category, secondary_category, sizes, images, colors, color_images, is_bestseller, is_new, is_sale, is_last_sizes, position')
         .order('position', { ascending: true })
         .order('created_at', { ascending: false });
 
@@ -40,6 +41,7 @@ export const usePublicProducts = () => {
         sizes: p.sizes || [],
         images: p.images || [],
         colors: p.colors || [],
+        color_images: (p.color_images as Record<string, string>) || {},
         is_bestseller: p.is_bestseller || false,
         is_new: p.is_new || false,
         is_sale: p.is_sale || false,
