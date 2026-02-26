@@ -56,27 +56,27 @@ const ProductPage = () => {
   const product = products.find(p => p.id === id);
   const relatedProducts = id ? getRelatedProducts(id, 4) : [];
 
-  // Set image to match selected color (from URL or dropdown)
+  // Set initial color from URL
   useEffect(() => {
-    const color = selectedColor || colorFromUrl;
-    if (product && color && product.images) {
-      // First check explicit color_images mapping
-      const explicitImage = product.color_images?.[color];
-      if (explicitImage) {
-        const idx = product.images.indexOf(explicitImage);
-        if (idx >= 0) {
-          setCurrentImageIndex(idx);
-          return;
-        }
-      }
-      // Fallback to filename matching
-      const colorLower = color.toLowerCase();
-      const matchIndex = product.images.findIndex(img => img.toLowerCase().includes(colorLower));
-      if (matchIndex >= 0) {
-        setCurrentImageIndex(matchIndex);
-      }
+    if (colorFromUrl && product) {
+      setSelectedColor(colorFromUrl);
+    } else if (product && product.colors?.length > 0 && !selectedColor) {
+      setSelectedColor(product.colors[0]);
     }
-  }, [product, colorFromUrl, selectedColor]);
+  }, [product, colorFromUrl]);
+
+  // Get images filtered by selected color
+  const getDisplayImages = (): string[] => {
+    if (selectedColor && product?.color_images?.[selectedColor]?.length > 0) {
+      return product.color_images[selectedColor];
+    }
+    return product?.images && product.images.length > 0 ? product.images : ['/placeholder.svg'];
+  };
+
+  // Reset image index when color changes
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [selectedColor]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -139,7 +139,7 @@ const ProductPage = () => {
     );
   }
 
-  const images = product.images && product.images.length > 0 ? product.images : ['/placeholder.svg'];
+  const images = getDisplayImages();
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);

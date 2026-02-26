@@ -13,8 +13,17 @@ interface ProductCardCarouselProps {
 
 const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCardCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const images = product.images && product.images.length > 0 ? product.images : ['/placeholder.svg'];
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
+
+  // Get images for the selected color, or fallback to product.images
+  const getImagesForColor = (): string[] => {
+    if (selectedColor && product.color_images?.[selectedColor]?.length > 0) {
+      return product.color_images[selectedColor];
+    }
+    return product.images && product.images.length > 0 ? product.images : ['/placeholder.svg'];
+  };
+
+  const images = getImagesForColor();
 
   const nextImage = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -50,7 +59,6 @@ const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCard
       className="product-card group"
     >
       <div className="relative overflow-hidden bg-secondary">
-        {/* Favorite Button */}
         <button
           onClick={handleToggleFavorite}
           className="absolute top-3 right-3 w-8 h-8 bg-background/80 rounded-full flex items-center justify-center z-20 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
@@ -58,17 +66,12 @@ const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCard
           <Heart className={`w-4 h-4 ${isFavorite(product.id) ? 'fill-primary text-primary' : ''}`} />
         </button>
 
-        {/* Badges */}
         <div className="absolute top-4 left-4 flex flex-col gap-1 z-10">
           {discount && (
-            <span className="bg-primary text-primary-foreground text-xs tracking-wider px-3 py-1.5 rounded-full">
-              {discount}
-            </span>
+            <span className="bg-primary text-primary-foreground text-xs tracking-wider px-3 py-1.5 rounded-full">{discount}</span>
           )}
           {product.is_last_sizes && (
-            <span className="bg-destructive text-destructive-foreground text-[10px] tracking-wider px-2 py-1 rounded-full">
-              Заканчивается
-            </span>
+            <span className="bg-destructive text-destructive-foreground text-[10px] tracking-wider px-2 py-1 rounded-full">Заканчивается</span>
           )}
         </div>
         
@@ -76,36 +79,20 @@ const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCard
           src={images[currentIndex]}
           alt={product.name}
           className="product-card-image"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = '/placeholder.svg';
-          }}
+          onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
         />
 
-        {/* Navigation arrows - only show if multiple images */}
         {images.length > 1 && (
           <>
-            <button
-              onClick={prevImage}
-              className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-background"
-            >
+            <button onClick={prevImage} className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-background">
               <ChevronLeft className="w-3 h-3" />
             </button>
-            <button
-              onClick={nextImage}
-              className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-background"
-            >
+            <button onClick={nextImage} className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-background">
               <ChevronRight className="w-3 h-3" />
             </button>
-            
-            {/* Dots indicator */}
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
               {images.map((_, idx) => (
-                <span
-                  key={idx}
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    idx === currentIndex ? "bg-primary" : "bg-primary/40"
-                  }`}
-                />
+                <span key={idx} className={`w-1.5 h-1.5 rounded-full transition-colors ${idx === currentIndex ? "bg-primary" : "bg-primary/40"}`} />
               ))}
             </div>
           </>
@@ -119,34 +106,8 @@ const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCard
           )}
           <p className="product-price">{product.price} byn</p>
         </div>
-        {/* Color swatches */}
-        {!hideColors && product.colors && product.colors.length > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-1">
-            {product.colors.map((color) => (
-              <button
-                key={color}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  // Check explicit color_images first
-                  const explicitImg = product.color_images?.[color];
-                  if (explicitImg) {
-                    const idx = images.findIndex(img => img === explicitImg);
-                    if (idx >= 0) { setCurrentIndex(idx); return; }
-                  }
-                  // Fallback to filename matching
-                  const colorLower = color.toLowerCase();
-                  const matchIndex = images.findIndex((img) => img.toLowerCase().includes(colorLower));
-                  if (matchIndex >= 0) {
-                    setCurrentIndex(matchIndex);
-                  }
-                }}
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors underline-offset-2 hover:underline"
-              >
-                {color}
-              </button>
-            ))}
-          </div>
+        {selectedColor && (
+          <p className="text-xs text-muted-foreground mt-1">{selectedColor}</p>
         )}
       </div>
     </Link>
