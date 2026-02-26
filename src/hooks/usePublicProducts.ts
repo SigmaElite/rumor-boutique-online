@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { normalizeColorImages } from './useProducts';
 
 export interface PublicProduct {
   id: string;
@@ -12,7 +13,7 @@ export interface PublicProduct {
   sizes: string[];
   images: string[];
   colors: string[];
-  color_images: Record<string, string>;
+  color_images: Record<string, string[]>;
   is_bestseller: boolean;
   is_new: boolean;
   is_sale: boolean;
@@ -41,7 +42,7 @@ export const usePublicProducts = () => {
         sizes: p.sizes || [],
         images: p.images || [],
         colors: p.colors || [],
-        color_images: (p.color_images as Record<string, string>) || {},
+        color_images: normalizeColorImages(p.color_images),
         is_bestseller: p.is_bestseller || false,
         is_new: p.is_new || false,
         is_sale: p.is_sale || false,
@@ -80,14 +81,5 @@ export const usePublicProducts = () => {
     return Array.from(cats);
   };
 
-  return {
-    products,
-    loading,
-    fetchProducts,
-    getProductById,
-    getBestsellers,
-    getSaleProducts,
-    getRelatedProducts,
-    getCategories,
-  };
+  return { products, loading, fetchProducts, getProductById, getBestsellers, getSaleProducts, getRelatedProducts, getCategories };
 };

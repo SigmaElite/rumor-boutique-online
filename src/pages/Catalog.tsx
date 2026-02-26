@@ -72,26 +72,29 @@ const Catalog = () => {
     return matchesSearch && matchesCategory && matchesSize;
   });
 
-  // Expand products by color: each color becomes a separate card
   const expandedProducts = filteredProducts.flatMap(product => {
     if (product.colors && product.colors.length > 1) {
       return product.colors.map((color) => {
-        // Use explicit color_images mapping first, fallback to filename matching
-        const explicitImage = product.color_images?.[color];
-        let colorImage: string | undefined = explicitImage;
-        if (!colorImage) {
-          const colorLower = color.toLowerCase();
-          const matchingImageIndex = product.images.findIndex(img => img.toLowerCase().includes(colorLower));
-          colorImage = matchingImageIndex >= 0 ? product.images[matchingImageIndex] : product.images[0];
-        }
+        const colorImages = product.color_images?.[color] || [];
         return {
           ...product,
           _colorVariant: color,
           _key: `${product.id}-${color}`,
-          images: colorImage ? [colorImage] : product.images,
+          images: colorImages.length > 0 ? colorImages : product.images,
           colors: [color],
         };
       });
+    }
+    // Single color or no colors — use color_images of first color if available
+    if (product.colors?.length === 1) {
+      const color = product.colors[0];
+      const colorImages = product.color_images?.[color] || [];
+      return [{
+        ...product,
+        _colorVariant: color,
+        _key: product.id,
+        images: colorImages.length > 0 ? colorImages : product.images,
+      }];
     }
     return [{ ...product, _colorVariant: undefined as string | undefined, _key: product.id }];
   });
