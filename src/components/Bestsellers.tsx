@@ -10,7 +10,35 @@ const Bestsellers = () => {
   const [showAll, setShowAll] = useState(false);
   
   const bestsellers = getBestsellers();
-  const displayProducts = showAll ? bestsellers : bestsellers.slice(0, INITIAL_COUNT);
+
+  // Expand by color: each color becomes a separate card
+  const expandedBestsellers = bestsellers.flatMap(product => {
+    if (product.colors && product.colors.length > 1) {
+      return product.colors.map((color) => {
+        const colorImages = product.color_images?.[color] || [];
+        return {
+          ...product,
+          _colorVariant: color,
+          _key: `${product.id}-${color}`,
+          images: colorImages.length > 0 ? colorImages : product.images,
+          colors: [color],
+        };
+      });
+    }
+    if (product.colors?.length === 1) {
+      const color = product.colors[0];
+      const colorImages = product.color_images?.[color] || [];
+      return [{
+        ...product,
+        _colorVariant: color,
+        _key: product.id,
+        images: colorImages.length > 0 ? colorImages : product.images,
+      }];
+    }
+    return [{ ...product, _colorVariant: undefined as string | undefined, _key: product.id }];
+  });
+
+  const displayProducts = showAll ? expandedBestsellers : expandedBestsellers.slice(0, INITIAL_COUNT);
 
   if (loading) {
     return (
@@ -38,12 +66,12 @@ const Bestsellers = () => {
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-6 gap-y-12 md:gap-y-20">
           {displayProducts.map((product) => (
-            <ProductCardCarousel key={product.id} product={product} />
+            <ProductCardCarousel key={product._key} product={product} selectedColor={product._colorVariant} />
           ))}
         </div>
 
         <div className="flex flex-col items-center gap-6 mt-16">
-          {!showAll && bestsellers.length > INITIAL_COUNT && (
+          {!showAll && expandedBestsellers.length > INITIAL_COUNT && (
             <button onClick={() => setShowAll(true)} className="btn-outline">
               Загрузить ещё
             </button>
