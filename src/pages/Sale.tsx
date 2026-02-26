@@ -22,6 +22,33 @@ const Sale = () => {
     return matchesSearch && matchesCategory;
   });
 
+  // Expand by color
+  const expandedProducts = filteredProducts.flatMap(product => {
+    if (product.colors && product.colors.length > 1) {
+      return product.colors.map((color) => {
+        const colorImages = product.color_images?.[color] || [];
+        return {
+          ...product,
+          _colorVariant: color,
+          _key: `${product.id}-${color}`,
+          images: colorImages.length > 0 ? colorImages : product.images,
+          colors: [color],
+        };
+      });
+    }
+    if (product.colors?.length === 1) {
+      const color = product.colors[0];
+      const colorImages = product.color_images?.[color] || [];
+      return [{
+        ...product,
+        _colorVariant: color,
+        _key: product.id,
+        images: colorImages.length > 0 ? colorImages : product.images,
+      }];
+    }
+    return [{ ...product, _colorVariant: undefined as string | undefined, _key: product.id }];
+  });
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -103,13 +130,13 @@ const Sale = () => {
           {/* Products Grid */}
           {!loading && (
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-8 md:gap-y-20 mb-16">
-              {filteredProducts.map((product) => (
-                <ProductCardCarousel key={product.id} product={product} />
+              {expandedProducts.map((product) => (
+                <ProductCardCarousel key={product._key} product={product} selectedColor={product._colorVariant} />
               ))}
             </div>
           )}
 
-          {!loading && filteredProducts.length === 0 && (
+          {!loading && expandedProducts.length === 0 && (
             <p className="text-center text-muted-foreground py-12">
               Товары не найдены
             </p>
