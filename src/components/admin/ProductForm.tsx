@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DbProduct, ProductFormData, normalizeColorImages } from '@/hooks/useProducts';
+import { DbProduct, ProductFormData, normalizeColorImages, normalizeColorSizes } from '@/hooks/useProducts';
 import { X, Upload, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -49,6 +49,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
     images: [],
     colors: [],
     color_images: {},
+    color_sizes: {},
     is_bestseller: false,
     is_new: false,
     is_sale: false,
@@ -74,6 +75,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         images: product.images || [],
         colors: product.colors || [],
         color_images: normalizeColorImages(product.color_images),
+        color_sizes: normalizeColorSizes(product.color_sizes),
         is_bestseller: product.is_bestseller || false,
         is_new: product.is_new || false,
         is_sale: product.is_sale || false,
@@ -95,6 +97,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         images: [],
         colors: [],
         color_images: {},
+        color_sizes: {},
         is_bestseller: false,
         is_new: false,
         is_sale: false,
@@ -159,6 +162,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         ...prev,
         colors: [...prev.colors, newColor.trim()],
         color_images: { ...prev.color_images, [newColor.trim()]: [] },
+        color_sizes: { ...prev.color_sizes, [newColor.trim()]: [...prev.sizes] },
       }));
       setNewColor('');
     }
@@ -168,10 +172,26 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
     setFormData((prev) => {
       const newColorImages = { ...prev.color_images };
       delete newColorImages[color];
+      const newColorSizes = { ...prev.color_sizes };
+      delete newColorSizes[color];
       return {
         ...prev,
         colors: prev.colors.filter((c) => c !== color),
         color_images: newColorImages,
+        color_sizes: newColorSizes,
+      };
+    });
+  };
+
+  const toggleColorSize = (color: string, size: string) => {
+    setFormData((prev) => {
+      const currentSizes = prev.color_sizes[color] || [];
+      const newSizes = currentSizes.includes(size)
+        ? currentSizes.filter(s => s !== size)
+        : [...currentSizes, size];
+      return {
+        ...prev,
+        color_sizes: { ...prev.color_sizes, [color]: newSizes },
       };
     });
   };
@@ -298,6 +318,25 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
                       </button>
                     </div>
                   ))}
+                </div>
+
+                {/* Sizes for this color */}
+                <div className="space-y-1">
+                  <span className="text-xs text-muted-foreground">Доступные размеры для "{color}":</span>
+                  <div className="flex flex-wrap gap-1">
+                    {defaultSizes.map((size) => (
+                      <Button
+                        key={size}
+                        type="button"
+                        variant={(formData.color_sizes[color] || []).includes(size) ? 'default' : 'outline'}
+                        size="sm"
+                        className="text-xs h-7 px-2"
+                        onClick={() => toggleColorSize(color, size)}
+                      >
+                        {size}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Upload button for this color */}

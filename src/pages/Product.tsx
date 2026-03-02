@@ -76,6 +76,7 @@ const ProductPage = () => {
   // Reset image index when color changes
   useEffect(() => {
     setCurrentImageIndex(0);
+    setSelectedSize("");
   }, [selectedColor]);
 
   const handleAddToCart = () => {
@@ -260,24 +261,29 @@ const ProductPage = () => {
                 или в рассрочку по карте "Халва" от МТБанка
               </p>
 
-              {/* Size Select */}
-              {product.sizes && product.sizes.length > 0 && (
-                <div className="mb-4">
-                  <label className="text-sm font-medium mb-2 block">Размер</label>
-                  <Select value={selectedSize} onValueChange={setSelectedSize}>
-                    <SelectTrigger className="w-40 bg-background border-border">
-                      <SelectValue placeholder="Выберите" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {product.sizes.map((size) => (
-                        <SelectItem key={size} value={size}>
-                          {size}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
+              {/* Size Select - filtered by selected color */}
+              {(() => {
+                const availableSizes = selectedColor && product.color_sizes?.[selectedColor]?.length > 0
+                  ? product.color_sizes[selectedColor]
+                  : product.sizes;
+                return availableSizes && availableSizes.length > 0 ? (
+                  <div className="mb-4">
+                    <label className="text-sm font-medium mb-2 block">Размер</label>
+                    <Select value={selectedSize} onValueChange={setSelectedSize}>
+                      <SelectTrigger className="w-40 bg-background border-border">
+                        <SelectValue placeholder="Выберите" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableSizes.map((size) => (
+                          <SelectItem key={size} value={size}>
+                            {size}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ) : null;
+              })()}
 
               {/* Color Select */}
               {product.colors && product.colors.length > 0 && (

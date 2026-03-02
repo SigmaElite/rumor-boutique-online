@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { normalizeColorImages } from './useProducts';
+import { normalizeColorImages, normalizeColorSizes } from './useProducts';
 
 export interface PublicProduct {
   id: string;
@@ -14,6 +14,7 @@ export interface PublicProduct {
   images: string[];
   colors: string[];
   color_images: Record<string, string[]>;
+  color_sizes: Record<string, string[]>;
   is_bestseller: boolean;
   is_new: boolean;
   is_sale: boolean;
@@ -30,7 +31,7 @@ export const usePublicProducts = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, description, price, old_price, category, secondary_category, sizes, images, colors, color_images, is_bestseller, is_new, is_sale, is_last_sizes, position')
+        .select('id, name, description, price, old_price, category, secondary_category, sizes, images, colors, color_images, color_sizes, is_bestseller, is_new, is_sale, is_last_sizes, position')
         .order('position', { ascending: true })
         .order('created_at', { ascending: false });
 
@@ -43,6 +44,7 @@ export const usePublicProducts = () => {
         images: p.images || [],
         colors: p.colors || [],
         color_images: normalizeColorImages(p.color_images),
+        color_sizes: normalizeColorSizes(p.color_sizes),
         is_bestseller: p.is_bestseller || false,
         is_new: p.is_new || false,
         is_sale: p.is_sale || false,
