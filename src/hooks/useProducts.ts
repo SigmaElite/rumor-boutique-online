@@ -28,6 +28,7 @@ export interface DbProduct {
   images: string[];
   colors: string[];
   color_images: Record<string, string[]>;
+  color_sizes: Record<string, string[]>;
   is_bestseller: boolean;
   is_new: boolean;
   is_sale: boolean;
@@ -48,11 +49,23 @@ export interface ProductFormData {
   images: string[];
   colors: string[];
   color_images: Record<string, string[]>;
+  color_sizes: Record<string, string[]>;
   is_bestseller: boolean;
   is_new: boolean;
   is_sale: boolean;
   is_last_sizes: boolean;
   position: number;
+}
+
+export function normalizeColorSizes(raw: any): Record<string, string[]> {
+  if (!raw || typeof raw !== 'object') return {};
+  const result: Record<string, string[]> = {};
+  for (const [key, val] of Object.entries(raw)) {
+    if (Array.isArray(val)) {
+      result[key] = val.filter((v): v is string => typeof v === 'string' && v.trim() !== '');
+    }
+  }
+  return result;
 }
 
 export const useProducts = () => {
@@ -73,6 +86,7 @@ export const useProducts = () => {
       setProducts((data || []).map(p => ({
         ...p,
         color_images: normalizeColorImages(p.color_images),
+        color_sizes: normalizeColorSizes(p.color_sizes),
       })));
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -96,6 +110,13 @@ export const useProducts = () => {
           if (filtered.length > 0) cleaned[k] = filtered;
         }
         cleanedData.color_images = cleaned;
+      }
+      if (cleanedData.color_sizes) {
+        const cleaned: Record<string, string[]> = {};
+        for (const [k, v] of Object.entries(cleanedData.color_sizes)) {
+          if (v.length > 0) cleaned[k] = v;
+        }
+        cleanedData.color_sizes = cleaned;
       }
 
       const { data, error } = await supabase
@@ -127,6 +148,13 @@ export const useProducts = () => {
         }
         cleanedData.color_images = cleaned;
       }
+      if (cleanedData.color_sizes) {
+        const cleaned: Record<string, string[]> = {};
+        for (const [k, v] of Object.entries(cleanedData.color_sizes)) {
+          if (v.length > 0) cleaned[k] = v;
+        }
+        cleanedData.color_sizes = cleaned;
+      }
       
       const { data, error } = await supabase
         .from('products')
@@ -138,7 +166,7 @@ export const useProducts = () => {
       if (error) throw error;
 
       setProducts(prevProducts => 
-        prevProducts.map(p => p.id === id ? { ...p, ...data, color_images: normalizeColorImages(data.color_images) } : p)
+        prevProducts.map(p => p.id === id ? { ...p, ...data, color_images: normalizeColorImages(data.color_images), color_sizes: normalizeColorSizes(data.color_sizes) } : p)
       );
 
       toast({ title: 'Успешно', description: 'Товар обновлён' });

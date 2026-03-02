@@ -135,6 +135,7 @@ export type Database = {
         Row: {
           category: string
           color_images: Json | null
+          color_sizes: Json | null
           colors: string[] | null
           created_at: string
           description: string | null
@@ -155,6 +156,7 @@ export type Database = {
         Insert: {
           category: string
           color_images?: Json | null
+          color_sizes?: Json | null
           colors?: string[] | null
           created_at?: string
           description?: string | null
@@ -175,6 +177,7 @@ export type Database = {
         Update: {
           category?: string
           color_images?: Json | null
+          color_sizes?: Json | null
           colors?: string[] | null
           created_at?: string
           description?: string | null
