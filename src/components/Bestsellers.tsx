@@ -11,10 +11,14 @@ const Bestsellers = () => {
   
   const bestsellers = getBestsellers();
 
-  // Expand by color: each color becomes a separate card
+  // Expand by color: only show colors listed in bestseller_colors
   const expandedBestsellers = bestsellers.flatMap(product => {
-    if (product.colors && product.colors.length > 1) {
-      return product.colors.map((color) => {
+    const allowedColors = product.bestseller_colors?.length > 0
+      ? product.bestseller_colors
+      : product.colors || [];
+
+    if (allowedColors.length > 1) {
+      return allowedColors.map((color) => {
         const colorImages = product.color_images?.[color] || [];
         return {
           ...product,
@@ -25,8 +29,8 @@ const Bestsellers = () => {
         };
       });
     }
-    if (product.colors?.length === 1) {
-      const color = product.colors[0];
+    if (allowedColors.length === 1) {
+      const color = allowedColors[0];
       const colorImages = product.color_images?.[color] || [];
       return [{
         ...product,
