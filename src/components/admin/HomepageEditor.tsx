@@ -23,6 +23,8 @@ interface BestsellersProduct {
   category: string;
   price: number;
   images: string[];
+  colors: string[];
+  bestseller_colors: string[];
   is_bestseller: boolean;
   position: number;
 }
@@ -64,12 +66,14 @@ const HomepageEditor = () => {
     try {
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, category, price, images, is_bestseller, position')
+        .select('id, name, category, price, images, colors, bestseller_colors, is_bestseller, position')
         .order('position', { ascending: true });
       if (error) throw error;
       setAllProducts(data?.map(p => ({
         ...p,
         images: p.images || [],
+        colors: (p.colors || []) as string[],
+        bestseller_colors: ((p as any).bestseller_colors || []) as string[],
         is_bestseller: p.is_bestseller || false,
         position: p.position || 0,
       })) || []);
@@ -85,15 +89,46 @@ const HomepageEditor = () => {
   }, []);
 
   const toggleBestseller = async (productId: string, current: boolean) => {
+    const product = allProducts.find(p => p.id === productId);
+    const newVal = !current;
+    // When adding to bestsellers, default to all colors
+    const bestseller_colors = newVal ? (product?.colors || []) : [];
     const { error } = await supabase
       .from('products')
-      .update({ is_bestseller: !current })
+      .update({ is_bestseller: newVal, bestseller_colors } as any)
       .eq('id', productId);
     if (error) {
       toast.error('Ошибка обновления');
       return;
     }
-    setAllProducts(prev => prev.map(p => p.id === productId ? { ...p, is_bestseller: !current } : p));
+    setAllProducts(prev => prev.map(p => p.id === productId ? { ...p, is_bestseller: newVal, bestseller_colors } : p));
+  };
+
+  const toggleBestsellerColor = async (productId: string, color: string) => {
+    const product = allProducts.find(p => p.id === productId);
+    if (!product) return;
+    const current = product.bestseller_colors || [];
+    const updated = current.includes(color)
+      ? current.filter(c => c !== color)
+      : [...current, color];
+    
+    if (updated.length === 0) {
+      // If no colors left, remove from bestsellers
+      const { error } = await supabase
+        .from('products')
+        .update({ is_bestseller: false, bestseller_colors: [] } as any)
+        .eq('id', productId);
+      if (error) { toast.error('Ошибка обновления'); return; }
+      setAllProducts(prev => prev.map(p => p.id === productId ? { ...p, is_bestseller: false, bestseller_colors: [] } : p));
+      return;
+    }
+    
+    const { error } = await supabase
+      .from('products')
+      .update({ bestseller_colors: updated } as any)
+      .eq('id', productId);
+    if (error) { toast.error('Ошибка обновления'); return; }
+    setAllProducts(prev => prev.map(p => p.id === productId ? { ...p, bestseller_colors: updated } : p));
   };
 
   const moveBestseller = async (productId: string, direction: 'up' | 'down') => {
@@ -280,6 +315,26 @@ const HomepageEditor = () => {
                           <div className="flex-1 min-w-0">
                             <p className="font-medium truncate">{product.name}</p>
                             <p className="text-sm text-muted-foreground">{product.category} · ${product.price}</p>
+                            {product.colors.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {product.colors.map(color => {
+                                  const isActive = product.bestseller_colors.includes(color);
+                                  return (
+                                    <button
+                                      key={color}
+                                      onClick={() => toggleBestsellerColor(product.id, color)}
+                                      className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${
+                                        isActive
+                                          ? 'bg-primary text-primary-foreground border-primary'
+                                          : 'bg-muted text-muted-foreground border-border opacity-50'
+                                      }`}
+                                    >
+                                      {color}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
                           <div className="flex items-center gap-1">
                             <Button

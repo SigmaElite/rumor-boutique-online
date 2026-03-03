@@ -1,0 +1,1 @@
+ALTER TABLE public.products ADD COLUMN bestseller_colors text[] DEFAULT '{}'::text[];

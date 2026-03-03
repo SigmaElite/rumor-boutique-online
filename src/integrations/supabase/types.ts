@@ -133,6 +133,7 @@ export type Database = {
       }
       products: {
         Row: {
+          bestseller_colors: string[] | null
           category: string
           color_images: Json | null
           color_sizes: Json | null
@@ -154,6 +155,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          bestseller_colors?: string[] | null
           category: string
           color_images?: Json | null
           color_sizes?: Json | null
@@ -175,6 +177,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          bestseller_colors?: string[] | null
           category?: string
           color_images?: Json | null
           color_sizes?: Json | null
