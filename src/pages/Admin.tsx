@@ -121,6 +121,12 @@ const Admin = () => {
               <Package className="h-4 w-4" />
               Товары
             </TabsTrigger>
+             {isAdmin && (
+              <TabsTrigger value="orders" className="flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4" />
+                Заказы
+              </TabsTrigger>
+            )}
             {isAdmin && (
               <TabsTrigger value="homepage" className="flex items-center gap-2">
                 <Home className="h-4 w-4" />
