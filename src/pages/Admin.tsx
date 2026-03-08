@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import ProductForm from '@/components/admin/ProductForm';
 import ProductsTable from '@/components/admin/ProductsTable';
 import HomepageEditor from '@/components/admin/HomepageEditor';
-import { Plus, Search, LogOut, ArrowLeft, Package, Home } from 'lucide-react';
+import OrdersTable from '@/components/admin/OrdersTable';
+import { Plus, Search, LogOut, ArrowLeft, Package, Home, ShoppingBag } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
