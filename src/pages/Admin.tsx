@@ -169,6 +169,13 @@ const Admin = () => {
             />
           </TabsContent>
 
+          {/* Orders Tab */}
+          {isAdmin && (
+            <TabsContent value="orders">
+              <OrdersTable />
+            </TabsContent>
+          )}
+
           {/* Homepage Tab */}
           {isAdmin && (
             <TabsContent value="homepage">
