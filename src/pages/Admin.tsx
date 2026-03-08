@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import ProductForm from '@/components/admin/ProductForm';
 import ProductsTable from '@/components/admin/ProductsTable';
 import HomepageEditor from '@/components/admin/HomepageEditor';
-import { Plus, Search, LogOut, ArrowLeft, Package, Home } from 'lucide-react';
+import OrdersTable from '@/components/admin/OrdersTable';
+import { Plus, Search, LogOut, ArrowLeft, Package, Home, ShoppingBag } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -120,6 +121,12 @@ const Admin = () => {
               <Package className="h-4 w-4" />
               Товары
             </TabsTrigger>
+             {isAdmin && (
+              <TabsTrigger value="orders" className="flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4" />
+                Заказы
+              </TabsTrigger>
+            )}
             {isAdmin && (
               <TabsTrigger value="homepage" className="flex items-center gap-2">
                 <Home className="h-4 w-4" />
@@ -161,6 +168,13 @@ const Admin = () => {
               loading={productsLoading}
             />
           </TabsContent>
+
+          {/* Orders Tab */}
+          {isAdmin && (
+            <TabsContent value="orders">
+              <OrdersTable />
+            </TabsContent>
+          )}
 
           {/* Homepage Tab */}
           {isAdmin && (
