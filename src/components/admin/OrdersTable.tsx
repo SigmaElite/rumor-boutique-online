@@ -18,6 +18,7 @@ interface Order {
   customer_name: string;
   customer_email: string;
   customer_phone: string;
+  customer_instagram: string | null;
   delivery_address: string;
   delivery_method: string;
   payment_method: string;
