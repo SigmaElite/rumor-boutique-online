@@ -241,9 +241,15 @@ const OrdersTable = () => {
                   <span className="text-muted-foreground">Телефон:</span>
                   <div>{selectedOrder.customer_phone}</div>
                 </div>
+                {selectedOrder.customer_instagram && (
+                  <div>
+                    <span className="text-muted-foreground">Instagram:</span>
+                    <div>{selectedOrder.customer_instagram}</div>
+                  </div>
+                )}
                 <div>
                   <span className="text-muted-foreground">Доставка:</span>
-                  <div>{selectedOrder.delivery_method === 'delivery' ? 'Доставка' : 'Самовывоз'}</div>
+                  <div>{selectedOrder.delivery_method}</div>
                 </div>
                 <div className="col-span-2">
                   <span className="text-muted-foreground">Адрес:</span>

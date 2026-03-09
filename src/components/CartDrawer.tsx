@@ -10,12 +10,47 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 
+const deliveryOptions = [
+  {
+    value: "pickup",
+    label: "Самовывоз",
+    description: "ЖК Левада, ул. Нововиленская, 61, 3 подъезд, флагманский магазин Румор",
+    needsAddress: false,
+  },
+  {
+    value: "courier_minsk",
+    label: "Курьер по Минску",
+    description: "Укажите точный адрес, желаемые дату и время доставки",
+    needsAddress: true,
+  },
+  {
+    value: "europochta",
+    label: "Европочта до двери/до отделения",
+    description: "Укажите точный адрес или адрес отделения",
+    needsAddress: true,
+  },
+  {
+    value: "cdek",
+    label: "СДЭК до двери/до отделения",
+    description: "Укажите точный адрес или адрес отделения",
+    needsAddress: true,
+  },
+  {
+    value: "belpochta",
+    label: "Белпочта по всему миру",
+    description: "За пределы РБ и РФ, без возможности возврата/обмена. Укажите точный адрес",
+    needsAddress: true,
+  },
+];
+
 const orderSchema = z.object({
   phone: z.string().min(9, "Введите корректный номер телефона"),
-  name: z.string().min(2, "Введите ваше имя"),
+  name: z.string().min(2, "Введите ваше ФИО"),
   email: z.string().email("Введите корректный email"),
 });
 
@@ -26,6 +61,9 @@ const CartDrawer = () => {
     phone: "+375",
     name: "",
     email: "",
+    instagram: "",
+    deliveryMethod: "pickup",
+    deliveryAddress: "",
   });
   const [agreed, setAgreed] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -42,9 +80,22 @@ const CartDrawer = () => {
     return '/placeholder.svg';
   };
 
+  const selectedDelivery = deliveryOptions.find(d => d.value === formData.deliveryMethod);
+
   const validateForm = () => {
     try {
       orderSchema.parse(formData);
+      const fieldErrors: Record<string, string> = {};
+      
+      if (selectedDelivery?.needsAddress && !formData.deliveryAddress.trim()) {
+        fieldErrors.deliveryAddress = "Укажите адрес доставки";
+      }
+      
+      if (Object.keys(fieldErrors).length > 0) {
+        setErrors(fieldErrors);
+        return false;
+      }
+      
       setErrors({});
       return true;
     } catch (error) {
@@ -53,6 +104,9 @@ const CartDrawer = () => {
         error.errors.forEach((err) => {
           if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
         });
+        if (selectedDelivery?.needsAddress && !formData.deliveryAddress.trim()) {
+          fieldErrors.deliveryAddress = "Укажите адрес доставки";
+        }
         setErrors(fieldErrors);
       }
       return false;
@@ -61,41 +115,35 @@ const CartDrawer = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('=== STEP 1: Form submit started ===');
-    console.log('Form data:', formData);
-    console.log('Cart items:', items);
-    console.log('Total price:', totalPrice);
-    console.log('Agreement accepted:', agreed);
 
     if (!agreed) {
-      console.log('ERROR: Agreement not accepted');
       toast.error("Необходимо принять условия оферты");
       return;
     }
 
     if (items.length === 0) {
-      console.log('ERROR: Cart is empty');
       toast.error("Корзина пуста");
       return;
     }
 
-    if (!validateForm()) {
-      console.log('ERROR: Form validation failed', errors);
-      return;
-    }
+    if (!validateForm()) return;
 
-    console.log('=== STEP 2: Validation passed, creating order ===');
     setLoading(true);
 
     try {
-      // Create order via edge function (bypasses RLS)
-      console.log('Calling create-order edge function...');
+      const deliveryLabel = selectedDelivery?.label || formData.deliveryMethod;
+      const deliveryAddress = selectedDelivery?.needsAddress
+        ? formData.deliveryAddress.trim()
+        : selectedDelivery?.description || "Самовывоз";
+
       const { data: orderResult, error: orderError } = await supabase.functions.invoke('create-order', {
         body: {
           customer_name: formData.name,
           customer_email: formData.email,
           customer_phone: formData.phone,
-          total_price: totalPrice,
+          customer_instagram: formData.instagram.trim() || null,
+          delivery_address: deliveryAddress,
+          delivery_method: deliveryLabel,
           items: items.map((item) => ({
             product_id: item.product.id,
             product_name: item.product.name,
@@ -107,61 +155,25 @@ const CartDrawer = () => {
         }
       });
 
-      if (orderError) {
-        console.log('=== ERROR: Order creation failed ===');
-        console.log('Order error:', orderError);
-        throw orderError;
-      }
-
-      if (!orderResult?.orderId) {
-        console.log('=== ERROR: No orderId returned ===');
-        throw new Error('No orderId returned from server');
-      }
-
-      console.log('=== STEP 3: Order created successfully ===');
-      console.log('Order ID:', orderResult.orderId);
-
-      // Get WebPay redirect URL from JSON API
-      console.log('=== STEP 4: Calling webpay-create-payment function ===');
-      console.log('Calling with orderId:', orderResult.orderId);
+      if (orderError) throw orderError;
+      if (!orderResult?.orderId) throw new Error('No orderId returned from server');
 
       const { data: paymentData, error: paymentError } = await supabase.functions.invoke('webpay-create-payment', {
         body: { orderId: orderResult.orderId }
       });
 
-      console.log('WebPay function response:');
-      console.log('  paymentData:', paymentData);
-      console.log('  paymentError:', paymentError);
+      if (paymentError) throw new Error('Failed to create payment: ' + JSON.stringify(paymentError));
+      if (!paymentData?.redirectUrl) throw new Error('No redirectUrl returned from WebPay');
 
-      if (paymentError) {
-        console.log('=== ERROR: WebPay function error ===');
-        console.log('Payment error details:', paymentError);
-        throw new Error('Failed to create payment: ' + JSON.stringify(paymentError));
-      }
-
-      if (!paymentData?.redirectUrl) {
-        console.log('=== ERROR: No redirectUrl returned ===');
-        console.log('Payment data received:', paymentData);
-        throw new Error('No redirectUrl returned from WebPay');
-      }
-
-      console.log('=== STEP 5: Got redirectUrl, redirecting... ===');
-      console.log('Redirect URL:', paymentData.redirectUrl);
-
-      // Clear cart and form
       clearCart();
-      setFormData({ phone: "+375", name: "", email: "" });
+      setFormData({ phone: "+375", name: "", email: "", instagram: "", deliveryMethod: "pickup", deliveryAddress: "" });
       setAgreed(false);
       setIsCartOpen(false);
       
-      // Redirect to WebPay payment page
       window.location.href = paymentData.redirectUrl;
       
     } catch (error: any) {
-      console.log('=== CATCH BLOCK: Error occurred ===');
-      console.log('Error type:', typeof error);
-      console.log('Error message:', error?.message);
-      console.log('Full error:', error);
+      console.error('Order error:', error);
       toast.error("Не удалось оформить заказ. Попробуйте позже.");
     } finally {
       setLoading(false);
@@ -172,7 +184,6 @@ const CartDrawer = () => {
     <Dialog open={isCartOpen} onOpenChange={setIsCartOpen}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0">
         <div className="p-6">
-          {/* Header */}
           <h2 className="text-xl font-medium mb-6">Ваш заказ:</h2>
 
           {items.length === 0 ? (
@@ -270,7 +281,20 @@ const CartDrawer = () => {
                 <h3 className="font-medium">Данные получателя</h3>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Номер телефона</Label>
+                  <Label htmlFor="name">ФИО *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Фамилия Имя Отчество"
+                    disabled={loading}
+                    className="border-foreground"
+                  />
+                  {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Номер телефона *</Label>
                   <Input
                     id="phone"
                     type="tel"
@@ -284,20 +308,19 @@ const CartDrawer = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="name">Имя</Label>
+                  <Label htmlFor="instagram">Instagram (опционально)</Label>
                   <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Ваше имя"
+                    id="instagram"
+                    value={formData.instagram}
+                    onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
+                    placeholder="@username"
                     disabled={loading}
                     className="border-foreground"
                   />
-                  {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">e-mail</Label>
+                  <Label htmlFor="email">e-mail *</Label>
                   <Input
                     id="email"
                     type="email"
@@ -309,22 +332,63 @@ const CartDrawer = () => {
                   />
                   {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
                 </div>
+              </div>
 
-                {/* Agreement checkbox */}
-                <div className="flex items-start space-x-2">
-                  <Checkbox
-                    id="agreement"
-                    checked={agreed}
-                    onCheckedChange={(checked) => setAgreed(checked as boolean)}
-                    disabled={loading}
-                  />
-                  <label htmlFor="agreement" className="text-sm leading-relaxed cursor-pointer">
-                    Согласен (-сна) с условиями{" "}
-                    <Link to="/offer" className="underline" onClick={() => setIsCartOpen(false)}>Оферты</Link>,{" "}
-                    <Link to="/privacy" className="underline" onClick={() => setIsCartOpen(false)}>Политики обработки персональных данных</Link>,{" "}
-                    <Link to="/returns" className="underline" onClick={() => setIsCartOpen(false)}>Политики возврата товара</Link>
-                  </label>
-                </div>
+              {/* Delivery Options */}
+              <div className="space-y-4 mb-6">
+                <h3 className="font-medium">Тип доставки</h3>
+
+                <RadioGroup
+                  value={formData.deliveryMethod}
+                  onValueChange={(value) => setFormData({ ...formData, deliveryMethod: value, deliveryAddress: "" })}
+                  className="space-y-3"
+                >
+                  {deliveryOptions.map((option) => (
+                    <div key={option.value} className="flex items-start space-x-3">
+                      <RadioGroupItem value={option.value} id={option.value} className="mt-1" />
+                      <Label htmlFor={option.value} className="font-normal cursor-pointer leading-relaxed">
+                        <span className="font-medium">{option.label}</span>
+                        <br />
+                        <span className="text-xs text-muted-foreground">{option.description}</span>
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+
+                {selectedDelivery?.needsAddress && (
+                  <div className="space-y-2 mt-3">
+                    <Label htmlFor="deliveryAddress">Адрес доставки *</Label>
+                    <Textarea
+                      id="deliveryAddress"
+                      value={formData.deliveryAddress}
+                      onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
+                      placeholder={
+                        formData.deliveryMethod === "courier_minsk"
+                          ? "Точный адрес, желаемые дата и время доставки"
+                          : "Точный адрес или адрес отделения"
+                      }
+                      disabled={loading}
+                      className="border-foreground"
+                    />
+                    {errors.deliveryAddress && <p className="text-sm text-destructive">{errors.deliveryAddress}</p>}
+                  </div>
+                )}
+              </div>
+
+              {/* Agreement checkbox */}
+              <div className="flex items-start space-x-2 mb-6">
+                <Checkbox
+                  id="agreement"
+                  checked={agreed}
+                  onCheckedChange={(checked) => setAgreed(checked as boolean)}
+                  disabled={loading}
+                />
+                <label htmlFor="agreement" className="text-sm leading-relaxed cursor-pointer">
+                  Согласен (-сна) с условиями{" "}
+                  <Link to="/offer" className="underline" onClick={() => setIsCartOpen(false)}>Оферты</Link>,{" "}
+                  <Link to="/privacy" className="underline" onClick={() => setIsCartOpen(false)}>Политики обработки персональных данных</Link>,{" "}
+                  <Link to="/returns" className="underline" onClick={() => setIsCartOpen(false)}>Политики возврата товара</Link>
+                </label>
               </div>
 
               {/* Total and submit */}
