@@ -88,6 +88,7 @@ export type Database = {
           comment: string | null
           created_at: string
           customer_email: string
+          customer_instagram: string | null
           customer_name: string
           customer_phone: string
           delivery_address: string
@@ -103,6 +104,7 @@ export type Database = {
           comment?: string | null
           created_at?: string
           customer_email: string
+          customer_instagram?: string | null
           customer_name: string
           customer_phone: string
           delivery_address: string
@@ -118,6 +120,7 @@ export type Database = {
           comment?: string | null
           created_at?: string
           customer_email?: string
+          customer_instagram?: string | null
           customer_name?: string
           customer_phone?: string
           delivery_address?: string

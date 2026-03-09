@@ -10,7 +10,8 @@ const defaultCategories = [
   { name: "Платья", image: dressImage },
   { name: "Комплекты", image: setImage },
   { name: "Юбки", image: null },
-  { name: "Костюмы", image: null },
+  { name: "Жакеты", image: null },
+  { name: "Брюки", image: null },
   { name: "Верхняя одежда", image: null },
   { name: "Спорт", image: null },
 ];
