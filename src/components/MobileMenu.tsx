@@ -89,7 +89,10 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
                         <Link
                           to={`/catalog?category=${encodeURIComponent(category)}`}
                           className="block py-2 text-sm text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wide"
-                          onClick={onClose}
+                          onClick={() => {
+                            onClose();
+                            setTimeout(() => window.dispatchEvent(new Event('catalog-navigate')), 0);
+                          }}
                         >
                           {category}
                         </Link>

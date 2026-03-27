@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const categories = ["NEW", "Корсеты", "Платья", "Комплекты", "Юбки", "Костюмы", "Верхняя одежда", "Спорт"];
+import { categories } from "@/data/products";
 
 const Catalog = () => {
   const { products, loading } = usePublicProducts();
