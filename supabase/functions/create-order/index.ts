@@ -189,6 +189,41 @@ serve(async (req) => {
       );
     }
 
+    // Send Telegram notification
+    try {
+      const botToken = Deno.env.get('TELEGRAM_BOT_TOKEN');
+      const chatId = Deno.env.get('TELEGRAM_CHAT_ID');
+
+      if (botToken && chatId) {
+        const itemsList = validatedItems
+          .map(i => `  • ${i.product_name}${i.size ? ` (${i.size})` : ''}${i.color ? ` — ${i.color}` : ''} × ${i.quantity} — ${i.product_price} BYN`)
+          .join('\n');
+
+        const message = `🛒 <b>Новый заказ!</b>\n\n` +
+          `<b>Клиент:</b> ${customerName}\n` +
+          `<b>Телефон:</b> ${customerPhone}\n` +
+          `<b>Email:</b> ${customerEmail}\n` +
+          (customerInstagram ? `<b>Instagram:</b> ${customerInstagram}\n` : '') +
+          `\n<b>Доставка:</b> ${deliveryMethod}\n` +
+          `<b>Адрес:</b> ${deliveryAddress}\n` +
+          (comment ? `<b>Комментарий:</b> ${comment}\n` : '') +
+          `\n<b>Товары:</b>\n${itemsList}\n` +
+          `\n<b>Итого: ${totalPrice} BYN</b>`;
+
+        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+            parse_mode: 'HTML',
+          }),
+        });
+      }
+    } catch (tgError) {
+      console.error('Telegram notification error:', tgError);
+    }
+
     return new Response(
       JSON.stringify({ orderId: order.id, totalPrice: totalPrice }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
