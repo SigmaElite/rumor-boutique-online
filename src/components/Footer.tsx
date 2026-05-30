@@ -109,22 +109,26 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* Dev credit */}
+        <div className="mt-8 flex justify-end">
+          <a
+            href="https://code-lab-studio.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm opacity-70 hover:opacity-100 transition-opacity underline"
+          >
+            Разработка и продвижение сайтов
+          </a>
+        </div>
+
         {/* Contacts section */}
-        <div className="mt-8 pt-6 border-t border-primary-foreground/20">
+        <div className="mt-4 pt-6 border-t border-primary-foreground/20">
           <h4 className="text-sm font-medium mb-3">Контакты</h4>
           <div className="text-sm opacity-70 space-y-1">
             <p>Почтовый адрес: Беларусь, Минск, ЖК Левада, ул. Нововиленская, 61, 3 подъезд</p>
             <p>Телефон: <a href="tel:+375298379586" className="hover:opacity-100 transition-opacity">+375 29 837 9586</a></p>
             <p>e-mail: <a href="mailto:rumor.by@icloud.com" className="hover:opacity-100 transition-opacity">rumor.by@icloud.com</a></p>
           </div>
-          <a
-            href="https://code-lab-studio.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block mt-4 text-sm opacity-70 hover:opacity-100 transition-opacity underline"
-          >
-            Разработка и продвижение сайтов
-          </a>
         </div>
 
         {/* Payment Systems */}
