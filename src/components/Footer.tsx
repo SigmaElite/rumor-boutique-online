@@ -117,6 +117,14 @@ const Footer = () => {
             <p>Телефон: <a href="tel:+375298379586" className="hover:opacity-100 transition-opacity">+375 29 837 9586</a></p>
             <p>e-mail: <a href="mailto:rumor.by@icloud.com" className="hover:opacity-100 transition-opacity">rumor.by@icloud.com</a></p>
           </div>
+          <a
+            href="https://code-lab-studio.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-4 text-sm opacity-70 hover:opacity-100 transition-opacity underline"
+          >
+            Разработка и продвижение сайтов
+          </a>
         </div>
 
         {/* Payment Systems */}
