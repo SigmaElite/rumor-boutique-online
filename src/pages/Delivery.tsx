@@ -24,10 +24,7 @@ const Delivery = () => {
             Точные условия и доступные способы доставки будут рассчитаны на странице оформления заказа после ввода страны и города доставки, а также озвучены консультантом при подтверждении заказа
           </p>
 
-          <h2 className="font-script text-3xl md:text-4xl tracking-wide mb-3">Цены на доставку</h2>
-          <p className="text-muted-foreground mb-6 max-w-2xl">
-            Доставка Европочта/СДЭК до пункта выдачи/до двери оплачивается за счет клиента по тарифам оператора доставки при получении заказа
-          </p>
+          <h2 className="font-script text-3xl md:text-4xl tracking-wide mb-6">Цены на доставку</h2>
 
           <Tabs defaultValue="ru-by" className="w-full">
             <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-8 flex-wrap">
@@ -52,21 +49,12 @@ const Delivery = () => {
             </TabsList>
 
             <TabsContent value="ru-by" className="space-y-6">
-              <div>
-                <h3 className="font-semibold mb-4">Доставка СДЭК (РФ):</h3>
-                <div className="space-y-2 text-muted-foreground">
-                  <p>• Курьером до двери — <span className="font-medium text-foreground">60 byn (1600 ₽)</span></p>
-                  <p>• До отделения — <span className="font-medium text-foreground">40 byn (1100 ₽)</span></p>
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-4">Европочта (РБ):</h3>
-                <div className="space-y-2 text-muted-foreground">
-                  <p>• Курьером до двери — <span className="font-medium text-foreground">30 byn</span></p>
-                  <p>• До отделения — <span className="font-medium text-foreground">15 byn</span></p>
-                </div>
-              </div>
+              <p className="text-muted-foreground">
+                Доставка Европочта/СДЭК до пункта выдачи/до двери оплачивается за счет клиента по тарифам оператора доставки при получении заказа
+              </p>
             </TabsContent>
+
+
 
 
             <TabsContent value="minsk" className="space-y-6">
