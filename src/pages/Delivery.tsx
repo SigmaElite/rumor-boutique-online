@@ -21,10 +21,13 @@ const Delivery = () => {
           </h1>
 
           <p className="text-muted-foreground mb-8 max-w-2xl">
-            Доставка Европочта/Сдэк до пункта выдачи/до двери оплачивается за счет клиента по тарифам оператора доставки при получении заказа
+            Точные условия и доступные способы доставки будут рассчитаны на странице оформления заказа после ввода страны и города доставки, а также озвучены консультантом при подтверждении заказа
           </p>
 
-          <h2 className="font-script text-3xl md:text-4xl tracking-wide mb-6">Цены на доставку</h2>
+          <h2 className="font-script text-3xl md:text-4xl tracking-wide mb-3">Цены на доставку</h2>
+          <p className="text-muted-foreground mb-6 max-w-2xl">
+            Доставка Европочта/СДЭК до пункта выдачи/до двери оплачивается за счет клиента по тарифам оператора доставки при получении заказа
+          </p>
 
           <Tabs defaultValue="ru-by" className="w-full">
             <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-8 flex-wrap">
