@@ -26,19 +26,13 @@ const Delivery = () => {
 
           <h2 className="font-script text-3xl md:text-4xl tracking-wide mb-6">Цены на доставку</h2>
 
-          <Tabs defaultValue="russia" className="w-full">
+          <Tabs defaultValue="ru-by" className="w-full">
             <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-8 flex-wrap">
               <TabsTrigger 
-                value="russia" 
+                value="ru-by" 
                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 md:px-6 py-4 text-sm"
               >
-                🇷🇺 РФ
-              </TabsTrigger>
-              <TabsTrigger 
-                value="belarus" 
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 md:px-6 py-4 text-sm"
-              >
-                🇧🇾 РБ
+                🇷🇺 РФ / 🇧🇾 РБ
               </TabsTrigger>
               <TabsTrigger 
                 value="minsk" 
@@ -54,25 +48,23 @@ const Delivery = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="russia" className="space-y-6">
+            <TabsContent value="ru-by" className="space-y-6">
               <div>
-                <h3 className="font-semibold mb-4">Доставка СДЭК:</h3>
+                <h3 className="font-semibold mb-4">Доставка СДЭК (РФ):</h3>
                 <div className="space-y-2 text-muted-foreground">
                   <p>• Курьером до двери — <span className="font-medium text-foreground">60 byn (1600 ₽)</span></p>
                   <p>• До отделения — <span className="font-medium text-foreground">40 byn (1100 ₽)</span></p>
                 </div>
               </div>
-            </TabsContent>
-
-            <TabsContent value="belarus" className="space-y-6">
               <div>
-                <h3 className="font-semibold mb-4">Европочта:</h3>
+                <h3 className="font-semibold mb-4">Европочта (РБ):</h3>
                 <div className="space-y-2 text-muted-foreground">
                   <p>• Курьером до двери — <span className="font-medium text-foreground">30 byn</span></p>
                   <p>• До отделения — <span className="font-medium text-foreground">15 byn</span></p>
                 </div>
               </div>
             </TabsContent>
+
 
             <TabsContent value="minsk" className="space-y-6">
               <div>
