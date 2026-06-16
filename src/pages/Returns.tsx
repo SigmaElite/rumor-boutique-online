@@ -61,7 +61,7 @@ const Returns = () => {
             </p>
             <div className="space-y-2 text-muted-foreground">
               <p>Телефон: <a href="tel:+375298379586" className="text-foreground hover:underline">+375 (29) 837-95-86</a></p>
-              <p>Telegram: <a href="https://t.me/rumor_boutique" className="text-foreground hover:underline" target="_blank" rel="noopener noreferrer">@rumor_boutique</a></p>
+              <p>Telegram: <a href="https://t.me/rumor_by" className="text-foreground hover:underline" target="_blank" rel="noopener noreferrer">@rumor_by</a></p>
             </div>
           </div>
 

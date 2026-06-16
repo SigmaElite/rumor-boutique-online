@@ -319,7 +319,7 @@ const ProductPage = () => {
 
               {/* Secondary Actions */}
               <div className="flex flex-wrap gap-3 mb-8">
-                <a href="https://t.me/rumor_boutique" target="_blank" rel="noopener noreferrer" className="btn-primary bg-foreground text-background hover:bg-foreground/90">
+                <a href="https://t.me/rumor_by" target="_blank" rel="noopener noreferrer" className="btn-primary bg-foreground text-background hover:bg-foreground/90">
                   Задать вопрос в Telegram
                 </a>
                 <button onClick={() => setShowSizeGuide(true)} className="btn-outline">

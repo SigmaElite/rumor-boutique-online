@@ -53,4 +53,4 @@ export const getProductsForLook = (productIds: number[]) => {
   return productIds.map(id => allProducts.find(p => p.id === id)).filter(Boolean);
 };
 
-export const TELEGRAM_LINK = "https://t.me/rumor_store";
+export const TELEGRAM_LINK = "https://t.me/rumor_by";
