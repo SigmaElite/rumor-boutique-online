@@ -99,7 +99,7 @@ const Support = () => {
 
               <div className="flex items-center gap-6">
                 <a
-                  href="https://instagram.com/rumor.boutique"
+                  href="https://www.instagram.com/rumor.by"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex flex-col items-center gap-2 hover:opacity-70 transition-opacity"
@@ -115,7 +115,7 @@ const Support = () => {
                 </a>
 
                 <a
-                  href="https://t.me/rumor_boutique"
+                  href="https://t.me/rumor_by"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex flex-col items-center gap-2 hover:opacity-70 transition-opacity"

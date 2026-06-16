@@ -46,7 +46,7 @@ const Contacts = () => {
 
             <div className="flex items-center gap-8">
               <a
-                href="https://instagram.com/rumor.boutique"
+                href="https://www.instagram.com/rumor.by"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm hover:underline"
@@ -54,7 +54,7 @@ const Contacts = () => {
                 Instagram
               </a>
               <a
-                href="https://t.me/rumor_boutique"
+                href="https://t.me/rumor_by"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm hover:underline"

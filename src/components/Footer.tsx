@@ -84,7 +84,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-6 justify-center md:justify-start">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/rumor.by"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm opacity-90 hover:opacity-70 transition-opacity"
@@ -95,7 +95,7 @@ const Footer = () => {
                 Instagram
               </a>
               <a
-                href="https://t.me/"
+                href="https://t.me/rumor_by"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm opacity-90 hover:opacity-70 transition-opacity"
