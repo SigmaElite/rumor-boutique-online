@@ -14,6 +14,7 @@ const defaultCategories = [
   { name: "Брюки", image: null },
   { name: "Верхняя одежда", image: null },
   { name: "Спорт", image: null },
+  { name: "wedding collection", image: null },
 ];
 
 const Categories = () => {
