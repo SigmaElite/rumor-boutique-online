@@ -17,7 +17,7 @@ interface ProductFormProps {
   loading?: boolean;
 }
 
-const categories = ['NEW', 'Корсеты', 'Платья', 'Комплекты', 'Юбки', 'Жакеты', 'Брюки', 'Верхняя одежда', 'Спорт'];
+const categories = ['NEW', 'Корсеты', 'Платья', 'Комплекты', 'Юбки', 'Жакеты', 'Брюки', 'Верхняя одежда', 'Спорт', 'wedding collection'];
 const defaultSizes = [
   'XXS-38',
   'Doll (55 талия, 90 грудь)',
