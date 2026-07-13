@@ -153,6 +153,28 @@ const ProductPage = () => {
 
   return (
     <div className="min-h-screen">
+      <Seo
+        title={`${product.name} — RUMOR`}
+        description={`${product.name} — ${product.price} byn. Купить в интернет-магазине RUMOR. Оригинал, доставка по РБ и миру.`}
+        path={`/product/${product.id}`}
+        image={product.images?.[0]}
+        type="product"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: product.name,
+          image: product.images,
+          description: product.name,
+          brand: { "@type": "Brand", name: "RUMOR" },
+          offers: {
+            "@type": "Offer",
+            url: `https://rumor-chic-style.lovable.app/product/${product.id}`,
+            priceCurrency: "BYN",
+            price: product.price,
+            availability: "https://schema.org/InStock",
+          },
+        }}
+      />
       <div className="hidden md:block">
         <Header />
       </div>
