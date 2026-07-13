@@ -102,6 +102,11 @@ const Catalog = () => {
 
   return (
     <div className="min-h-screen">
+      <Seo
+        title={selectedCategory === "all" ? "Каталог одежды RUMOR — платья, корсеты, жакеты" : `${selectedCategory} — Каталог RUMOR`}
+        description="Каталог премиальной женской одежды RUMOR: вечерние платья, корсеты, жакеты, брюки. Актуальные коллекции, оригинал."
+        path={selectedCategory === "all" ? "/catalog" : `/catalog?category=${encodeURIComponent(selectedCategory)}`}
+      />
       <Header />
       <main className="pt-2 md:pt-4">
         <div className="container px-2 md:px-6">
