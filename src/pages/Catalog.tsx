@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
+import Seo from "@/components/Seo";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { usePublicProducts } from "@/hooks/usePublicProducts";
