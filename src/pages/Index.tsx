@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import Seo from "@/components/Seo";
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import Bestsellers from "@/components/Bestsellers";
