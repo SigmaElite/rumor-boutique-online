@@ -15,7 +15,6 @@ const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCard
   const [currentIndex, setCurrentIndex] = useState(0);
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
 
-  // Get images for the selected color, or fallback to product.images
   const getImagesForColor = (): string[] => {
     if (selectedColor && product.color_images?.[selectedColor]?.length > 0) {
       return product.color_images[selectedColor];
@@ -66,7 +65,25 @@ const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCard
         >
           <Heart className={`w-4 h-4 ${isFavorite(product.id) ? 'fill-primary text-primary' : ''}`} />
         </button>
-...
+
+        <div className="absolute top-4 left-4 flex flex-col gap-1 z-10">
+          {discount && (
+            <span className="bg-primary text-primary-foreground text-xs tracking-wider px-3 py-1.5 rounded-full">{discount}</span>
+          )}
+          {product.is_last_sizes && (
+            <span className="bg-destructive text-destructive-foreground text-[10px] tracking-wider px-2 py-1 rounded-full">Заканчивается</span>
+          )}
+        </div>
+        
+        <img
+          src={images[currentIndex]}
+          alt={product.name}
+          className="product-card-image"
+          onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
+        />
+
+        {images.length > 1 && (
+          <>
             <button onClick={prevImage} aria-label="Предыдущее фото" className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-background">
               <ChevronLeft className="w-3 h-3" />
             </button>
