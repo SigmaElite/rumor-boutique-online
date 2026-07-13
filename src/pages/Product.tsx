@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import ProductCardCarousel from "@/components/ProductCardCarousel";
+import Seo from "@/components/Seo";
 
 const ProductPage = () => {
   const { id } = useParams();
