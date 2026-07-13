@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,6 +33,7 @@ const Support = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"Центр поддержки — RUMOR"} description={"Помощь и поддержка клиентов RUMOR: контакты, ответы на вопросы, связь с менеджером."} path="/support" />
       <Header />
       
       <main>

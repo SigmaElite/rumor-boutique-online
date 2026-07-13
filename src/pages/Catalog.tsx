@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
+import Seo from "@/components/Seo";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { usePublicProducts } from "@/hooks/usePublicProducts";
@@ -101,6 +102,11 @@ const Catalog = () => {
 
   return (
     <div className="min-h-screen">
+      <Seo
+        title={selectedCategory === "all" ? "Каталог одежды RUMOR — платья, корсеты, жакеты" : `${selectedCategory} — Каталог RUMOR`}
+        description="Каталог премиальной женской одежды RUMOR: вечерние платья, корсеты, жакеты, брюки. Актуальные коллекции, оригинал."
+        path={selectedCategory === "all" ? "/catalog" : `/catalog?category=${encodeURIComponent(selectedCategory)}`}
+      />
       <Header />
       <main className="pt-2 md:pt-4">
         <div className="container px-2 md:px-6">
@@ -149,6 +155,7 @@ const Catalog = () => {
 
               <button 
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
+                aria-label={isSearchOpen ? "Скрыть поиск" : "Открыть поиск"}
                 className="p-2 hover:opacity-60 transition-opacity ml-auto"
               >
                 <Search className="w-5 h-5" />

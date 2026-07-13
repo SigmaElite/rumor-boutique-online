@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import ProductCardCarousel from "@/components/ProductCardCarousel";
+import Seo from "@/components/Seo";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -152,6 +153,28 @@ const ProductPage = () => {
 
   return (
     <div className="min-h-screen">
+      <Seo
+        title={`${product.name} — RUMOR`}
+        description={`${product.name} — ${product.price} byn. Купить в интернет-магазине RUMOR. Оригинал, доставка по РБ и миру.`}
+        path={`/product/${product.id}`}
+        image={product.images?.[0]}
+        type="product"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: product.name,
+          image: product.images,
+          description: product.name,
+          brand: { "@type": "Brand", name: "RUMOR" },
+          offers: {
+            "@type": "Offer",
+            url: `https://rumor-chic-style.lovable.app/product/${product.id}`,
+            priceCurrency: "BYN",
+            price: product.price,
+            availability: "https://schema.org/InStock",
+          },
+        }}
+      />
       <div className="hidden md:block">
         <Header />
       </div>
@@ -159,6 +182,7 @@ const ProductPage = () => {
         {/* Back button - mobile top */}
         <button 
           onClick={() => navigate(-1)}
+          aria-label="Назад"
           className="md:hidden absolute top-4 left-4 z-20 w-8 h-8 bg-background/80 rounded-full flex items-center justify-center"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -193,12 +217,14 @@ const ProductPage = () => {
                 <>
                   <button
                     onClick={prevImage}
+                    aria-label="Предыдущее фото"
                     className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-border bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-colors"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <button
                     onClick={nextImage}
+                    aria-label="Следующее фото"
                     className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-border bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-colors"
                   >
                     <ChevronRight className="w-5 h-5" />
@@ -311,6 +337,7 @@ const ProductPage = () => {
                 </button>
                 <button 
                   onClick={handleToggleFavorite}
+                  aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
                   className={`w-12 h-12 flex items-center justify-center border border-border rounded hover:bg-secondary transition-colors ${isFavorite(product.id) ? 'bg-secondary' : ''}`}
                 >
                   <Heart className={`w-5 h-5 ${isFavorite(product.id) ? 'fill-primary text-primary' : ''}`} />

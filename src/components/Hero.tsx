@@ -54,9 +54,10 @@ const Hero = () => {
       
       {/* Overlay Content */}
       <div className="absolute bottom-16 left-8 md:left-16 text-white z-10">
-        <h2 className="font-snell text-3xl md:text-5xl mb-2 drop-shadow-lg">
+        <h1 className="sr-only">RUMOR — премиальная женская одежда: платья, корсеты, жакеты и брюки</h1>
+        <p className="font-snell text-3xl md:text-5xl mb-2 drop-shadow-lg" aria-hidden="true">
           {displayTitle}
-        </h2>
+        </p>
         <p className="font-snell text-xl md:text-2xl drop-shadow-md">
           {displaySubtitle}
         </p>

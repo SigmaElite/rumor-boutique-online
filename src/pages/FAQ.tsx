@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 import {
   Accordion,
   AccordionContent,
@@ -33,6 +34,20 @@ const faqItems = [
 const FAQ = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="FAQ — Часто задаваемые вопросы | RUMOR"
+        description="Ответы на популярные вопросы о размерах, доставке, возврате и гарантии в интернет-магазине RUMOR."
+        path="/faq"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqItems.map((it) => ({
+            "@type": "Question",
+            name: it.question,
+            acceptedAnswer: { "@type": "Answer", text: it.answer },
+          })),
+        }}
+      />
       <Header />
       
       <main>

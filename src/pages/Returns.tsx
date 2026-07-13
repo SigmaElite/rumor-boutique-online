@@ -1,9 +1,11 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 
 const Returns = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"Возврат и обмен — RUMOR"} description={"Правила возврата и обмена товара в интернет-магазине RUMOR: сроки, условия и порядок оформления."} path="/returns" />
       <Header />
       
       <main>
