@@ -159,6 +159,7 @@ const ProductPage = () => {
         {/* Back button - mobile top */}
         <button 
           onClick={() => navigate(-1)}
+          aria-label="Назад"
           className="md:hidden absolute top-4 left-4 z-20 w-8 h-8 bg-background/80 rounded-full flex items-center justify-center"
         >
           <ChevronLeft className="w-5 h-5" />
