@@ -1,10 +1,12 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Delivery = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"Доставка и оплата — RUMOR"} description={"Условия доставки Европочтой и СДЭК по РБ, РФ и в другие страны. Способы оплаты в интернет-магазине RUMOR."} path="/delivery" />
       <Header />
       
       <main>

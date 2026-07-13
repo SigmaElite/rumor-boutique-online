@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 import { usePublicProducts } from "@/hooks/usePublicProducts";
 import ProductCardCarousel from "@/components/ProductCardCarousel";
 
@@ -51,6 +52,7 @@ const Sale = () => {
 
   return (
     <div className="min-h-screen">
+      <Seo title={"Sale — Скидки на одежду RUMOR"} description={"Товары со скидкой в интернет-магазине RUMOR: платья, корсеты и жакеты по специальным ценам."} path="/sale" />
       <Header />
       <main className="pt-6 md:pt-16">
         <div className="container px-2 md:px-6">
