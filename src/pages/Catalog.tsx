@@ -149,6 +149,7 @@ const Catalog = () => {
 
               <button 
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
+                aria-label={isSearchOpen ? "Скрыть поиск" : "Открыть поиск"}
                 className="p-2 hover:opacity-60 transition-opacity ml-auto"
               >
                 <Search className="w-5 h-5" />
