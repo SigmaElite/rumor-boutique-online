@@ -5,6 +5,27 @@ import Seo from "@/components/Seo";
 const Contacts = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="Контакты RUMOR — примерочная в Минске, телефон, соцсети"
+        description="Как связаться с RUMOR: адрес шоурума в Минске (ЖК Левада), телефон +375 29 837-95-86, Instagram и Telegram."
+        path="/contacts"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ClothingStore",
+          name: "RUMOR",
+          telephone: "+375298379586",
+          email: "rumor.by@icloud.com",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "ул. Нововиленская, 61, ЖК Левада, 3 подъезд",
+            addressLocality: "Минск",
+            postalCode: "220053",
+            addressCountry: "BY",
+          },
+          openingHours: "Mo-Su 11:00-20:00",
+          url: "https://rumor-chic-style.lovable.app/contacts",
+        }}
+      />
       <Header />
       
       <main>
