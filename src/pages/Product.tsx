@@ -314,6 +314,7 @@ const ProductPage = () => {
                 </button>
                 <button 
                   onClick={handleToggleFavorite}
+                  aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
                   className={`w-12 h-12 flex items-center justify-center border border-border rounded hover:bg-secondary transition-colors ${isFavorite(product.id) ? 'bg-secondary' : ''}`}
                 >
                   <Heart className={`w-5 h-5 ${isFavorite(product.id) ? 'fill-primary text-primary' : ''}`} />
