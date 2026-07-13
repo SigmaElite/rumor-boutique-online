@@ -194,12 +194,14 @@ const ProductPage = () => {
                 <>
                   <button
                     onClick={prevImage}
+                    aria-label="Предыдущее фото"
                     className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-border bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-colors"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <button
                     onClick={nextImage}
+                    aria-label="Следующее фото"
                     className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-border bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-colors"
                   >
                     <ChevronRight className="w-5 h-5" />
