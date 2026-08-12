@@ -90,8 +90,8 @@ const Categories = () => {
                     />
                   </div>
                 ) : (
-                  <div className="h-40 md:h-56 w-full flex items-center justify-center mb-4">
-                    <span className="font-display text-2xl md:text-3xl tracking-[0.2em] uppercase text-muted-foreground">
+                  <div className="h-40 md:h-56 w-full flex items-center justify-center mb-4 overflow-hidden px-1">
+                    <span className="font-display text-lg md:text-3xl tracking-[0.1em] md:tracking-[0.2em] uppercase text-muted-foreground text-center break-words leading-tight max-w-full">
                       {category.name}
                     </span>
                   </div>
