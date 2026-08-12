@@ -112,7 +112,7 @@ const Footer = () => {
         {/* Dev credit */}
         <div className="mt-8 flex justify-end">
           <a
-            href="https://code-lab-studio.vercel.app/"
+            href="https://t.me/CodeLabW"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm opacity-70 hover:opacity-100 transition-opacity underline"
