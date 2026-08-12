@@ -96,7 +96,7 @@ const Categories = () => {
                     </span>
                   </div>
                 )}
-                <span className="block text-center text-sm md:text-base tracking-wider uppercase font-body">{category.name}</span>
+                <span className="block text-center text-[0.65rem] md:text-base tracking-wider uppercase font-body break-words leading-tight">{category.name}</span>
               </div>
             </a>
           ))}
