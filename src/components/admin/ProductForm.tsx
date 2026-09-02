@@ -30,6 +30,7 @@ const defaultSizes = [
   'M-44',
   'L-46',
   'XL-48',
+  'Предзаказ',
 ];
 
 const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps) => {
