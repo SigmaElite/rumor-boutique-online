@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
 import { z } from "zod";
+import { thumbUrl } from "@/lib/image";
 
 const deliveryOptions = [
   {
@@ -209,8 +210,10 @@ const CartDrawer = () => {
                       className="w-16 h-20 flex-shrink-0 bg-secondary overflow-hidden"
                     >
                       <img
-                        src={getProductImage(item.product.images)}
+                        src={thumbUrl(getProductImage(item.product.images))}
                         alt={item.product.name}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = '/placeholder.svg';

@@ -3,6 +3,7 @@ import { useHomepageSettings } from "@/hooks/useHomepageSettings";
 import corsetImage from "@/assets/product-corset-1.jpg";
 import dressImage from "@/assets/product-dress-1.jpg";
 import setImage from "@/assets/product-set-1.jpg";
+import { getImageUrl } from "@/lib/image";
 
 const defaultCategories = [
   { name: "NEW", image: null },
@@ -83,8 +84,10 @@ const Categories = () => {
                 {category.image ? (
                   <div className="h-40 md:h-56 w-full flex items-center justify-center mb-4">
                     <img
-                      src={category.image}
+                      src={getImageUrl(category.image, 600, 75)}
                       alt={category.name}
+                      loading="lazy"
+                      decoding="async"
                       className="max-w-full max-h-full object-contain pointer-events-none"
                       draggable={false}
                     />
