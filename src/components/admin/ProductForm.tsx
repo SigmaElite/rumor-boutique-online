@@ -9,6 +9,8 @@ import { DbProduct, ProductFormData, normalizeColorImages, normalizeColorSizes }
 import { X, Upload, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { compressImage, thumbUrl } from '@/lib/image';
+
 
 interface ProductFormProps {
   product?: DbProduct | null;
@@ -315,7 +317,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
                 <div className="flex flex-wrap gap-2">
                   {colorImages.map((img, idx) => (
                     <div key={idx} className="relative group">
-                      <img src={img} alt={`${color} ${idx + 1}`} className="w-20 h-24 object-cover rounded border" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+                      <img src={thumbUrl(img)} alt={`${color} ${idx + 1}`} loading="lazy" decoding="async" className="w-20 h-24 object-cover rounded border" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
                       <button type="button" onClick={() => removeColorImage(color, img)} className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground rounded-full p-0.5">
                         <X className="h-3 w-3" />
                       </button>
