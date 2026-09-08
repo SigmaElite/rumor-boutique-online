@@ -210,10 +210,12 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
   const uploadImageForColor = async (color: string, file: File) => {
     setUploadingColorImage(color);
     try {
-      const fileExt = file.name.split('.').pop();
+      const compressed = await compressImage(file);
+      const fileExt = compressed.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `products/${fileName}`;
-      const { error: uploadError } = await supabase.storage.from('product-images').upload(filePath, file);
+      const { error: uploadError } = await supabase.storage.from('product-images').upload(filePath, compressed, { contentType: compressed.type });
+
       if (uploadError) {
         toast({ title: 'Ошибка', description: uploadError.message, variant: 'destructive' });
         return;
