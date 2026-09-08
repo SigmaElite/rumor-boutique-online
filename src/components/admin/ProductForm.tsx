@@ -9,6 +9,8 @@ import { DbProduct, ProductFormData, normalizeColorImages, normalizeColorSizes }
 import { X, Upload, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { compressImage, thumbUrl } from '@/lib/image';
+
 
 interface ProductFormProps {
   product?: DbProduct | null;
@@ -210,10 +212,12 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
   const uploadImageForColor = async (color: string, file: File) => {
     setUploadingColorImage(color);
     try {
-      const fileExt = file.name.split('.').pop();
+      const compressed = await compressImage(file);
+      const fileExt = compressed.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `products/${fileName}`;
-      const { error: uploadError } = await supabase.storage.from('product-images').upload(filePath, file);
+      const { error: uploadError } = await supabase.storage.from('product-images').upload(filePath, compressed, { contentType: compressed.type });
+
       if (uploadError) {
         toast({ title: 'Ошибка', description: uploadError.message, variant: 'destructive' });
         return;
@@ -313,7 +317,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
                 <div className="flex flex-wrap gap-2">
                   {colorImages.map((img, idx) => (
                     <div key={idx} className="relative group">
-                      <img src={img} alt={`${color} ${idx + 1}`} className="w-20 h-24 object-cover rounded border" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+                      <img src={thumbUrl(img)} alt={`${color} ${idx + 1}`} loading="lazy" decoding="async" className="w-20 h-24 object-cover rounded border" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
                       <button type="button" onClick={() => removeColorImage(color, img)} className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground rounded-full p-0.5">
                         <X className="h-3 w-3" />
                       </button>

@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/dialog";
 import ProductCardCarousel from "@/components/ProductCardCarousel";
 import Seo from "@/components/Seo";
+import { fullUrl, thumbUrl } from "@/lib/image";
+
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -205,13 +207,16 @@ const ProductPage = () => {
             {/* Main Image */}
             <div className="relative w-screen md:w-auto aspect-[3/4] max-h-[70vh] bg-secondary overflow-hidden">
               <img
-                src={images[currentImageIndex]}
+                src={fullUrl(images[currentImageIndex])}
                 alt={product.name}
                 className="w-full h-full object-cover"
+                decoding="async"
+                fetchPriority="high"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = '/placeholder.svg';
                 }}
               />
+
               
               {images.length > 1 && (
                 <>
@@ -247,13 +252,16 @@ const ProductPage = () => {
                     }`}
                   >
                     <img
-                      src={img}
+                      src={thumbUrl(img)}
                       alt={`${product.name} - фото ${idx + 1}`}
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = '/placeholder.svg';
                       }}
                     />
+
                   </button>
                 ))}
               </div>

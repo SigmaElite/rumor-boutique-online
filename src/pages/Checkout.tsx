@@ -13,6 +13,7 @@ import { z } from 'zod';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Link } from 'react-router-dom';
+import { thumbUrl } from "@/lib/image";
 
 const deliveryOptions = [
   {
@@ -296,7 +297,7 @@ const Checkout = () => {
                 {items.map((item, index) => (
                   <div key={`${item.product.id}-${item.size}-${item.color}-${index}`} className="flex gap-4">
                     <div className="w-16 h-20 flex-shrink-0 bg-background overflow-hidden">
-                      <img src={getProductImage(item.product.images)} alt={item.product.name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+                      <img src={thumbUrl(getProductImage(item.product.images))} alt={item.product.name} loading="lazy" decoding="async" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium">{item.product.name}</p>

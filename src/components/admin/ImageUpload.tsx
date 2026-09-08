@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Upload, X, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { compressImage } from '@/lib/image';
+
 
 interface ImageUploadProps {
   value: string;
@@ -36,12 +38,14 @@ const ImageUpload = ({ value, onChange, label = 'Изображение', placeh
 
     setUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
+      const compressed = await compressImage(file);
+      const fileExt = compressed.name.split('.').pop();
       const fileName = `homepage/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from('product-images')
-        .upload(fileName, file);
+        .upload(fileName, compressed, { contentType: compressed.type });
+
 
       if (uploadError) throw uploadError;
 

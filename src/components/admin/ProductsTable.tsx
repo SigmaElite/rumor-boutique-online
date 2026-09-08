@@ -9,7 +9,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Pencil, Trash2, Star, Sparkles, Percent } from 'lucide-react';
+import { thumbUrl } from "@/lib/image";
 import {
+
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -64,8 +66,10 @@ const ProductsTable = ({ products, onEdit, onDelete, loading }: ProductsTablePro
               <TableCell>
                 {product.images && product.images[0] ? (
                   <img
-                    src={product.images[0]}
+                    src={thumbUrl(product.images[0])}
                     alt={product.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-12 h-12 object-cover rounded"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/placeholder.svg';

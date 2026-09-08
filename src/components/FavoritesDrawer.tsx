@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { thumbUrl } from "@/lib/image";
 
 const FavoritesDrawer = () => {
   const { favorites, isFavoritesOpen, setIsFavoritesOpen, removeFromFavorites, totalFavorites } = useFavorites();
@@ -56,8 +57,10 @@ const FavoritesDrawer = () => {
                   className="w-20 h-24 flex-shrink-0 bg-secondary overflow-hidden"
                 >
                   <img
-                    src={getProductImage(product)}
+                    src={thumbUrl(getProductImage(product))}
                     alt={product.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/placeholder.svg';

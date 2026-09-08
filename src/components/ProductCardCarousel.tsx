@@ -4,6 +4,8 @@ import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import type { PublicProduct } from "@/hooks/usePublicProducts";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { toast } from "sonner";
+import { thumbUrl } from "@/lib/image";
+
 
 interface ProductCardCarouselProps {
   product: PublicProduct;
@@ -76,11 +78,14 @@ const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCard
         </div>
         
         <img
-          src={images[currentIndex]}
+          src={thumbUrl(images[currentIndex])}
           alt={product.name}
           className="product-card-image"
+          loading="lazy"
+          decoding="async"
           onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
         />
+
 
         {images.length > 1 && (
           <>
