@@ -9,8 +9,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Pencil, Trash2, Star, Sparkles, Percent } from 'lucide-react';
-import {
 import { thumbUrl } from "@/lib/image";
+import {
+
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
