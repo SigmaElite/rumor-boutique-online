@@ -48,7 +48,7 @@ export const getImageUrl = (
 };
 
 /** Миниатюра для каталога / сеток товаров (~40 КБ). */
-export const thumbUrl = (url?: string | null) => getImageUrl(url, 600, 85);
+export const thumbUrl = (url?: string | null) => getImageUrl(url, 800, 90);
 
 /** Фото для карточки товара (~150–200 КБ). */
-export const fullUrl = (url?: string | null) => getImageUrl(url, 1200, 80);
+export const fullUrl = (url?: string | null) => getImageUrl(url, 1600, 90);
