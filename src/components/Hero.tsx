@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useHomepageSettings } from "@/hooks/useHomepageSettings";
+import { fullUrl } from "@/lib/image";
 
 const HERO_CACHE_KEY = "rumor_hero_img";
 const HERO_TITLE_KEY = "rumor_hero_title";
@@ -43,7 +44,7 @@ const Hero = () => {
     <section className="relative w-full h-[70svh] md:h-[90svh] overflow-hidden bg-black">
       {displayImage && (
         <img
-          src={displayImage}
+          src={fullUrl(displayImage)}
           alt={title}
           className="w-full h-full object-cover object-center"
         />
