@@ -5,6 +5,7 @@ import CatalogDropdown from "./CatalogDropdown";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import logoBlack from "@/assets/logo-black.png";
+import LanguageSwitcher from "./LanguageSwitcher";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
@@ -50,6 +51,7 @@ const Header = () => {
 
           {/* Right - Icons */}
           <div className="flex items-center gap-1 md:gap-6 flex-1 md:w-[200px] md:flex-none justify-end">
+            <LanguageSwitcher className="mr-1 md:mr-0" />
             <button 
               onClick={() => setIsFavoritesOpen(true)}
               className="p-1.5 md:p-2 transition-opacity hover:opacity-60 relative" 
