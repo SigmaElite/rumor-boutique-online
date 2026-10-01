@@ -15,6 +15,7 @@ interface ProductCardCarouselProps {
 }
 
 const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCardCarouselProps) => {
+  const { format } = useCurrency();
   const [currentIndex, setCurrentIndex] = useState(0);
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
 

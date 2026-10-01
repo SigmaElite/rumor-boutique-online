@@ -28,6 +28,7 @@ import { fullUrl, thumbUrl } from "@/lib/image";
 
 
 const ProductPage = () => {
+  const { format } = useCurrency();
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

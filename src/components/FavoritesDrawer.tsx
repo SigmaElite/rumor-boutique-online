@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { thumbUrl } from "@/lib/image";
 
 const FavoritesDrawer = () => {
+  const { format } = useCurrency();
   const { favorites, isFavoritesOpen, setIsFavoritesOpen, removeFromFavorites, totalFavorites } = useFavorites();
   const { addItem } = useCart();
 

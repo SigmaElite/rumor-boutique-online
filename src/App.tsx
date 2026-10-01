@@ -7,6 +7,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import { CartProvider } from "./contexts/CartContext";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { CurrencyProvider } from "./contexts/CurrencyContext";
 import CartDrawer from "./components/CartDrawer";
 import FavoritesDrawer from "./components/FavoritesDrawer";
 import Index from "./pages/Index";
@@ -35,6 +36,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
+      <CurrencyProvider>
         <CartProvider>
           <FavoritesProvider>
             <Toaster />
@@ -68,6 +70,7 @@ const App = () => (
           </BrowserRouter>
           </FavoritesProvider>
         </CartProvider>
+      </CurrencyProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
