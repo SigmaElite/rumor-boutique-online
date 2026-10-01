@@ -1,3 +1,4 @@
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
@@ -14,6 +15,7 @@ interface ProductCardCarouselProps {
 }
 
 const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCardCarouselProps) => {
+  const { format } = useCurrency();
   const [currentIndex, setCurrentIndex] = useState(0);
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
 
@@ -107,9 +109,9 @@ const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCard
         <p className="product-name">{product.name}</p>
         <div className="flex items-center justify-center gap-2">
           {product.old_price && (
-            <span className="text-muted-foreground line-through text-xs">{product.old_price} byn</span>
+            <span className="text-muted-foreground line-through text-xs">{format(product.old_price)}</span>
           )}
-          <p className="product-price">{product.price} byn</p>
+          <p className="product-price">{format(product.price)}</p>
         </div>
         {selectedColor && (
           <p className="text-xs text-muted-foreground mt-1">{selectedColor}</p>
