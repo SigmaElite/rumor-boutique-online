@@ -1,3 +1,4 @@
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { useState } from "react";
 import { Minus, Plus, X } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
@@ -69,6 +70,7 @@ const CartDrawer = () => {
   const [agreed, setAgreed] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const { format } = useCurrency();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("ru-RU").format(price) + " BYN";
@@ -255,7 +257,7 @@ const CartDrawer = () => {
                     </div>
 
                     <span className="font-medium whitespace-nowrap">
-                      {formatPrice(item.product.price * item.quantity)}
+                      {format(item.product.price * item.quantity)}
                     </span>
 
                     <button
@@ -271,7 +273,7 @@ const CartDrawer = () => {
 
               {/* Subtotal */}
               <div className="text-right mb-6">
-                <span className="font-medium">Сумма: {formatPrice(totalPrice)}</span>
+                <span className="font-medium">Сумма: {format(totalPrice)}</span>
               </div>
 
               {/* Info text */}
@@ -396,7 +398,7 @@ const CartDrawer = () => {
 
               {/* Total and submit */}
               <div className="text-right mb-4">
-                <span className="text-lg font-medium">Итоговая сумма: {formatPrice(totalPrice)}</span>
+                <span className="text-lg font-medium">Итоговая сумма к оплате: {formatPrice(totalPrice)}</span>
               </div>
 
               <button

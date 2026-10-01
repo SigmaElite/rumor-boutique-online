@@ -1,3 +1,4 @@
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { Trash2 } from "lucide-react";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCart } from "@/contexts/CartContext";
@@ -77,7 +78,7 @@ const FavoritesDrawer = () => {
                     {product.name}
                   </Link>
 
-                  <p className="text-sm mt-1">{product.price} BYN</p>
+                  <p className="text-sm mt-1">{format(product.price)}</p>
 
                   <button
                     onClick={() => handleAddToCart(product)}

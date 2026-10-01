@@ -1,3 +1,4 @@
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link, useSearchParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Heart, X } from "lucide-react";
@@ -284,10 +285,10 @@ const ProductPage = () => {
 
               <div className="flex items-center gap-3 mb-2">
                 {product.old_price && (
-                  <span className="text-muted-foreground line-through text-lg">{product.old_price} BYN</span>
+                  <span className="text-muted-foreground line-through text-lg">{format(product.old_price)}</span>
                 )}
                 <p className="text-xl md:text-2xl font-light">
-                  {product.price} BYN
+                  {format(product.price)}
                 </p>
               </div>
 
