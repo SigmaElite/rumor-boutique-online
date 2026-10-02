@@ -66,7 +66,6 @@ const Categories = () => {
     setIsDragging(false);
   };
 
-  // Use DB settings if available, otherwise fallback to defaults
   const categories = categoriesSettings?.items?.length 
     ? categoriesSettings.items.map((item, idx) => ({
         id: idx + 1,
@@ -74,6 +73,10 @@ const Categories = () => {
         image: item.image_url || defaultCategories[idx]?.image || null,
       }))
     : defaultCategories.map((cat, idx) => ({ id: idx + 1, ...cat }));
+
+  useEffect(() => {
+    updateArrows();
+  }, [categories.length]);
 
   return (
     <section className="pt-8 md:pt-12 pb-4 md:pb-6">
