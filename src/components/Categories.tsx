@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useHomepageSettings } from "@/hooks/useHomepageSettings";
 import corsetImage from "@/assets/product-corset-1.jpg";
 import dressImage from "@/assets/product-dress-1.jpg";
