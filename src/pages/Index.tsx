@@ -38,6 +38,7 @@ const Index = () => {
       <main>
         <Hero />
         <Categories />
+        <NewSection />
         <Bestsellers />
         <YouSection />
       </main>
