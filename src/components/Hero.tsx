@@ -46,7 +46,7 @@ const Hero = () => {
         <img
           src={displayImage}
           alt={title}
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-top"
         />
       )}
       
