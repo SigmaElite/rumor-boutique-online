@@ -64,7 +64,7 @@ const Bestsellers = () => {
   }
 
   return (
-    <section className="pt-4 md:pt-6 pb-16 md:pb-24">
+    <section id="bestsellers" className="pt-4 md:pt-6 pb-16 md:pb-24 scroll-mt-24">
       <div className="container">
         <h2 className="font-snell text-4xl md:text-5xl lg:text-6xl text-center mb-6 md:mb-8">Bestsellers</h2>
 

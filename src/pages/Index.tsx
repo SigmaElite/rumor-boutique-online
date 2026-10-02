@@ -3,6 +3,7 @@ import Seo from "@/components/Seo";
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import Bestsellers from "@/components/Bestsellers";
+import NewSection from "@/components/NewSection";
 import YouSection from "@/components/YouSection";
 import Footer from "@/components/Footer";
 
@@ -37,6 +38,7 @@ const Index = () => {
       <main>
         <Hero />
         <Categories />
+        <NewSection />
         <Bestsellers />
         <YouSection />
       </main>
