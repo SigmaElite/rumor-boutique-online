@@ -41,7 +41,7 @@ const Hero = () => {
   }, [imageUrl, title, subtitle, loading]);
 
   return (
-    <section className="relative w-full h-[50svh] md:h-[62svh] overflow-hidden bg-black">
+    <section className="relative w-full h-[60svh] md:h-[72svh] overflow-hidden bg-black">
       {displayImage && (
         <img
           src={displayImage}
