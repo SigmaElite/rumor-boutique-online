@@ -15,7 +15,7 @@ const NewSection = () => {
     return (
       <section className="pt-4 md:pt-6 pb-16 md:pb-24">
         <div className="container">
-          <h2 className="font-snell text-4xl md:text-5xl lg:text-6xl text-center mb-6 md:mb-8">NEW</h2>
+          <h2 className="font-snell text-4xl md:text-5xl lg:text-6xl text-center mb-6 md:mb-8">New</h2>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-6 gap-y-12 md:gap-y-20">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="animate-pulse">
@@ -35,7 +35,7 @@ const NewSection = () => {
   return (
     <section className="pt-4 md:pt-6 pb-16 md:pb-24">
       <div className="container">
-        <h2 className="font-snell text-4xl md:text-5xl lg:text-6xl text-center mb-6 md:mb-8">NEW</h2>
+        <h2 className="font-snell text-4xl md:text-5xl lg:text-6xl text-center mb-6 md:mb-8">New</h2>
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-6 gap-y-12 md:gap-y-20">
           {displayProducts.map((product) => (
