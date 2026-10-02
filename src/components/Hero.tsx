@@ -41,7 +41,7 @@ const Hero = () => {
   }, [imageUrl, title, subtitle, loading]);
 
   return (
-    <section className="relative w-full h-[70svh] md:h-[90svh] overflow-hidden bg-black">
+    <section className="relative w-full h-[55svh] md:h-[68svh] overflow-hidden bg-black">
       {displayImage && (
         <img
           src={displayImage}
@@ -59,9 +59,15 @@ const Hero = () => {
         <p className="font-snell text-3xl md:text-5xl mb-2 drop-shadow-lg" aria-hidden="true">
           {displayTitle}
         </p>
-        <p className="font-snell text-xl md:text-2xl drop-shadow-md">
+        <p className="font-snell text-xl md:text-2xl drop-shadow-md mb-6 md:mb-8">
           {displaySubtitle}
         </p>
+        <a
+          href="#bestsellers"
+          className="inline-block border border-primary-foreground bg-primary-foreground/10 backdrop-blur-sm text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase font-body hover:bg-primary-foreground hover:text-primary transition-colors"
+        >
+          Shop bestsellers
+        </a>
       </div>
     </section>
   );
