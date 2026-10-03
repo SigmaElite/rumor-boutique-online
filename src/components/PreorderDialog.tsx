@@ -66,6 +66,18 @@ const PreorderDialog = ({
       return;
     }
 
+    // Уведомление в Telegram (ошибка не влияет на заявку)
+    supabase.functions.invoke("notify-preorder", {
+      body: {
+        product_name: productName,
+        customer_name: parsed.data.name,
+        phone: parsed.data.phone,
+        size: parsed.data.size || null,
+        color: selectedColor || null,
+        comment: parsed.data.comment || null,
+      },
+    }).catch((e) => console.error("Preorder notify failed:", e));
+
     toast.success("Заявка на предзаказ отправлена! Мы свяжемся с вами.");
     setName("");
     setPhone("");
