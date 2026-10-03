@@ -134,6 +134,42 @@ export type Database = {
         }
         Relationships: []
       }
+      preorder_requests: {
+        Row: {
+          color: string | null
+          comment: string | null
+          created_at: string
+          customer_name: string
+          id: string
+          phone: string
+          product_id: string | null
+          product_name: string
+          size: string | null
+        }
+        Insert: {
+          color?: string | null
+          comment?: string | null
+          created_at?: string
+          customer_name: string
+          id?: string
+          phone: string
+          product_id?: string | null
+          product_name: string
+          size?: string | null
+        }
+        Update: {
+          color?: string | null
+          comment?: string | null
+          created_at?: string
+          customer_name?: string
+          id?: string
+          phone?: string
+          product_id?: string | null
+          product_name?: string
+          size?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           bestseller_colors: string[] | null

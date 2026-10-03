@@ -23,6 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import ProductCardCarousel from "@/components/ProductCardCarousel";
+import PreorderDialog from "@/components/PreorderDialog";
 import Seo from "@/components/Seo";
 import { fullUrl, thumbUrl } from "@/lib/image";
 
@@ -41,6 +42,7 @@ const ProductPage = () => {
   const [selectedColor, setSelectedColor] = useState<string>(colorFromUrl || "");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [showPreorder, setShowPreorder] = useState(false);
   const [sizeGuideImage, setSizeGuideImage] = useState<string>('/size-guide-table.jpg');
 
   useEffect(() => {
@@ -364,6 +366,14 @@ const ProductPage = () => {
                 </button>
               </div>
 
+              {/* Preorder link */}
+              <button
+                onClick={() => setShowPreorder(true)}
+                className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground transition-colors mb-8 self-start"
+              >
+                Нет вашего размера? Оформить предзаказ
+              </button>
+
               {/* Product Details */}
               <div className="text-sm text-muted-foreground space-y-1">
                 <p>Торговая марка: <span className="text-foreground">RUMOR</span></p>
@@ -422,6 +432,16 @@ const ProductPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Preorder Modal */}
+      <PreorderDialog
+        open={showPreorder}
+        onOpenChange={setShowPreorder}
+        productId={product.id}
+        productName={product.name}
+        selectedSize={selectedSize}
+        selectedColor={selectedColor}
+      />
     </div>
   );
 };
