@@ -55,12 +55,11 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
         const { at, r } = JSON.parse(cached);
         setRates(r);
         if (Date.now() - at < REFRESH_MS) {
-          lastFetchRef.current = at;
-          return; // fresh cache — skip initial fetch
+          lastFetchRef.current = at; // fresh cache — skip initial fetch
         }
       } catch {}
     }
-    load();
+    if (lastFetchRef.current === 0) load();
 
     // Keep refreshing while the tab stays open (checked every 10 min)
     const id = setInterval(() => {
