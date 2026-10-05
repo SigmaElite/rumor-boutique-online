@@ -1,9 +1,18 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  ReactNode
+} from "react";
 
 export type Currency = "BYN" | "RUB" | "USD";
 
 // BYN per 1 unit of currency (fallback if live rates unavailable)
 const FALLBACK: Record<Currency, number> = { BYN: 1, USD: 3.0, RUB: 0.036 };
+
+const REFRESH_MS = 6 * 3600 * 1000; // refresh rates every 6 hours
 
 interface Ctx {
   currency: Currency;
@@ -18,27 +27,46 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
     () => (localStorage.getItem("currency") as Currency) || "BYN"
   );
   const [rates, setRates] = useState(FALLBACK);
+  const lastFetchRef = useRef(0);
 
   useEffect(() => {
+    const load = async () => {
+      try {
+        const get = (code: string) =>
+          fetch(`https://api.nbrb.by/exrates/rates/${code}?parammode=2`)
+            .then((res) => res.json())
+            .then((d) => d.Cur_OfficialRate / d.Cur_Scale);
+        const [usd, rub] = await Promise.all([get("USD"), get("RUB")]);
+        const r = { BYN: 1, USD: usd, RUB: rub };
+        setRates(r);
+        localStorage.setItem(
+          "currency_rates",
+          JSON.stringify({ at: Date.now(), r })
+        );
+        lastFetchRef.current = Date.now();
+      } catch {
+        // keep fallback on failure
+      }
+    };
+
     const cached = localStorage.getItem("currency_rates");
     if (cached) {
       try {
         const { at, r } = JSON.parse(cached);
         setRates(r);
-        if (Date.now() - at < 6 * 3600 * 1000) return;
+        if (Date.now() - at < REFRESH_MS) {
+          lastFetchRef.current = at;
+          return; // fresh cache — skip initial fetch
+        }
       } catch {}
     }
-    const get = (code: string) =>
-      fetch(`https://api.nbrb.by/exrates/rates/${code}?parammode=2`)
-        .then((res) => res.json())
-        .then((d) => d.Cur_OfficialRate / d.Cur_Scale);
-    Promise.all([get("USD"), get("RUB")])
-      .then(([usd, rub]) => {
-        const r = { BYN: 1, USD: usd, RUB: rub };
-        setRates(r);
-        localStorage.setItem("currency_rates", JSON.stringify({ at: Date.now(), r }));
-      })
-      .catch(() => {});
+    load();
+
+    // Keep refreshing while the tab stays open (checked every 10 min)
+    const id = setInterval(() => {
+      if (Date.now() - lastFetchRef.current >= REFRESH_MS) load();
+    }, 10 * 60 * 1000);
+    return () => clearInterval(id);
   }, []);
 
   const setCurrency = (c: Currency) => {
