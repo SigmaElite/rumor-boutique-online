@@ -98,9 +98,16 @@ const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCard
               <ChevronRight className="w-3 h-3" />
             </button>
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-              {images.map((_, idx) => (
-                <span key={idx} className={`w-1.5 h-1.5 rounded-full transition-colors ${idx === currentIndex ? "bg-primary" : "bg-primary/40"}`} />
-              ))}
+              {(() => {
+                const MAX_DOTS = 10;
+                const start = Math.max(0, Math.min(currentIndex - Math.floor(MAX_DOTS / 2), images.length - MAX_DOTS));
+                return images.slice(start, start + MAX_DOTS).map((_, i) => {
+                  const idx = start + i;
+                  return (
+                    <span key={idx} className={`w-1.5 h-1.5 rounded-full transition-colors ${idx === currentIndex ? "bg-primary" : "bg-primary/40"}`} />
+                  );
+                });
+              })()}
             </div>
           </>
         )}

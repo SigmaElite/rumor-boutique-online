@@ -51,7 +51,8 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
     if (currency === "BYN") return `${new Intl.NumberFormat("ru-RU").format(n)} byn`;
     const v = n / rates[currency];
     const rounded = currency === "RUB" ? Math.round(v / 10) * 10 : Math.round(v);
-    return `${new Intl.NumberFormat("ru-RU").format(rounded)} ${currency.toLowerCase()}`;
+    const symbol = currency === "USD" ? "$" : "₽";
+    return `${new Intl.NumberFormat("ru-RU").format(rounded)} ${symbol}`;
   };
 
   return (
