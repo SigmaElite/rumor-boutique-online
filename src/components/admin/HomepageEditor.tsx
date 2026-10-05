@@ -26,6 +26,7 @@ interface BestsellersProduct {
   colors: string[];
   bestseller_colors: string[];
   is_bestseller: boolean;
+  is_new: boolean;
   position: number;
 }
 
