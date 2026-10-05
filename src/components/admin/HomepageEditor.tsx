@@ -154,8 +154,48 @@ const HomepageEditor = () => {
     }));
   };
 
+  const toggleNew = async (productId: string, current: boolean) => {
+    const { error } = await supabase
+      .from('products')
+      .update({ is_new: !current } as any)
+      .eq('id', productId);
+    if (error) {
+      toast.error('Ошибка обновления');
+      return;
+    }
+    setAllProducts(prev => prev.map(p => p.id === productId ? { ...p, is_new: !current } : p));
+  };
+
+  const moveNew = async (productId: string, direction: 'up' | 'down') => {
+    const newItems = allProducts.filter(p => p.is_new).sort((a, b) => a.position - b.position);
+    const idx = newItems.findIndex(p => p.id === productId);
+    if (idx < 0) return;
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= newItems.length) return;
+
+    const posA = newItems[idx].position;
+    const posB = newItems[swapIdx].position;
+
+    const { error: e1 } = await supabase.from('products').update({ position: posB }).eq('id', newItems[idx].id);
+    const { error: e2 } = await supabase.from('products').update({ position: posA }).eq('id', newItems[swapIdx].id);
+    if (e1 || e2) { toast.error('Ошибка сортировки'); return; }
+
+    setAllProducts(prev => prev.map(p => {
+      if (p.id === newItems[idx].id) return { ...p, position: posB };
+      if (p.id === newItems[swapIdx].id) return { ...p, position: posA };
+      return p;
+    }));
+  };
+
   const currentBestsellers = allProducts.filter(p => p.is_bestseller).sort((a, b) => a.position - b.position);
   const nonBestsellers = allProducts.filter(p => !p.is_bestseller && (
+    bestsellersSearch === '' ||
+    p.name.toLowerCase().includes(bestsellersSearch.toLowerCase()) ||
+    p.category.toLowerCase().includes(bestsellersSearch.toLowerCase())
+  ));
+
+  const currentNew = allProducts.filter(p => p.is_new).sort((a, b) => a.position - b.position);
+  const nonNew = allProducts.filter(p => !p.is_new && (
     bestsellersSearch === '' ||
     p.name.toLowerCase().includes(bestsellersSearch.toLowerCase()) ||
     p.category.toLowerCase().includes(bestsellersSearch.toLowerCase())
