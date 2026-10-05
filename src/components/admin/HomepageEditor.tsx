@@ -67,7 +67,7 @@ const HomepageEditor = () => {
     try {
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, category, price, images, colors, bestseller_colors, is_bestseller, position')
+        .select('id, name, category, price, images, colors, bestseller_colors, is_bestseller, is_new, position')
         .order('position', { ascending: true });
       if (error) throw error;
       setAllProducts(data?.map(p => ({
@@ -76,6 +76,7 @@ const HomepageEditor = () => {
         colors: (p.colors || []) as string[],
         bestseller_colors: ((p as any).bestseller_colors || []) as string[],
         is_bestseller: p.is_bestseller || false,
+        is_new: p.is_new || false,
         position: p.position || 0,
       })) || []);
     } catch (e) {
