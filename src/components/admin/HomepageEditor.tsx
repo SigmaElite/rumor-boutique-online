@@ -26,6 +26,7 @@ interface BestsellersProduct {
   colors: string[];
   bestseller_colors: string[];
   is_bestseller: boolean;
+  is_new: boolean;
   position: number;
 }
 
@@ -66,7 +67,7 @@ const HomepageEditor = () => {
     try {
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, category, price, images, colors, bestseller_colors, is_bestseller, position')
+        .select('id, name, category, price, images, colors, bestseller_colors, is_bestseller, is_new, position')
         .order('position', { ascending: true });
       if (error) throw error;
       setAllProducts(data?.map(p => ({
@@ -75,6 +76,7 @@ const HomepageEditor = () => {
         colors: (p.colors || []) as string[],
         bestseller_colors: ((p as any).bestseller_colors || []) as string[],
         is_bestseller: p.is_bestseller || false,
+        is_new: p.is_new || false,
         position: p.position || 0,
       })) || []);
     } catch (e) {
@@ -152,8 +154,48 @@ const HomepageEditor = () => {
     }));
   };
 
+  const toggleNew = async (productId: string, current: boolean) => {
+    const { error } = await supabase
+      .from('products')
+      .update({ is_new: !current } as any)
+      .eq('id', productId);
+    if (error) {
+      toast.error('Ошибка обновления');
+      return;
+    }
+    setAllProducts(prev => prev.map(p => p.id === productId ? { ...p, is_new: !current } : p));
+  };
+
+  const moveNew = async (productId: string, direction: 'up' | 'down') => {
+    const newItems = allProducts.filter(p => p.is_new).sort((a, b) => a.position - b.position);
+    const idx = newItems.findIndex(p => p.id === productId);
+    if (idx < 0) return;
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= newItems.length) return;
+
+    const posA = newItems[idx].position;
+    const posB = newItems[swapIdx].position;
+
+    const { error: e1 } = await supabase.from('products').update({ position: posB }).eq('id', newItems[idx].id);
+    const { error: e2 } = await supabase.from('products').update({ position: posA }).eq('id', newItems[swapIdx].id);
+    if (e1 || e2) { toast.error('Ошибка сортировки'); return; }
+
+    setAllProducts(prev => prev.map(p => {
+      if (p.id === newItems[idx].id) return { ...p, position: posB };
+      if (p.id === newItems[swapIdx].id) return { ...p, position: posA };
+      return p;
+    }));
+  };
+
   const currentBestsellers = allProducts.filter(p => p.is_bestseller).sort((a, b) => a.position - b.position);
   const nonBestsellers = allProducts.filter(p => !p.is_bestseller && (
+    bestsellersSearch === '' ||
+    p.name.toLowerCase().includes(bestsellersSearch.toLowerCase()) ||
+    p.category.toLowerCase().includes(bestsellersSearch.toLowerCase())
+  ));
+
+  const currentNew = allProducts.filter(p => p.is_new).sort((a, b) => a.position - b.position);
+  const nonNew = allProducts.filter(p => !p.is_new && (
     bestsellersSearch === '' ||
     p.name.toLowerCase().includes(bestsellersSearch.toLowerCase()) ||
     p.category.toLowerCase().includes(bestsellersSearch.toLowerCase())
@@ -235,13 +277,118 @@ const HomepageEditor = () => {
 
   return (
     <Tabs defaultValue="hero" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-5">
+      <TabsList className="grid w-full grid-cols-6">
         <TabsTrigger value="hero">Hero</TabsTrigger>
+        <TabsTrigger value="new">New</TabsTrigger>
         <TabsTrigger value="bestsellers">Bestsellers</TabsTrigger>
         <TabsTrigger value="categories">Категории</TabsTrigger>
         <TabsTrigger value="you">You секция</TabsTrigger>
         <TabsTrigger value="sizeguide">Размерная сетка</TabsTrigger>
       </TabsList>
+
+      {/* New Section */}
+      <TabsContent value="new">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Star className="h-5 w-5" />
+              Управление секцией New
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {bestsellersLoading ? (
+              <div className="text-muted-foreground">Загрузка...</div>
+            ) : (
+              <>
+                <div>
+                  <Label className="text-base font-semibold mb-3 block">
+                    Товары в секции New ({currentNew.length})
+                  </Label>
+                  {currentNew.length === 0 ? (
+                    <p className="text-muted-foreground text-sm">Нет выбранных товаров</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {currentNew.map((product, idx) => (
+                        <div key={product.id} className="flex items-center gap-3 p-3 border rounded-lg bg-accent/30">
+                          {product.images[0] && (
+                            <img src={product.images[0]} alt="" className="w-12 h-16 object-cover rounded" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate">{product.name}</p>
+                            <p className="text-sm text-muted-foreground">{product.category} · {product.price} byn</p>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              disabled={idx === 0}
+                              onClick={() => moveNew(product.id, 'up')}
+                            >
+                              <ArrowUp className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              disabled={idx === currentNew.length - 1}
+                              onClick={() => moveNew(product.id, 'down')}
+                            >
+                              <ArrowDown className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive"
+                              onClick={() => toggleNew(product.id, true)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <Label className="text-base font-semibold mb-3 block">Добавить товар в New</Label>
+                  <div className="relative mb-3">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Поиск по названию или категории..."
+                      value={bestsellersSearch}
+                      onChange={(e) => setBestsellersSearch(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  <div className="space-y-1 max-h-[400px] overflow-y-auto">
+                    {nonNew.map(product => (
+                      <div
+                        key={product.id}
+                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/20 cursor-pointer"
+                        onClick={() => toggleNew(product.id, false)}
+                      >
+                        <Checkbox checked={false} />
+                        {product.images[0] && (
+                          <img src={product.images[0]} alt="" className="w-10 h-13 object-cover rounded" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{product.name}</p>
+                          <p className="text-xs text-muted-foreground">{product.category}</p>
+                        </div>
+                      </div>
+                    ))}
+                    {nonNew.length === 0 && (
+                      <p className="text-sm text-muted-foreground py-2">Нет товаров для добавления</p>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
 
       {/* Hero Section */}
       <TabsContent value="hero">
