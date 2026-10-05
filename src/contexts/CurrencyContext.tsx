@@ -49,22 +49,17 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
+    // Show last known rates instantly, then always fetch fresh ones
     const cached = localStorage.getItem("currency_rates");
     if (cached) {
       try {
-        const { at, r } = JSON.parse(cached);
-        setRates(r);
-        if (Date.now() - at < REFRESH_MS) {
-          lastFetchRef.current = at; // fresh cache — skip initial fetch
-        }
+        setRates(JSON.parse(cached).r);
       } catch {}
     }
-    if (lastFetchRef.current === 0) load();
+    load();
 
-    // Keep refreshing while the tab stays open (checked every 10 min)
-    const id = setInterval(() => {
-      if (Date.now() - lastFetchRef.current >= REFRESH_MS) load();
-    }, 10 * 60 * 1000);
+    // While the tab is open, re-fetch every hour
+    const id = setInterval(load, 60 * 60 * 1000);
     return () => clearInterval(id);
   }, []);
 
