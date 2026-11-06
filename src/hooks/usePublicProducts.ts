@@ -23,13 +23,22 @@ export interface PublicProduct {
   position: number;
 }
 
-export const usePublicProducts = () => {
-  const [products, setProducts] = useState<PublicProduct[]>([]);
-  const [loading, setLoading] = useState(true);
+// Shared cache: one request for all components, reused for 5 minutes
+const TTL = 5 * 60 * 1000;
+const LS_KEY = 'public_products_cache_v1';
+let cache: PublicProduct[] | null = null;
+let cacheTime = 0;
+let inflight: Promise<PublicProduct[]> | null = null;
+const listeners = new Set<(p: PublicProduct[]) => void>();
+try {
+  const raw = localStorage.getItem(LS_KEY);
+  if (raw) { const j = JSON.parse(raw); cache = j.data; cacheTime = j.time || 0; }
+} catch { /* ignore */ }
 
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
+const loadProducts = (force = false): Promise<PublicProduct[]> => {
+  if (!force && cache && Date.now() - cacheTime < TTL) return Promise.resolve(cache);
+  if (inflight) return inflight;
+  inflight = (async () => {
       const { data, error } = await supabase
         .from('products')
         .select('id, name, description, price, old_price, category, secondary_category, sizes, images, colors, color_images, color_sizes, bestseller_colors, is_bestseller, is_new, is_sale, is_last_sizes, position')
@@ -37,8 +46,7 @@ export const usePublicProducts = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
-      setProducts(data?.map(p => ({
+      const mapped: PublicProduct[] = (data?.map(p => ({
         ...p,
         secondary_category: p.secondary_category || null,
         sizes: p.sizes || [],
@@ -52,7 +60,23 @@ export const usePublicProducts = () => {
         is_sale: p.is_sale || false,
         is_last_sizes: p.is_last_sizes || false,
         position: p.position || 0,
-      })) || []);
+      })) || []) as PublicProduct[];
+      cache = mapped; cacheTime = Date.now();
+      try { localStorage.setItem(LS_KEY, JSON.stringify({ data: mapped, time: cacheTime })); } catch { /* quota */ }
+      listeners.forEach(l => l(mapped));
+      return mapped;
+  })().finally(() => { inflight = null; });
+  return inflight;
+};
+
+export const usePublicProducts = () => {
+  const [products, setProducts] = useState<PublicProduct[]>(cache || []);
+  const [loading, setLoading] = useState(!cache);
+
+  const fetchProducts = async (force = true) => {
+    try {
+      if (!cache) setLoading(true);
+      setProducts(await loadProducts(force));
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {
@@ -61,7 +85,9 @@ export const usePublicProducts = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
+    listeners.add(setProducts);
+    fetchProducts(false);
+    return () => { listeners.delete(setProducts); };
   }, []);
 
   const getProductById = (id: string): PublicProduct | undefined => {
