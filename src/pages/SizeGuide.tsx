@@ -4,19 +4,16 @@ import Footer from "@/components/Footer";
 import Seo from "@/components/Seo";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { loadHomepageSettings } from "@/hooks/useHomepageSettings";
 
 const SizeGuide = () => {
   const [sizeGuideImage, setSizeGuideImage] = useState<string>('/size-guide-table.jpg');
 
   useEffect(() => {
     const fetchSizeGuideImage = async () => {
-      const { data } = await supabase
-        .from('homepage_settings')
-        .select('data')
-        .eq('id', 'size_guide')
-        .maybeSingle();
-      
+ const rows = await loadHomepageSettings().catch(() => []);
+      const data = rows.find(r => r.id === 'size_guide') as { data: unknown } | undefined;
+
       if (data?.data && typeof data.data === 'object' && 'image_url' in data.data) {
         setSizeGuideImage((data.data as { image_url: string }).image_url);
       }

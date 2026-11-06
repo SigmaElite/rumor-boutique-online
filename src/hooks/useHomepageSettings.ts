@@ -30,6 +30,25 @@ export interface SizeGuideSettings {
   image_url: string;
 }
 
+type SettingRow = { id: string; data: unknown };
+const SETTINGS_TTL = 5 * 60 * 1000;
+let settingsCache: SettingRow[] | null = null;
+let settingsTime = 0;
+let settingsInflight: Promise<SettingRow[]> | null = null;
+export const loadHomepageSettings = (force = false): Promise<SettingRow[]> => {
+  if (!force && settingsCache && Date.now() - settingsTime < SETTINGS_TTL) return Promise.resolve(settingsCache);
+  if (settingsInflight) return settingsInflight;
+  settingsInflight = (async () => {
+    const { data, error } = await supabase.from('homepage_settings').select('*');
+    if (error) throw error;
+    settingsCache = (data || []) as SettingRow[];
+    settingsTime = Date.now();
+    return settingsCache;
+  })().finally(() => { settingsInflight = null; });
+  return settingsInflight;
+};
+const invalidateSettings = () => { settingsTime = 0; };
+
 export const useHomepageSettings = () => {
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null);
   const [categoriesSettings, setCategoriesSettings] = useState<CategoriesSettings | null>(null);
@@ -38,13 +57,9 @@ export const useHomepageSettings = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const fetchSettings = async () => {
+  const fetchSettings = async (force = false) => {
     try {
-      const { data, error } = await supabase
-        .from('homepage_settings')
-        .select('*');
-
-      if (error) throw error;
+      const data = await loadHomepageSettings(force);
 
       data?.forEach((setting: { id: string; data: unknown }) => {
         if (setting.id === 'hero') {
@@ -72,6 +87,7 @@ export const useHomepageSettings = () => {
         .eq('id', 'hero');
 
       if (error) throw error;
+      invalidateSettings();
 
       setHeroSettings(data);
       toast({ title: 'Успешно', description: 'Hero секция обновлена' });
@@ -90,6 +106,7 @@ export const useHomepageSettings = () => {
         .eq('id', 'categories');
 
       if (error) throw error;
+      invalidateSettings();
 
       setCategoriesSettings(data);
       toast({ title: 'Успешно', description: 'Категории обновлены' });
@@ -108,6 +125,7 @@ export const useHomepageSettings = () => {
         .eq('id', 'you_section');
 
       if (error) throw error;
+      invalidateSettings();
 
       setYouSectionSettings(data);
       toast({ title: 'Успешно', description: 'Секция You обновлена' });
@@ -125,6 +143,7 @@ export const useHomepageSettings = () => {
         .upsert({ id: 'size_guide', data: JSON.parse(JSON.stringify(data)) as Json });
 
       if (error) throw error;
+      invalidateSettings();
 
       setSizeGuideSettings(data);
       toast({ title: 'Успешно', description: 'Размерная сетка обновлена' });
@@ -149,6 +168,6 @@ export const useHomepageSettings = () => {
     updateCategoriesSettings,
     updateYouSectionSettings,
     updateSizeGuideSettings,
-    refetch: fetchSettings,
+    refetch: () => fetchSettings(true),
   };
 };

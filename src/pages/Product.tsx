@@ -1,3 +1,4 @@
+import { loadHomepageSettings } from '@/hooks/useHomepageSettings';
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link, useSearchParams } from "react-router-dom";
@@ -47,12 +48,9 @@ const ProductPage = () => {
 
   useEffect(() => {
     const fetchSizeGuideImage = async () => {
-      const { data } = await supabase
-        .from('homepage_settings')
-        .select('data')
-        .eq('id', 'size_guide')
-        .maybeSingle();
-      
+ const rows = await loadHomepageSettings().catch(() => []);
+      const data = rows.find(r => r.id === 'size_guide') as { data: unknown } | undefined;
+
       if (data?.data && typeof data.data === 'object' && 'image_url' in data.data) {
         setSizeGuideImage((data.data as { image_url: string }).image_url);
       }
