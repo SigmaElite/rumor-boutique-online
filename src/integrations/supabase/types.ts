@@ -172,6 +172,7 @@ export type Database = {
       }
       products: {
         Row: {
+          badge_text: string | null
           bestseller_colors: string[] | null
           category: string
           color_images: Json | null
@@ -194,6 +195,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          badge_text?: string | null
           bestseller_colors?: string[] | null
           category: string
           color_images?: Json | null
@@ -216,6 +218,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          badge_text?: string | null
           bestseller_colors?: string[] | null
           category?: string
           color_images?: Json | null
