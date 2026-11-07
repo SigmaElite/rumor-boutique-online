@@ -40,11 +40,17 @@ const loadProducts = (force = false): Promise<PublicProduct[]> => {
   if (!force && cache && Date.now() - cacheTime < TTL) return Promise.resolve(cache);
   if (inflight) return inflight;
   inflight = (async () => {
-      const { data, error } = await supabase
+      const base = 'id, name, description, price, old_price, category, secondary_category, sizes, images, colors, color_images, color_sizes, bestseller_colors, is_bestseller, is_new, is_sale, is_last_sizes, position';
+      const run = (cols: string) => supabase
         .from('products')
-        .select('id, name, description, price, old_price, category, secondary_category, sizes, images, colors, color_images, color_sizes, bestseller_colors, is_bestseller, is_new, is_sale, is_last_sizes, badge_text, position')
+        .select(cols)
         .order('position', { ascending: true })
         .order('created_at', { ascending: false });
+      let { data, error } = await run(`${base}, badge_text`) as { data: any[] | null; error: any };
+      // Fallback: databases without the badge_text column must still load products
+      if (error && (error.code === '42703' || String(error.message || '').includes('badge_text'))) {
+        ({ data, error } = await run(base) as { data: any[] | null; error: any });
+      }
 
       if (error) throw error;
       const mapped: PublicProduct[] = (data?.map(p => ({
