@@ -56,10 +56,10 @@ const Hero = () => {
       {/* Overlay Content */}
       <div className="absolute bottom-16 left-8 md:left-16 text-white z-10">
         <h1 className="sr-only">RUMOR — премиальная женская одежда: платья, корсеты, жакеты и брюки</h1>
-        <p className="font-snell text-3xl md:text-5xl mb-2 drop-shadow-lg" aria-hidden="true">
+        <p className={`${/sale|\d/i.test(displayTitle) ? "font-body font-medium uppercase tracking-[0.15em] text-2xl md:text-4xl" : "font-snell text-3xl md:text-5xl"} mb-2 drop-shadow-lg`} aria-hidden="true">
           {displayTitle}
         </p>
-        <p className="font-snell text-xl md:text-2xl drop-shadow-md mb-6 md:mb-8">
+        <p className={`${/sale|\d/i.test(displaySubtitle) ? "font-body font-medium uppercase tracking-[0.15em] text-lg md:text-2xl" : "font-snell text-xl md:text-2xl"} drop-shadow-md mb-6 md:mb-8`}>
           {displaySubtitle}
         </p>
         <a
@@ -67,6 +67,12 @@ const Hero = () => {
           className="inline-block border border-primary-foreground bg-primary-foreground/10 backdrop-blur-sm text-primary-foreground px-8 py-3 text-xs tracking-[0.25em] uppercase font-body hover:bg-primary-foreground hover:text-primary transition-colors"
         >
           Shop bestsellers
+        </a>
+        <a
+          href="/catalog?category=SALE"
+          className="inline-block ml-3 mt-3 border border-primary-foreground bg-primary-foreground text-primary px-8 py-3 text-xs tracking-[0.25em] uppercase font-body hover:bg-primary-foreground/80 transition-colors"
+        >
+          Sale
         </a>
       </div>
     </section>

@@ -20,12 +20,13 @@ export interface PublicProduct {
   is_new: boolean;
   is_sale: boolean;
   is_last_sizes: boolean;
+  badge_text?: string | null;
   position: number;
 }
 
 // Shared cache: one request for all components, reused for 5 minutes
 const TTL = 5 * 60 * 1000;
-const LS_KEY = 'public_products_cache_v1';
+const LS_KEY = 'public_products_cache_v2';
 let cache: PublicProduct[] | null = null;
 let cacheTime = 0;
 let inflight: Promise<PublicProduct[]> | null = null;
@@ -41,7 +42,7 @@ const loadProducts = (force = false): Promise<PublicProduct[]> => {
   inflight = (async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, description, price, old_price, category, secondary_category, sizes, images, colors, color_images, color_sizes, bestseller_colors, is_bestseller, is_new, is_sale, is_last_sizes, position')
+        .select('id, name, description, price, old_price, category, secondary_category, sizes, images, colors, color_images, color_sizes, bestseller_colors, is_bestseller, is_new, is_sale, is_last_sizes, badge_text, position')
         .order('position', { ascending: true })
         .order('created_at', { ascending: false });
 
@@ -59,6 +60,7 @@ const loadProducts = (force = false): Promise<PublicProduct[]> => {
         is_new: p.is_new || false,
         is_sale: p.is_sale || false,
         is_last_sizes: p.is_last_sizes || false,
+        badge_text: (p as any).badge_text || null,
         position: p.position || 0,
       })) || []) as PublicProduct[];
       cache = mapped; cacheTime = Date.now();

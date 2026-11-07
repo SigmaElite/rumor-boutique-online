@@ -71,7 +71,10 @@ const ProductCardCarousel = ({ product, selectedColor, hideColors }: ProductCard
         </button>
 
         <div className="absolute top-4 left-4 flex flex-col gap-1 z-10">
-          {discount && (
+          {product.badge_text && (
+            <span className="bg-destructive text-destructive-foreground text-xs font-medium tracking-wider px-3 py-1.5 rounded-full">{product.badge_text}</span>
+          )}
+          {!product.badge_text && discount && (
             <span className="bg-primary text-primary-foreground text-xs tracking-wider px-3 py-1.5 rounded-full">{discount}</span>
           )}
           {product.is_last_sizes && (
