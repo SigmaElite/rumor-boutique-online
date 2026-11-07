@@ -68,7 +68,7 @@ const Catalog = () => {
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || product.category === selectedCategory || product.secondary_category === selectedCategory;
+    const matchesCategory = selectedCategory === "all" || (selectedCategory === "SALE" && product.is_sale) || product.category === selectedCategory || product.secondary_category === selectedCategory;
     const matchesSize = selectedSize === "all" || (product.sizes && product.sizes.includes(selectedSize));
     return matchesSearch && matchesCategory && matchesSize;
   });

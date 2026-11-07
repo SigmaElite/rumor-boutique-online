@@ -33,6 +33,7 @@ export interface DbProduct {
   is_new: boolean;
   is_sale: boolean;
   is_last_sizes: boolean;
+  badge_text?: string | null;
   position: number;
   created_at: string;
   updated_at: string;
@@ -54,6 +55,7 @@ export interface ProductFormData {
   is_new: boolean;
   is_sale: boolean;
   is_last_sizes: boolean;
+  badge_text?: string | null;
   position: number;
 }
 

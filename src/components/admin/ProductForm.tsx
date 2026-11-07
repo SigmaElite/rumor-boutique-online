@@ -19,7 +19,7 @@ interface ProductFormProps {
   loading?: boolean;
 }
 
-const categories = ['NEW', 'Корсеты', 'Платья', 'Комплекты', 'Юбки', 'Жакеты', 'Брюки', 'Верхняя одежда', 'Спорт', 'wedding collection'];
+const categories = ['NEW', 'Корсеты', 'Платья', 'Комплекты', 'Юбки', 'Жакеты', 'Брюки', 'Верхняя одежда', 'Спорт', 'wedding collection', 'SALE'];
 const defaultSizes = [
   'XXS-38',
   'Doll (55 талия, 90 грудь)',
@@ -57,6 +57,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
     is_new: false,
     is_sale: false,
     is_last_sizes: false,
+    badge_text: '',
     position: 0,
   });
 
@@ -83,6 +84,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         is_new: product.is_new || false,
         is_sale: product.is_sale || false,
         is_last_sizes: product.is_last_sizes || false,
+        badge_text: product.badge_text || '',
         position: product.position || 0,
       });
       setPriceValue(product.price.toString());
@@ -105,6 +107,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         is_new: false,
         is_sale: false,
         is_last_sizes: false,
+        badge_text: '',
         position: 0,
       });
       setPriceValue('');
@@ -137,6 +140,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
       ...formData,
       price,
       old_price: oldPriceValue ? parseFloat(oldPriceValue) : null,
+      badge_text: formData.badge_text?.trim() || null,
       images: allImages,
     };
     await onSubmit(submitData);
@@ -394,6 +398,12 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
           <Switch id="is_last_sizes" checked={formData.is_last_sizes} onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, is_last_sizes: checked }))} />
           <Label htmlFor="is_last_sizes">Последние размеры</Label>
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="badge_text">Плашка на фото товара</Label>
+        <Input id="badge_text" value={formData.badge_text || ''} onChange={(e) => setFormData((prev) => ({ ...prev, badge_text: e.target.value }))} placeholder="Например: скидка 11%" maxLength={30} />
+        <p className="text-xs text-muted-foreground">Оставьте пустым, чтобы не показывать</p>
       </div>
 
       <div className="space-y-2">
