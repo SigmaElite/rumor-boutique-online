@@ -56,10 +56,10 @@ const Hero = () => {
       {/* Overlay Content */}
       <div className="absolute bottom-16 left-8 md:left-16 text-white z-10">
         <h1 className="sr-only">RUMOR — премиальная женская одежда: платья, корсеты, жакеты и брюки</h1>
-        <p className="font-snell text-3xl md:text-5xl mb-2 drop-shadow-lg" aria-hidden="true">
+        <p className="font-script text-3xl md:text-5xl mb-2 drop-shadow-lg" aria-hidden="true">
           {displayTitle}
         </p>
-        <p className="font-snell text-xl md:text-2xl drop-shadow-md mb-6 md:mb-8">
+        <p className="font-script text-xl md:text-2xl drop-shadow-md mb-6 md:mb-8">
           {displaySubtitle}
         </p>
         <a
