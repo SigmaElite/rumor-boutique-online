@@ -108,7 +108,6 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }: ProductFormProps)
         is_sale: false,
         is_last_sizes: false,
         badge_text: '',
-    badge_text: '',
         position: 0,
       });
       setPriceValue('');
